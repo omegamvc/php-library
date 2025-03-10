@@ -5,16 +5,16 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\Kernel;
 use System\Integrate\PackageManifest;
 
-final class KarnelHandleExceptionTest extends TestCase
+final class KernelHandleExceptionTest extends TestCase
 {
     private Application $app;
-    private Karnel $karnel;
+    private Kernel $kernel;
     private Handler $handler;
 
     protected function setUp(): void
@@ -29,8 +29,8 @@ final class KarnelHandleExceptionTest extends TestCase
         ));
 
         $this->app->set(
-            Karnel::class,
-            fn () => new $this->karnel($this->app)
+            Kernel::class,
+            fn () => new $this->kernel($this->app)
         );
 
         $this->app->set(
@@ -38,7 +38,7 @@ final class KarnelHandleExceptionTest extends TestCase
             fn () => $this->handler
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->kernel = new class($this->app) extends Kernel {
             protected function dispatcher(Request $request): array
             {
                 throw new HttpException(500, 'Test Exception');
@@ -67,8 +67,8 @@ final class KarnelHandleExceptionTest extends TestCase
     /** @test */
     public function itCanRenderException()
     {
-        $karnel      = $this->app->make(Karnel::class);
-        $response    = $karnel->handle(new Request('/test'));
+        $kernel      = $this->app->make(Kernel::class);
+        $response    = $kernel->handle(new Request('/test'));
 
         $this->assertEquals('Test Exception', $response->getContent());
         $this->assertEquals(500, $response->getStatusCode());

@@ -7,7 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 

@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 
 class ConfigRepositoryTest extends TestCase
 {

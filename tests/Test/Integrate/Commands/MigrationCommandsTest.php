@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Database\MyPDO;
 use System\Database\MySchema\Table\Create;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Console\MigrationCommand;
 use System\Support\Facades\Facade;
 use System\Support\Facades\Schema;

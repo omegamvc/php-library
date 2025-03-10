@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate;
+namespace System\Config;
 
 /**
  * @implements \ArrayAccess<string, mixed>

@@ -4,13 +4,15 @@ declare(strict_types=1);
 
 namespace System\Integrate;
 
+use System\Application\Application;
+
 abstract class ServiceProvider
 {
     /** @var Application */
-    protected $app;
+    protected Application $app;
 
     /** @var array<int|string, class-string> Class register */
-    protected $register = [
+    protected array $register = [
         // register
     ];
 

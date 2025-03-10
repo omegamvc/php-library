@@ -6,7 +6,7 @@ namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\TestCase;
 use System\Collection\Collection;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Support\Facades\Facade;
 
 class RegisterFacadesTest extends TestCase

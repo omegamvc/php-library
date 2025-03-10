@@ -7,15 +7,15 @@ namespace System\Integrate\Testing;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
-use System\Integrate\Http\Karnel;
+use System\Application\Application;
+use System\Integrate\Http\Kernel;
 use System\Integrate\ServiceProvider;
 use System\Support\Facades\Facade;
 
 class TestCase extends BaseTestCase
 {
     protected Application $app;
-    protected Karnel $kernel;
+    protected Kernel $kernel;
     protected string $class;
 
     protected function tearDown(): void
@@ -65,8 +65,8 @@ class TestCase extends BaseTestCase
         string $remoteAddress = '::1',
         ?string $rawBody = null,
     ): TestResponse {
-        /** @var Karnel */
-        $kernel   = $this->app->make(Karnel::class);
+        /** @var Kernel */
+        $kernel   = $this->app->make(Kernel::class);
         $request  = new Request($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
         $response = $kernel->handle($request);
 

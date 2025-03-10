@@ -6,7 +6,7 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Console\Style\Style;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\PackageManifest;
 
 use function System\Console\fail;

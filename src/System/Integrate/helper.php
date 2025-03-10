@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 // path aplication
 
+use System\Application\Application;
 use System\Http\RedirectResponse;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 use System\Router\Router;
@@ -299,9 +300,9 @@ if (!function_exists('app')) {
     /**
      * Get Application container.
      */
-    function app(): System\Integrate\Application
+    function app(): Application
     {
-        $app = System\Integrate\Application::getIntance();
+        $app = Application::getIntance();
         if (null === $app) {
             throw new ApplicationNotAvailable();
         }

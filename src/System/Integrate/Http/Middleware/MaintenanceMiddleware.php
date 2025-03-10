@@ -6,7 +6,7 @@ namespace System\Integrate\Http\Middleware;
 
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Http\Exception\HttpException;
 
 class MaintenanceMiddleware

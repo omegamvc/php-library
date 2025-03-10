@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Console\SeedCommand;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO as FacadesPDO;

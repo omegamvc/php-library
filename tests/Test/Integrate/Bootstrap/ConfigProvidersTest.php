@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Application;
+use System\Application\Application;
 
 class ConfigProvidersTest extends TestCase
 {

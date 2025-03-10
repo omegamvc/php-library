@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Support\Facades;
 
-use System\Integrate\Application;
+use System\Application\Application;
 
 abstract class Facade
 {

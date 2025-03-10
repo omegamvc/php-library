@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use System\Database\MyQuery;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Console\MakeCommand;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;

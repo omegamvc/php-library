@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\RegisterFacades;
 use System\Integrate\Bootstrap\RegisterProviders;
 use System\Integrate\ValueObjects\CommandMap;
 
-class Karnel
+class Kernel
 {
     /**
      * Application Container.
@@ -39,7 +39,7 @@ class Karnel
     }
 
     /**
-     * Handle input (arguments) karnel.
+     * Handle input (arguments) kernel.
      *
      * @param string|array<int, string> $arguments
      *

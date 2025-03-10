@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Text\Str;
 
 class CommandTest extends TestCase

@@ -7,8 +7,8 @@ namespace System\Test\Integrate\Http\Middleware;
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
-use System\Integrate\ConfigRepository;
+use System\Application\Application;
+use System\Config\ConfigRepository;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 

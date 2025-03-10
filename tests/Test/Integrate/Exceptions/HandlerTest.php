@@ -7,10 +7,10 @@ namespace System\Test\Integrate\Exceptions;
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\Kernel;
 use System\Integrate\PackageManifest;
 use System\Text\Str;
 use System\View\Templator;
@@ -19,7 +19,7 @@ use System\View\TemplatorFinder;
 final class HandlerTest extends TestCase
 {
     private Application $app;
-    private Karnel $karnel;
+    private Kernel $kernel;
     private Handler $handler;
 
     /**
@@ -41,8 +41,8 @@ final class HandlerTest extends TestCase
         ));
 
         $this->app->set(
-            Karnel::class,
-            fn () => new $this->karnel($this->app)
+            Kernel::class,
+            fn () => new $this->kernel($this->app)
         );
 
         $this->app->set(
@@ -50,7 +50,7 @@ final class HandlerTest extends TestCase
             fn () => $this->handler
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->kernel = new class($this->app) extends Kernel {
             protected function dispatcher(Request $request): array
             {
                 throw new HttpException(429, 'Too Many Request');
@@ -94,8 +94,8 @@ final class HandlerTest extends TestCase
     /** @test */
     public function itCanRenderException()
     {
-        $karnel      = $this->app->make(Karnel::class);
-        $response    = $karnel->handle(new Request('/test'));
+        $kernel      = $this->app->make(Kernel::class);
+        $response    = $kernel->handle(new Request('/test'));
 
         $this->assertEquals('Too Many Request', $response->getContent());
         $this->assertEquals(429, $response->getStatusCode());
@@ -104,8 +104,8 @@ final class HandlerTest extends TestCase
     /** @test */
     public function itCanReportException()
     {
-        $karnel      = $this->app->make(Karnel::class);
-        $karnel->handle(new Request('/test'));
+        $kernel      = $this->app->make(Kernel::class);
+        $kernel->handle(new Request('/test'));
 
         $this->assertEquals(['Too Many Request'], HandlerTest::$logs);
     }
@@ -117,8 +117,8 @@ final class HandlerTest extends TestCase
             $this->app->set('app.debug', false);
         });
 
-        $karnel      = $this->app->make(Karnel::class);
-        $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
+        $kernel      = $this->app->make(Kernel::class);
+        $response    = $kernel->handle(new Request('/test', [], [], [], [], [], [
             'content-type' => 'application/json',
         ]));
 
@@ -138,8 +138,8 @@ final class HandlerTest extends TestCase
             $this->app->set('app.debug', true);
         });
 
-        $karnel      = $this->app->make(Karnel::class);
-        $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
+        $kernel      = $this->app->make(Kernel::class);
+        $response    = $kernel->handle(new Request('/test', [], [], [], [], [], [
             'content-type' => 'application/json',
         ]));
 

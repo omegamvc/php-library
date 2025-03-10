@@ -5,14 +5,14 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
-use System\Integrate\Http\Karnel;
+use System\Application\Application;
+use System\Integrate\Http\Kernel;
 use System\Integrate\PackageManifest;
 
-final class KarnelTest extends TestCase
+final class KernelTest extends TestCase
 {
     private Application $app;
-    private $karnel;
+    private $kernel;
 
     protected function setUp(): void
     {
@@ -26,11 +26,11 @@ final class KarnelTest extends TestCase
         ));
 
         $this->app->set(
-            Karnel::class,
-            fn () => new $this->karnel($this->app)
+            Kernel::class,
+            fn () => new $this->kernel($this->app)
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->kernel = new class($this->app) extends Kernel {
             protected function dispatcher(Request $request): array
             {
                 return [
@@ -68,13 +68,13 @@ final class KarnelTest extends TestCase
     protected function tearDown(): void
     {
         $this->app->flush();
-        $this->karnel = null;
+        $this->kernel = null;
     }
 
     /** @test */
     public function itCanRedirectByMiddleware()
     {
-        $respone = $this->app->make(Karnel::class);
+        $respone = $this->app->make(Kernel::class);
         $test    = $respone->handle(
             new Request('test')
         );
@@ -92,7 +92,7 @@ final class KarnelTest extends TestCase
     public function itCanBootstrap()
     {
         $this->assertFalse($this->app->isBootstrapped());
-        $this->app->make(Karnel::class)->bootstrap();
+        $this->app->make(Kernel::class)->bootstrap();
         $this->assertTrue($this->app->isBootstrapped());
     }
 }

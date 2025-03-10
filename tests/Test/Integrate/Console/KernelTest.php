@@ -6,15 +6,15 @@ namespace System\Test\Integrate\Console;
 
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
-use System\Integrate\Application;
-use System\Integrate\Console\Karnel;
+use System\Application\Application;
+use System\Integrate\Console\Kernel;
 use System\Integrate\PackageManifest;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
 use function System\Console\style;
 
-final class KarnelTest extends TestCase
+final class KernelTest extends TestCase
 {
     private $app;
 
@@ -38,9 +38,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingFullCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:full']);
+        $exit    = $kernel->handle(['cli', 'use:full']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -51,9 +51,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingGroupCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:group']);
+        $exit    = $kernel->handle(['cli', 'use:group']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -64,9 +64,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingStartCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'start:tesing']);
+        $exit    = $kernel->handle(['cli', 'start:tesing']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -77,9 +77,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingWithoutModeCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:without_mode']);
+        $exit    = $kernel->handle(['cli', 'use:without_mode']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -90,9 +90,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingWithoutMainCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:without_main']);
+        $exit    = $kernel->handle(['cli', 'use:without_main']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -103,9 +103,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingMatchCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:match']);
+        $exit    = $kernel->handle(['cli', 'use:match']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -116,9 +116,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingPatternCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:pattern']);
+        $exit    = $kernel->handle(['cli', 'use:pattern']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -129,9 +129,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandUsingPatternGroupCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'pattern1']);
+        $exit    = $kernel->handle(['cli', 'pattern1']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -139,9 +139,9 @@ final class KarnelTest extends TestCase
         $this->assertTrue($hasContent);
 
         // 2
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'pattern2']);
+        $exit    = $kernel->handle(['cli', 'pattern2']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -152,9 +152,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanCallCommandWithDefaultOption()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:default_option']);
+        $exit    = $kernel->handle(['cli', 'use:default_option']);
         $out     = ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -165,9 +165,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanReturnNothingBecauseCommandNotFound()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'test']);
+        $exit    = $kernel->handle(['cli', 'test']);
         ob_get_clean();
 
         $this->assertEquals(1, $exit);
@@ -176,9 +176,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanReturnCommandNotFoundBecauseNotClosetAnotherCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'xzy']);
+        $exit    = $kernel->handle(['cli', 'xzy']);
         $out     = ob_get_clean();
 
         $this->assertEquals(1, $exit);
@@ -189,9 +189,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanReturnSuggestionCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:patern']);
+        $exit    = $kernel->handle(['cli', 'use:patern']);
         $out     = ob_get_clean();
 
         $this->assertEquals(1, $exit);
@@ -204,9 +204,9 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanGivenClosetCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit    = $karnel->handle(['cli', 'use:']);
+        $exit    = $kernel->handle(['cli', 'use:']);
         $out     = ob_get_clean();
 
         $this->assertEquals(1, $exit);
@@ -218,16 +218,16 @@ final class KarnelTest extends TestCase
     public function itCanBootstrap()
     {
         $this->assertFalse($this->app->isBootstrapped());
-        $this->app->make(Karnel::class)->bootstrap();
+        $this->app->make(Kernel::class)->bootstrap();
         $this->assertTrue($this->app->isBootstrapped());
     }
 
     /** @test */
     public function itCanCallCommand()
     {
-        $karnel = new NormalCommand($this->app);
+        $kernel = new NormalCommand($this->app);
         ob_start();
-        $exit = $karnel->call('cli use:no-int-return');
+        $exit = $kernel->call('cli use:no-int-return');
         ob_get_clean();
 
         $this->assertEquals(0, $exit);
@@ -238,14 +238,14 @@ final class KarnelTest extends TestCase
      */
     public function itCanGetSimilarCommand()
     {
-        $karnel = new Karnel($this->app);
-        $result = (fn () => $this->{'getSimilarity'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($karnel);
+        $kernel = new Kernel($this->app);
+        $result = (fn () => $this->{'getSimilarity'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($kernel);
         $this->assertArrayHasKey('make:view', $result);
         $this->assertArrayHasKey('make:controller', $result);
     }
 }
 
-class NormalCommand extends Karnel
+class NormalCommand extends Kernel
 {
     protected function commands(): array
     {

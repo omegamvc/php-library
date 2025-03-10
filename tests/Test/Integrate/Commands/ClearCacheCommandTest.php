@@ -7,7 +7,7 @@ namespace System\Integrate\Commands;
 use PHPUnit\Framework\TestCase;
 use System\Cache\CacheManager;
 use System\Cache\Storage\ArrayStorage;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Console\ClearCacheCommand;
 
 class ClearCacheCommandTest extends TestCase

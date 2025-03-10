@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Application;
-use System\Integrate\ConfigRepository;
+use System\Application\Application;
+use System\Config\ConfigRepository;
 use System\Integrate\Console\ViewCommand;
 use System\View\Templator;
 use System\View\TemplatorFinder;

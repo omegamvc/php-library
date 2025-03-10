@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Helper;
 
 use PHPUnit\Framework\TestCase;
 use System\Http\Response;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Text\Str;
 use System\View\Templator;
 use System\View\TemplatorFinder;

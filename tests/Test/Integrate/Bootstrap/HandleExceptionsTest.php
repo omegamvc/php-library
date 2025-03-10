@@ -7,7 +7,7 @@ namespace System\Integrate\Bootstrap;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Exceptions\Handler;
 
 class HandleExceptionsTest extends TestCase

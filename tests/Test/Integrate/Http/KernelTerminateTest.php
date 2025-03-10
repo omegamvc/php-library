@@ -5,24 +5,24 @@ declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
-use System\Integrate\Http\Karnel;
+use System\Application\Application;
+use System\Integrate\Http\Kernel;
 
-final class KarnelTerminateTest extends TestCase
+final class KernelTerminateTest extends TestCase
 {
     private $app;
-    private $karnel;
+    private $kernel;
 
     protected function setUp(): void
     {
         $this->app = new Application('/');
 
         $this->app->set(
-            Karnel::class,
-            fn () => new $this->karnel($this->app)
+            Kernel::class,
+            fn () => new $this->kernel($this->app)
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->kernel = new class($this->app) extends Kernel {
             public function handle(Request $request)
             {
                 return new Response('ok');
@@ -30,7 +30,7 @@ final class KarnelTerminateTest extends TestCase
 
             protected function dispatcherMiddleware(Request $request)
             {
-                return [TestKarnelTerminate::class];
+                return [TestKernelTerminate::class];
             }
         };
     }
@@ -38,14 +38,14 @@ final class KarnelTerminateTest extends TestCase
     protected function tearDown(): void
     {
         $this->app->flush();
-        $this->karnel = null;
+        $this->kernel = null;
     }
 
     /** @test */
     public function itCanTerminate()
     {
-        $karnel      = $this->app->make(Karnel::class);
-        $response    = $karnel->handle(
+        $kernel      = $this->app->make(Kernel::class);
+        $response    = $kernel->handle(
             $request = new Request('/test')
         );
 
@@ -54,14 +54,14 @@ final class KarnelTerminateTest extends TestCase
         });
 
         ob_start();
-        $karnel->terminate($request, $response);
+        $kernel->terminate($request, $response);
         $out = ob_get_clean();
 
         $this->assertEquals('/testterminated.', $out);
     }
 }
 
-class TestKarnelTerminate
+class TestKernelTerminate
 {
     public function terminate(Request $request, Response $respone)
     {

@@ -6,7 +6,7 @@ namespace System\Integrate\Http;
 
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Bootstrap\BootProviders;
 use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\HandleExceptions;
@@ -16,7 +16,7 @@ use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 
-class Karnel
+class Kernel
 {
     /**
      * Application Container.

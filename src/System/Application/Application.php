@@ -2,13 +2,17 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate;
+namespace System\Application;
 
 use System\Container\Container;
 use System\Http\Request;
+use System\Config\ConfigRepository;
 use System\Integrate\Contracts\Paths;
 use System\Integrate\Http\Exception\HttpException;
+use System\Integrate\PackageManifest;
 use System\Integrate\Providers\IntegrateServiceProvider;
+use System\Integrate\ServiceProvider;
+use System\Integrate\Vite;
 use System\View\Templator;
 
 final class Application extends Container

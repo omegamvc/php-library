@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Application;
+use System\Application\Application;
 use System\Integrate\Console\PackageDiscoveryCommand;
 use System\Integrate\PackageManifest;
 

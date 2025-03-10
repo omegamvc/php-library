@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use System\Console\Command;
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 use System\Integrate\Console\HelpCommand;
 
 final class HelpCommandsTest extends CommandTest

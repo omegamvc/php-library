@@ -15,15 +15,10 @@ class RequestFactory
     }
 
     /**
-     * Derecated couse typo.
+     * Retrieves an array of global.
      *
-     * @deprecated v0.35.5 Use `getFromGlobal()` instead
+     * @return Request
      */
-    public function getFromGloball(): Request
-    {
-        return $this->getFromGlobal();
-    }
-
     public function getFromGlobal(): Request
     {
         return new Request(
