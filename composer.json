@@ -17,8 +17,7 @@
         "php": "^8.3",
         "ext-intl": "*",
         "ext-mbstring": "*",
-        "php-di/php-di": "^7.0.9",
-        "wixel/gump": "^v2.2.0"
+        "php-di/php-di": "^7.0.9"
     },
     "require-dev": {
         "phpunit/phpunit": "^12.0.7",
