@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate;
+namespace System\Support;
 
 use System\Collection\Collection;
 use System\Text\Str;

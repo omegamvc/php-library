@@ -12,7 +12,7 @@ use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\PackageManifest;
 use System\Integrate\Providers\IntegrateServiceProvider;
 use System\Integrate\ServiceProvider;
-use System\Integrate\Vite;
+use System\Support\Vite;
 use System\View\Templator;
 
 final class Application extends Container

@@ -353,7 +353,7 @@ if (!function_exists('vite')) {
      */
     function vite(...$entry_ponits)
     {
-        /** @var System\Integrate\Vite */
+        /** @var System\Support\Vite */
         $vite = app()->get('vite.gets');
 
         return $vite(...$entry_ponits);

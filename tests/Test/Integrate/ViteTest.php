@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Vite;
+use System\Support\Vite;
 
 final class ViteTest extends TestCase
 {
