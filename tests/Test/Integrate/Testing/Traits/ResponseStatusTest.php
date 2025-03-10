@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Testing\Traits;
 
 use PHPUnit\Framework\TestCase;
 use System\Http\Response;
-use System\Integrate\Testing\TestResponse;
+use System\Testing\TestResponse;
 
 final class ResponseStatusTest extends TestCase
 {

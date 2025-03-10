@@ -9,7 +9,7 @@ use System\Application\Application;
 use System\Integrate\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Kernel;
-use System\Integrate\PackageManifest;
+use System\Application\PackageManifest;
 
 final class KernelHandleExceptionTest extends TestCase
 {

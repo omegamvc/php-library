@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\PackageManifest;
+use System\Application\PackageManifest;
 
 class PackageManifestTest extends TestCase
 {
@@ -49,12 +49,12 @@ class PackageManifestTest extends TestCase
         $this->assertEquals([
             'packages/package1' => [
                 'providers' => [
-                    'Package//Package1//ServiceProvider::class',
+                    'Package//Package1//AbstractServiceProvider::class',
                 ],
             ],
             'packages/package2' => [
                 'providers' => [
-                    'Package//Package2//ServiceProvider::class',
+                    'Package//Package2//AbstractServiceProvider::class',
                     'Package//Package2//ServiceProvider2::class',
                 ],
             ],
@@ -71,8 +71,8 @@ class PackageManifestTest extends TestCase
         $config = (fn () => $this->{'config'}('providers'))->call($package_manifest);
 
         $this->assertEquals([
-            'Package//Package1//ServiceProvider::class',
-            'Package//Package2//ServiceProvider::class',
+            'Package//Package1//AbstractServiceProvider::class',
+            'Package//Package2//AbstractServiceProvider::class',
             'Package//Package2//ServiceProvider2::class',
         ], $config);
     }
@@ -87,8 +87,8 @@ class PackageManifestTest extends TestCase
         $config = $package_manifest->providers();
 
         $this->assertEquals([
-            'Package//Package1//ServiceProvider::class',
-            'Package//Package2//ServiceProvider::class',
+            'Package//Package1//AbstractServiceProvider::class',
+            'Package//Package2//AbstractServiceProvider::class',
             'Package//Package2//ServiceProvider2::class',
         ], $config);
     }

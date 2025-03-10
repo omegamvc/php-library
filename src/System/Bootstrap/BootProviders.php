@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Bootstrap;
+namespace System\Bootstrap;
 
 use System\Application\Application;
 

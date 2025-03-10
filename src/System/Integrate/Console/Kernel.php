@@ -6,10 +6,10 @@ namespace System\Integrate\Console;
 
 use System\Console\Style\Style;
 use System\Application\Application;
-use System\Integrate\Bootstrap\BootProviders;
-use System\Integrate\Bootstrap\ConfigProviders;
-use System\Integrate\Bootstrap\RegisterFacades;
-use System\Integrate\Bootstrap\RegisterProviders;
+use System\Bootstrap\BootProviders;
+use System\Bootstrap\ConfigProviders;
+use System\Bootstrap\RegisterFacades;
+use System\Bootstrap\RegisterProviders;
 use System\Integrate\ValueObjects\CommandMap;
 
 class Kernel

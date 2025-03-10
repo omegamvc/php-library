@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Testing;
+namespace System\Testing;
 
 use PHPUnit\Framework\Assert;
 use System\Http\Response;
-use System\Integrate\Testing\Traits\ResponseStatusTrait;
+use System\Testing\Traits\ResponseStatusTrait;
 
 class TestResponse
 {

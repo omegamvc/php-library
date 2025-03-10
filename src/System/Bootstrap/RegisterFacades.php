@@ -2,14 +2,15 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Bootstrap;
+namespace System\Bootstrap;
 
 use System\Application\Application;
+use System\Support\Facades\Facade;
 
-class RegisterProviders
+class RegisterFacades
 {
     public function bootstrap(Application $app): void
     {
-        $app->registerProvider();
+        Facade::setFacadeBase($app);
     }
 }

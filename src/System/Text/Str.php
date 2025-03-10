@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace System\Text;
 
-use System\Support\Marco;
+use System\Macroable\MacroableTrait;
 use System\Text\Exceptions\NoReturn;
 
 final class Str
 {
-    use Marco;
+    use MacroableTrait;
 
     /**
      * Create new instace.

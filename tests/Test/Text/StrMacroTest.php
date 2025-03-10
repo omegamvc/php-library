@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Support\Exceptions\MacroNotFound;
+use System\Macroable\Exceptions\MacroNotFoundException;
 use System\Text\Str;
 
 final class StrMacroTest extends TestCase
@@ -19,7 +19,7 @@ final class StrMacroTest extends TestCase
     /** @test */
     public function itCanThrowErrorWhenMacroNotFound()
     {
-        $this->expectException(MacroNotFound::class);
+        $this->expectException(MacroNotFoundException::class);
         Str::hay();
     }
 
@@ -32,7 +32,7 @@ final class StrMacroTest extends TestCase
         $this->assertEquals('ba', $add_prefix);
         Str::resetMacro();
 
-        $this->expectException(MacroNotFound::class);
+        $this->expectException(MacroNotFoundException::class);
 
         Str::add_prefix('a', 'b');
         Str::resetMacro();

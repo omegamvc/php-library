@@ -7,7 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Application\Application;
-use System\Integrate\PackageManifest;
+use System\Application\PackageManifest;
 
 use function System\Console\fail;
 use function System\Console\info;

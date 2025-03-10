@@ -7,7 +7,7 @@ namespace System\Console\Traits;
 use System\Console\Style\Alert;
 use System\Console\Style\Style;
 use Validator\Rule\ValidPool;
-use Validator\Validator;
+use System\Validator\Validator;
 
 trait ValidateCommandTrait
 {

@@ -4,21 +4,16 @@ declare(strict_types=1);
 
 namespace System\Application;
 
-use System\Container\Container;
-use System\Http\Request;
 use System\Config\ConfigRepository;
-use System\Integrate\Contracts\Paths;
+use System\Container\Container;
+use System\Container\ServiceProvider\ServiceProvider;
+use System\Http\Request;
 use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\PackageManifest;
-use System\Integrate\Providers\IntegrateServiceProvider;
-use System\Integrate\ServiceProvider;
 use System\Support\Vite;
 use System\View\Templator;
 
 final class Application extends Container
 {
-    use Paths;
-
     /**
      * Application instance.
      *
@@ -156,7 +151,7 @@ final class Application extends Container
     /**
      * Booted service provider.
      *
-     * @var ServiceProvider[]
+     * @var \System\Container\ServiceProvider\ServiceProvider[]
      */
     private $booted_providers = [];
 
@@ -217,7 +212,7 @@ final class Application extends Container
         $this->setBaseBinding();
 
         // register base provider
-        $this->register(IntegrateServiceProvider::class);
+        $this->register(ServiceProvider::class);
 
         // register container alias
         $this->registerAlias();
@@ -995,7 +990,7 @@ final class Application extends Container
      *
      * @param string $provider Class-name service provider
      *
-     * @return ServiceProvider
+     * @return AbstractServiceProvider
      */
     public function register($provider)
     {
@@ -1109,7 +1104,7 @@ final class Application extends Container
     /**
      * Merge applicationproveder and vendor package provider.
      *
-     * @return ServiceProvider[]
+     * @return AbstractServiceProvider[]
      */
     protected function getMergeProviders(): array
     {

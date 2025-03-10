@@ -6,6 +6,7 @@ namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\TestCase;
 use System\Application\Application;
+use System\Bootstrap\BootProviders;
 
 class BootProvidersTest extends TestCase
 {

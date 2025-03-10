@@ -6,7 +6,7 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Application\Application;
-use System\Integrate\Bootstrap\ConfigProviders;
+use System\Bootstrap\ConfigProviders;
 use System\Config\ConfigRepository;
 
 use function System\Console\fail;

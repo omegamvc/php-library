@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Application\Application;
 use System\Integrate\Console\Kernel;
-use System\Integrate\PackageManifest;
+use System\Application\PackageManifest;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate;
+namespace System\Container\ServiceProvider;
 
 use System\Application\Application;
 
-abstract class ServiceProvider
+abstract class AbstractServiceProvider
 {
     /** @var Application */
     protected Application $app;

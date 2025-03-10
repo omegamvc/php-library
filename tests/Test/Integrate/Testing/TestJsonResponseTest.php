@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Testing;
 
 use PHPUnit\Framework\TestCase;
 use System\Http\Response;
-use System\Integrate\Testing\TestJsonResponse;
+use System\Testing\TestJsonResponse;
 
 final class TestJsonResponseTest extends TestCase
 {
@@ -15,7 +15,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAsArray()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -34,7 +34,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssert()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -52,7 +52,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertEqual()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -69,7 +69,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertTrue()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -86,7 +86,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertFalse()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -103,7 +103,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertNull()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -120,7 +120,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertNotNull()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [
@@ -139,7 +139,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertEmpty()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [],
@@ -154,7 +154,7 @@ final class TestJsonResponseTest extends TestCase
      */
     public function itCanTestResponeseAssertNotEmpty()
     {
-        $response = new TestJsonResponse(new Response([
+        $response = new \System\Testing\TestJsonResponse(new Response([
             'status'=> 'ok',
             'code'  => 200,
             'data'  => [

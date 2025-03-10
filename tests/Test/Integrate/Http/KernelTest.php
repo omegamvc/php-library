@@ -7,7 +7,7 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
 use System\Integrate\Http\Kernel;
-use System\Integrate\PackageManifest;
+use System\Application\PackageManifest;
 
 final class KernelTest extends TestCase
 {

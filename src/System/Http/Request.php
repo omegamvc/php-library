@@ -6,11 +6,11 @@ namespace System\Http;
 
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
-use System\Support\Marco;
+use System\Macroable\MacroableTrait;
 use System\Text\Str;
 
 /**
- * @method \Validator\Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
+ * @method \System\Validator\Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
  * @method \System\File\UploadFile upload(array $file_name)
  *
  * @implements \ArrayAccess<string, string>
@@ -18,7 +18,7 @@ use System\Text\Str;
  */
 class Request implements \ArrayAccess, \IteratorAggregate
 {
-    use Marco;
+    use MacroableTrait;
 
     /**
      * Request method.

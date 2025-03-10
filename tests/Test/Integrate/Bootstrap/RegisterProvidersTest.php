@@ -6,7 +6,8 @@ namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\TestCase;
 use System\Application\Application;
-use System\Integrate\ServiceProvider;
+use System\Bootstrap\BootProviders;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 
 class RegisterProvidersTest extends TestCase
 {
@@ -20,11 +21,11 @@ class RegisterProvidersTest extends TestCase
     }
 }
 
-class TestRegisterServiceProvider extends ServiceProvider
+class TestRegisterServiceProvider extends AbstractServiceProvider
 {
 }
 
-class TestVendorServiceProvider extends ServiceProvider
+class TestVendorServiceProvider extends AbstractServiceProvider
 {
     public function boot()
     {

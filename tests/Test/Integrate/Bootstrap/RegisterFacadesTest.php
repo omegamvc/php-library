@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\TestCase;
+use System\Bootstrap\RegisterFacades;
 use System\Collection\Collection;
 use System\Application\Application;
 use System\Support\Facades\Facade;

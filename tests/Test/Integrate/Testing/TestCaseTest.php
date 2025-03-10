@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Testing;
 
 use System\Application\Application;
 use System\Integrate\Http\Kernel;
-use System\Integrate\Testing\TestCase;
+use System\Testing\TestCase;
 
 final class TestCaseTest extends TestCase
 {

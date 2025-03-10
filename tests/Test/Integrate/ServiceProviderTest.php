@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\ServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 
 final class ServiceProviderTest extends TestCase
 {
@@ -19,15 +19,15 @@ final class ServiceProviderTest extends TestCase
      */
     public function itCanExportModule(): void
     {
-        ServiceProvider::export([
+        AbstractServiceProvider::export([
             '/vendor/package/database/' => '/database/',
         ]);
 
-        ServiceProvider::export([
+        AbstractServiceProvider::export([
             '/vendor/package/resource/view/' => '/resourve/view/',
         ], 'pacakge-share');
 
-        ServiceProvider::export([
+        AbstractServiceProvider::export([
             '/vendor/package/resource/js/app.js'   => '/resourve/js/app.js',
             '/vendor/package/resource/css/app.css' => '/resourve/css/app.css',
         ], 'pacakge-share');
@@ -39,7 +39,7 @@ final class ServiceProviderTest extends TestCase
                 '/vendor/package/resource/js/app.js'   => '/resourve/js/app.js',
                 '/vendor/package/resource/css/app.css' => '/resourve/css/app.css',
             ],
-        ], ServiceProvider::getModules());
+        ], AbstractServiceProvider::getModules());
     }
 
     /**
@@ -47,12 +47,12 @@ final class ServiceProviderTest extends TestCase
      */
     public function itCanGetModule(): void
     {
-        ServiceProvider::export([
+        AbstractServiceProvider::export([
             '/vendor/package/database/' => '/database/',
         ]);
-        ServiceProvider::flushModule();
+        AbstractServiceProvider::flushModule();
 
-        $this->assertEquals([], ServiceProvider::getModules());
+        $this->assertEquals([], AbstractServiceProvider::getModules());
     }
 
     /**
@@ -60,7 +60,7 @@ final class ServiceProviderTest extends TestCase
      */
     public function itCanImportFile(): void
     {
-        $this->assertTrue(ServiceProvider::importFile(
+        $this->assertTrue(AbstractServiceProvider::importFile(
             __DIR__ . '/assets/copy/from/file.txt',
             __DIR__ . '/assets/copy/to/file.txt'
         ));
@@ -74,7 +74,7 @@ final class ServiceProviderTest extends TestCase
     public function itCanImportFileWithFolderDoestExits(): void
     {
         $random = now()->format('YmdHis') . microtime();
-        $this->assertTrue(ServiceProvider::importFile(
+        $this->assertTrue(AbstractServiceProvider::importFile(
             __DIR__ . '/assets/copy/from/file.txt',
             __DIR__ . '/assets/copy/to/folders/folder-' . $random . '/file.txt'
         ));
@@ -89,7 +89,7 @@ final class ServiceProviderTest extends TestCase
     {
         file_put_contents(__DIR__ . '/assets/copy/to/file.txt', '');
 
-        $this->assertTrue(ServiceProvider::importFile(
+        $this->assertTrue(AbstractServiceProvider::importFile(
             __DIR__ . '/assets/copy/from/file.txt',
             __DIR__ . '/assets/copy/to/file.txt',
             true
@@ -105,7 +105,7 @@ final class ServiceProviderTest extends TestCase
     {
         file_put_contents(__DIR__ . '/assets/copy/to/file.txt', '');
 
-        $this->assertFalse(ServiceProvider::importFile(
+        $this->assertFalse(AbstractServiceProvider::importFile(
             __DIR__ . '/assets/copy/from/file.txt',
             __DIR__ . '/assets/copy/to/file.txt'
         ));
@@ -119,7 +119,7 @@ final class ServiceProviderTest extends TestCase
     public function itCanImportFolder(): void
     {
         $random = now()->format('YmdHis') . microtime();
-        $this->assertTrue(ServiceProvider::importDir(
+        $this->assertTrue(AbstractServiceProvider::importDir(
             __DIR__ . '/assets/copy/from/folder',
             __DIR__ . '/assets/copy/to/folders/folder-' . $random
         ));
@@ -133,7 +133,7 @@ final class ServiceProviderTest extends TestCase
     public function itCanImportFolderRecursing(): void
     {
         $random = now()->format('YmdHis') . microtime();
-        $this->assertTrue(ServiceProvider::importDir(
+        $this->assertTrue(AbstractServiceProvider::importDir(
             __DIR__ . '/assets/copy/from/folder-nest',
             __DIR__ . '/assets/copy/to/folders/folder-' . $random
         ));
@@ -147,7 +147,7 @@ final class ServiceProviderTest extends TestCase
      */
     public function itCanImportFolderWithTargetExist(): void
     {
-        $this->assertTrue(ServiceProvider::importDir(
+        $this->assertTrue(AbstractServiceProvider::importDir(
             __DIR__ . '/assets/copy/from/folder',
             __DIR__ . '/assets/copy/to/folder',
             true
@@ -161,7 +161,7 @@ final class ServiceProviderTest extends TestCase
      */
     public function itCaNotImportFolderWithTargetExist(): void
     {
-        $this->assertFalse(ServiceProvider::importDir(
+        $this->assertFalse(AbstractServiceProvider::importDir(
             __DIR__ . '/assets/copy/from/folder',
             __DIR__ . '/assets/copy/to/folder'
         ));

@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Http\RedirectResponse;
-use System\Integrate\Testing\TestResponse;
+use System\Testing\TestResponse;
 
 class RedirectResponseTest extends TestCase
 {

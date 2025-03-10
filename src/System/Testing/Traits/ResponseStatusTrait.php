@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Testing\Traits;
+namespace System\Testing\Traits;
 
 use System\Http\Response;
 

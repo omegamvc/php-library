@@ -6,6 +6,7 @@ namespace System\Integrate\Bootstrap;
 
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
+use System\Bootstrap\HandleExceptions;
 use System\Http\Request;
 use System\Application\Application;
 use System\Integrate\Exceptions\Handler;

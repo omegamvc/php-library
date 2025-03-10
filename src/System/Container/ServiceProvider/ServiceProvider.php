@@ -2,14 +2,13 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Providers;
+namespace System\Container\ServiceProvider;
 
 use System\File\UploadFile;
 use System\Http\Request;
-use System\Integrate\ServiceProvider;
-use Validator\Validator;
+use System\Validator\Validator;
 
-class IntegrateServiceProvider extends ServiceProvider
+class ServiceProvider extends AbstractServiceProvider
 {
     /**
      * {@inheritDoc}

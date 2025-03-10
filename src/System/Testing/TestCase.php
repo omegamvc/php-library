@@ -2,14 +2,16 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Testing;
+namespace System\Testing;
 
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
 use System\Integrate\Http\Kernel;
-use System\Integrate\ServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
+use System\Testing\TestJsonResponse;
+use System\Testing\TestResponse;
 use System\Support\Facades\Facade;
 
 class TestCase extends BaseTestCase
@@ -22,7 +24,7 @@ class TestCase extends BaseTestCase
     {
         $this->app->flush();
         Facade::flushInstance();
-        ServiceProvider::flushModule();
+        AbstractServiceProvider::flushModule();
         unset($this->app);
         unset($this->kernel);
     }

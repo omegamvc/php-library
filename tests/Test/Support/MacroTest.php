@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Support\Exceptions\MacroNotFound;
-use System\Support\Marco;
+use System\Macroable\Exceptions\MacroNotFoundException;
+use System\Macroable\MacroableTrait;
 
 final class MacroTest extends TestCase
 {
@@ -11,7 +11,7 @@ final class MacroTest extends TestCase
     protected function setUp(): void
     {
         $this->mock_class = new class {
-            use Marco;
+            use MacroableTrait;
         };
     }
 
@@ -52,7 +52,7 @@ final class MacroTest extends TestCase
     /** @test */
     public function itThrowWhenMacroNotRegister()
     {
-        $this->expectException(MacroNotFound::class);
+        $this->expectException(MacroNotFoundException::class);
 
         $this->mock_class->test();
     }

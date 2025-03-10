@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Helper;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Testing\TestResponse;
+use System\Testing\TestResponse;
 use System\Router\Router;
 
 final class RedirectResponseTest extends TestCase

@@ -2,10 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Testing;
+namespace System\Testing;
 
 use PHPUnit\Framework\Assert;
 use System\Http\Response;
+use System\Testing\TestResponse;
 
 /**
  * @implements \ArrayAccess<string, mixed>

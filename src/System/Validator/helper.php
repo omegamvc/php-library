@@ -30,8 +30,8 @@ if (!function_exists('validate')) {
      *
      * @param array<string, mixed> $field Field input
      */
-    function validate($field): Validator\Validator
+    function validate($field): System\Validator\Validator
     {
-        return new Validator\Validator($field);
+        return new System\Validator\Validator($field);
     }
 }

@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
 use System\Integrate\Console\VendorImportCommand;
-use System\Integrate\ServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 
 final class VendorImportCommandsTest extends TestCase
 {
@@ -19,7 +19,7 @@ final class VendorImportCommandsTest extends TestCase
 
     protected function tearDown(): void
     {
-        ServiceProvider::flushModule();
+        AbstractServiceProvider::flushModule();
         @unlink($this->base_path . '/assets/copy/to/file.txt');
     }
 
@@ -33,11 +33,11 @@ final class VendorImportCommandsTest extends TestCase
         ]);
         $random = now()->format('YmdHis') . microtime();
 
-        ServiceProvider::export(
+        AbstractServiceProvider::export(
             path: [$this->base_path . '/assets/copy/from/file.txt' => $this->base_path . '/assets/copy/to/file.txt'],
             tag: 'test'
         );
-        ServiceProvider::export(
+        AbstractServiceProvider::export(
             path: [$this->base_path . '/assets/copy/from/folder' => $this->base_path . '/assets/copy/to/folders/folder-' . $random],
             tag: 'test'
         );
@@ -62,11 +62,11 @@ final class VendorImportCommandsTest extends TestCase
         ]);
         $random = now()->format('YmdHis') . microtime();
 
-        ServiceProvider::export(
+        AbstractServiceProvider::export(
             path: [$this->base_path . '/assets/copy/from/file.txt' => $this->base_path . '/assets/copy/to/file.txt'],
             tag: 'test'
         );
-        ServiceProvider::export(
+        AbstractServiceProvider::export(
             path: [$this->base_path . '/assets/copy/from/folder' => $this->base_path . '/assets/copy/to/folders/folder-' . $random],
             tag: 'vendor'
         );

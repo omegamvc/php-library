@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-use System\Integrate\ServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 
-class TestServiceProvider extends ServiceProvider
+class TestServiceProvider extends AbstractServiceProvider
 {
     public function register()
     {
