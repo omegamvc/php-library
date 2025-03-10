@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\View;
 
-use System\View\Exceptions\ViewFileNotFound;
+use System\View\Exceptions\ViewFileNotFoundException;
 
 class TemplatorFinder
 {
@@ -44,7 +44,7 @@ class TemplatorFinder
     /**
      * Find file location by view_name given.
      *
-     * @throws ViewFileNotFound
+     * @throws ViewFileNotFoundException
      */
     public function find(string $view_name): string
     {
@@ -82,7 +82,7 @@ class TemplatorFinder
      *
      * @param string[] $paths
      *
-     * @throws ViewFileNotFound
+     * @throws ViewFileNotFoundException
      */
     protected function findInPath(string $view_name, array $paths): string
     {
@@ -94,7 +94,7 @@ class TemplatorFinder
             }
         }
 
-        throw new ViewFileNotFound($view_name);
+        throw new ViewFileNotFoundException($view_name);
     }
 
     /**

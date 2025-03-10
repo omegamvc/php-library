@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Collection\Interfaces;
+namespace System\Collection;
 
 /**
  * @template TKey of array-key

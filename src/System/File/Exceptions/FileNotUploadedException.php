@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace System\File\Exceptions;
 
-/**
- * @internal
- */
-final class FileNotUploaded extends \RuntimeException
+use RuntimeException;
+
+class FileNotUploadedException extends RuntimeException
 {
     /**
      * Creates a new Exception instance.
+     *
+     * @return void
      */
     public function __construct()
     {

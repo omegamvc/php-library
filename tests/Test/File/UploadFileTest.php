@@ -3,10 +3,10 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use System\File\Exceptions\FolderNotExists;
+use System\File\Exceptions\FolderNotExistsException;
 use System\File\Exceptions\FolederNotExists;
 use System\File\UploadFile;
-use System\File\UploadMultyFile;
+use System\File\UploadMultiFile;
 
 final class UploadFileTest extends TestCase
 {
@@ -84,7 +84,7 @@ final class UploadFileTest extends TestCase
     public function itCantUploadFileInvalidFileFolder()
     {
         // $this->expectException(FolederNotExists::class);
-        $this->expectException(FolderNotExists::class);
+        $this->expectException(FolderNotExistsException::class);
 
         $this->upload->setFolderLocation('/unkow');
     }
@@ -128,7 +128,7 @@ final class UploadFileTest extends TestCase
     /** @test */
     public function itCanMultyUploadFileButSingleFile()
     {
-        $upload = new UploadMultyFile($this->files['file_2']);
+        $upload = new UploadMultiFile($this->files['file_2']);
         $upload
             ->markTest(true)
             ->setFileName('multy_file_')
@@ -149,7 +149,7 @@ final class UploadFileTest extends TestCase
     // /** @test */
     public function itCanMultyUploadFile()
     {
-        $upload = new UploadMultyFile($this->files['file_2']);
+        $upload = new UploadMultiFile($this->files['file_2']);
         $upload
             ->markTest(true)
             ->setFileName('multy_file')

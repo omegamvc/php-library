@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\View\Exceptions\ViewFileNotFound;
+use System\View\Exceptions\ViewFileNotFoundException;
 use System\View\View;
 
 class RenderViewTest extends TestCase
@@ -38,7 +38,7 @@ class RenderViewTest extends TestCase
     /** @test */
     public function itThrowWhenFileNotFound()
     {
-        $this->expectException(ViewFileNotFound::class);
+        $this->expectException(ViewFileNotFoundException::class);
         View::render('unknow');
     }
 }

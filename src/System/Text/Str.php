@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Text;
 
 use System\Macroable\MacroableTrait;
-use System\Text\Exceptions\NoReturn;
+use System\Text\Exceptions\NoReturnException;
 
 final class Str
 {
@@ -297,7 +297,7 @@ final class Str
      *
      * @return string
      *
-     * @throw NoReturn
+     * @throw NoReturnException
      */
     public static function slug(string $text)
     {
@@ -321,7 +321,7 @@ final class Str
         $text = mb_strtolower($text);
 
         if (empty($text)) {
-            throw new NoReturn(__FUNCTION__, $original);
+            throw new NoReturnException(__FUNCTION__, $original);
         }
 
         return $text;

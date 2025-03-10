@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Kernel;
 use System\Application\PackageManifest;

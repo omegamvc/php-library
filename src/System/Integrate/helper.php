@@ -6,7 +6,7 @@ declare(strict_types=1);
 
 use System\Application\Application;
 use System\Http\RedirectResponse;
-use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Application\Exceptions\ApplicationNotAvailableException;
 use System\Router\Router;
 
 if (!function_exists('app_path')) {
@@ -304,7 +304,7 @@ if (!function_exists('app')) {
     {
         $app = Application::getIntance();
         if (null === $app) {
-            throw new ApplicationNotAvailable();
+            throw new ApplicationNotAvailableException();
         }
 
         return $app;

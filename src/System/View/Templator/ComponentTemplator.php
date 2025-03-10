@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
-use System\View\Exceptions\ViewFileNotFound;
+use System\View\Exceptions\ViewFileNotFoundException;
 use System\View\InteractWithCacheTrait;
 
 class ComponentTemplator extends AbstractTemplatorParse
@@ -58,7 +58,7 @@ class ComponentTemplator extends AbstractTemplatorParse
                 }
 
                 if (false === $this->finder->exists($componentName)) {
-                    throw new ViewFileNotFound('Template file not found: ' . $componentName);
+                    throw new ViewFileNotFoundException('Template file not found: ' . $componentName);
                 }
 
                 $templatePath = $this->finder->find($componentName);

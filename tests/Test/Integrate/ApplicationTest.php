@@ -4,7 +4,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Application\Application;
 use System\Config\ConfigRepository;
-use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Application\Exceptions\ApplicationNotAvailableException;
 use System\Integrate\Http\Exception\HttpException;
 
 class ApplicationTest extends TestCase
@@ -12,7 +12,7 @@ class ApplicationTest extends TestCase
     /** @test */
     public function itThrowError()
     {
-        $this->expectException(ApplicationNotAvailable::class);
+        $this->expectException(ApplicationNotAvailableException::class);
         app();
         app()->flush();
     }
@@ -23,7 +23,7 @@ class ApplicationTest extends TestCase
         $app = new Application('/');
         $app->flush();
 
-        $this->expectException(ApplicationNotAvailable::class);
+        $this->expectException(ApplicationNotAvailableException::class);
         app();
         app()->flush();
     }

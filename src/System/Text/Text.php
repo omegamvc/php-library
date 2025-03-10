@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Text;
 
-use System\Text\Exceptions\NoReturn;
+use System\Text\Exceptions\NoReturnException;
 
 class Text
 {
@@ -187,7 +187,7 @@ class Text
         $text = Str::slice($this->_current, $start, $length);
 
         if ($this->_throw_on_failure && false === $text) {
-            throw new NoReturn(__FUNCTION__, $this->_current);
+            throw new NoReturnException(__FUNCTION__, $this->_current);
         }
 
         $this->execute($text, __FUNCTION__);

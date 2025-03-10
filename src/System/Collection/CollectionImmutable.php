@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Collection;
 
-use System\Collection\Exceptions\NoModify;
+use System\Collection\Exceptions\NoModifyException;
 
 /**
  * @template TKey of array-key
@@ -17,20 +17,20 @@ class CollectionImmutable extends AbstractCollectionImmutable
     /**
      * {@inheritdoc}
      *
-     * @throws NoModify
+     * @throws NoModifyException
      */
     public function offsetSet($offset, $value): void
     {
-        throw new NoModify();
+        throw new NoModifyException();
     }
 
     /**
      * {@inheritdoc}
      *
-     * @throws NoModify
+     * @throws NoModifyException
      */
     public function offsetUnset($offset): void
     {
-        throw new NoModify();
+        throw new NoModifyException();
     }
 }

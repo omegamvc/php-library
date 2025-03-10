@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 use System\Bootstrap\HandleExceptions;
 use System\Http\Request;
 use System\Application\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Exceptions\Handler;
 
 class HandleExceptionsTest extends TestCase
 {

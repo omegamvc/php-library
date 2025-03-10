@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Http;
 
-use System\Http\Exceptions\StreamedResponseCallable;
+use System\Http\Exceptions\StreamedResponseCallableException;
 
 class StreamedResponse extends Response
 {
@@ -55,7 +55,7 @@ class StreamedResponse extends Response
         $this->is_stream = true;
 
         if (null === $this->callable_stream) {
-            throw new StreamedResponseCallable();
+            throw new StreamedResponseCallableException();
         }
 
         ($this->callable_stream)();

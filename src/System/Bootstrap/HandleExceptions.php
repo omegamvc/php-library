@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Bootstrap;
 
 use System\Application\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Exceptions\Handler;
 
 class HandleExceptions
 {

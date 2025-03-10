@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace System\View\Templator;
 
 use System\View\AbstractTemplatorParse;
-use System\View\Exceptions\DirectiveCanNotBeRegister;
-use System\View\Exceptions\DirectiveNotRegister;
+use System\View\Exceptions\DirectiveCanNotBeRegisterException;
+use System\View\Exceptions\DirectiveNotRegisterException;
 
 class DirectiveTemplator extends AbstractTemplatorParse
 {
@@ -42,7 +42,7 @@ class DirectiveTemplator extends AbstractTemplatorParse
     public static function register(string $name, \Closure $callable): void
     {
         if (array_key_exists($name, self::$excludeList)) {
-            throw new DirectiveCanNotBeRegister($name, self::$excludeList[$name]);
+            throw new DirectiveCanNotBeRegisterException($name, self::$excludeList[$name]);
         }
 
         self::$directive[$name] = $callable;
@@ -51,7 +51,7 @@ class DirectiveTemplator extends AbstractTemplatorParse
     public static function call(string $name, mixed ...$parameters): string
     {
         if (false === array_key_exists($name, self::$directive)) {
-            throw new DirectiveNotRegister($name);
+            throw new DirectiveNotRegisterException($name);
         }
 
         $callback = self::$directive[$name];

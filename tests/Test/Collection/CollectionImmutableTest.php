@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use System\Collection\CollectionImmutable;
-use System\Collection\Exceptions\NoModify;
+use System\Collection\Exceptions\NoModifyException;
 
 class CollectionImmutableTest extends TestCase
 {
@@ -114,7 +114,7 @@ class CollectionImmutableTest extends TestCase
     {
         $coll = new CollectionImmutable(['one' => 1, 'two' => 2, 'three' => 3]);
 
-        $this->expectException(NoModify::class);
+        $this->expectException(NoModifyException::class);
         $coll['one'] = 4;
     }
 
@@ -123,7 +123,7 @@ class CollectionImmutableTest extends TestCase
     {
         $coll = new CollectionImmutable(['one' => 1, 'two' => 2, 'three' => 3]);
 
-        $this->expectException(NoModify::class);
+        $this->expectException(NoModifyException::class);
         unset($coll['one']);
     }
 

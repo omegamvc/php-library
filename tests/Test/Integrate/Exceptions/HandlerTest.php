@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Exceptions\Handler;
 use System\Integrate\Http\Exception\HttpException;
 use System\Integrate\Http\Kernel;
 use System\Application\PackageManifest;
@@ -46,7 +46,7 @@ final class HandlerTest extends TestCase
         );
 
         $this->app->set(
-            Handler::class,
+            \System\Exceptions\Handler::class,
             fn () => $this->handler
         );
 
@@ -63,7 +63,7 @@ final class HandlerTest extends TestCase
             }
         };
 
-        $this->handler = new class($this->app) extends Handler {
+        $this->handler = new class($this->app) extends \System\Exceptions\Handler {
             public function render(Request $request, \Throwable $th): Response
             {
                 // try to bypass test for json format
@@ -176,7 +176,7 @@ final class HandlerTest extends TestCase
             )
         );
 
-        $handler = $this->app->make(Handler::class);
+        $handler = $this->app->make(\System\Exceptions\Handler::class);
 
         $exception = new HttpException(429, 'Internal Error', null, []);
         $render    = (fn () => $this->{'handleHttpException'}($exception))->call($handler);

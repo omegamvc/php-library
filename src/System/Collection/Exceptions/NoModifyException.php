@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace System\Collection\Exceptions;
 
-/**
- * @internal
- */
-final class NoModify extends \InvalidArgumentException
+use InvalidArgumentException;
+
+class NoModifyException extends InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.
+     *
+     * @return void
      */
     public function __construct()
     {

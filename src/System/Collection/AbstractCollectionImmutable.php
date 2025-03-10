@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace System\Collection;
 
-use System\Collection\Interfaces\CollectionInterface;
-
 /**
  * @template TKey of array-key
  * @template TValue

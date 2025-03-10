@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace System\Test\View\Templator;
 
 use PHPUnit\Framework\TestCase;
-use System\View\Exceptions\DirectiveCanNotBeRegister;
-use System\View\Exceptions\DirectiveNotRegister;
+use System\View\Exceptions\DirectiveCanNotBeRegisterException;
+use System\View\Exceptions\DirectiveNotRegisterException;
 use System\View\Templator;
 use System\View\Templator\DirectiveTemplator;
 use System\View\TemplatorFinder;
@@ -29,13 +29,13 @@ final class DirectiveTest extends TestCase
      */
     public function itThowExcaptionDueDirectiveNotRegister()
     {
-        $this->expectException(DirectiveNotRegister::class);
+        $this->expectException(DirectiveNotRegisterException::class);
         DirectiveTemplator::call('unknow', 0);
     }
 
     public function itCanNotRegisterDirective(): void
     {
-        $this->expectException(DirectiveCanNotBeRegister::class);
+        $this->expectException(DirectiveCanNotBeRegisterException::class);
         DirectiveTemplator::register('include', fn ($file): string => $file);
     }
 

@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Time\Exceptions\PropertyNotExist;
-use System\Time\Exceptions\PropertyNotSetAble;
+use System\Time\Exceptions\PropertyNotExistException;
+use System\Time\Exceptions\PropertyNotSettableException;
 use System\Time\Now;
 
 final class TimeTravelTest extends TestCase
@@ -295,19 +295,19 @@ final class TimeTravelTest extends TestCase
     {
         $now            = new Now();
 
-        $this->expectException(PropertyNotSetAble::class);
+        $this->expectException(PropertyNotSettableException::class);
         $now->timestamp = time();
 
-        $this->expectException(PropertyNotSetAble::class);
+        $this->expectException(PropertyNotSettableException::class);
         $now->monthName = 'June';
 
-        $this->expectException(PropertyNotSetAble::class);
+        $this->expectException(PropertyNotSettableException::class);
         $now->dayName = 'Tuesday';
 
-        $this->expectException(PropertyNotSetAble::class);
+        $this->expectException(PropertyNotSettableException::class);
         $now->timeZone = 'Asia/Jakarta';
 
-        $this->expectException(PropertyNotSetAble::class);
+        $this->expectException(PropertyNotSettableException::class);
         $now->age = 27;
     }
 
@@ -316,7 +316,7 @@ final class TimeTravelTest extends TestCase
     {
         $now = new Now();
 
-        $this->expectException(PropertyNotExist::class);
+        $this->expectException(PropertyNotExistException::class);
         $now->not_exist_property;
     }
 

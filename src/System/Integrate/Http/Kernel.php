@@ -12,7 +12,7 @@ use System\Bootstrap\ConfigProviders;
 use System\Bootstrap\HandleExceptions;
 use System\Bootstrap\RegisterFacades;
 use System\Bootstrap\RegisterProviders;
-use System\Integrate\Exceptions\Handler;
+use System\Exceptions\Handler;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 

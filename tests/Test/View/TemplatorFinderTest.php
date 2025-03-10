@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\View\Exceptions\ViewFileNotFound;
+use System\View\Exceptions\ViewFileNotFoundException;
 use System\View\TemplatorFinder;
 
 class TemplatorFinderTest extends TestCase
@@ -27,7 +27,7 @@ class TemplatorFinderTest extends TestCase
 
         $view = new TemplatorFinder([$loader], ['.php']);
 
-        $this->expectException(ViewFileNotFound::class);
+        $this->expectException(ViewFileNotFoundException::class);
         $view->find('blade');
     }
 
@@ -66,7 +66,7 @@ class TemplatorFinderTest extends TestCase
 
         $view = new TemplatorFinder([$loader], ['.php']);
 
-        $this->expectException(ViewFileNotFound::class);
+        $this->expectException(ViewFileNotFoundException::class);
         (fn () => $this->{'findInPath'}('blade', [$loader]))->call($view);
     }
 

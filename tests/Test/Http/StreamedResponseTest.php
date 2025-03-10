@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Http;
 
 use PHPUnit\Framework\TestCase;
-use System\Http\Exceptions\StreamedResponseCallable;
+use System\Http\Exceptions\StreamedResponseCallableException;
 use System\Http\Request;
 use System\Http\StreamedResponse;
 
@@ -55,7 +55,7 @@ final class StreamedResponseTest extends TestCase
      */
     public function itCanSendContentWithNonCallable()
     {
-        $this->expectException(StreamedResponseCallable::class);
+        $this->expectException(StreamedResponseCallableException::class);
         $response = new StreamedResponse(null);
         (fn () => $this->{'sendContent'}())->call($response);
     }

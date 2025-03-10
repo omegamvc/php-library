@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\View;
 
 use System\Http\Response;
-use System\View\Exceptions\ViewFileNotFound;
+use System\View\Exceptions\ViewFileNotFoundException;
 
 class View
 {
@@ -17,12 +17,12 @@ class View
      *
      * @return Response
      *
-     * @throw ViewFileNotFound
+     * @throw ViewFileNotFoundException
      */
     public static function render(string $view_path, array $portal = [])
     {
         if (!file_exists($view_path)) {
-            throw new ViewFileNotFound($view_path);
+            throw new ViewFileNotFoundException($view_path);
         }
 
         $auth         = new Portal($portal['auth'] ?? []);

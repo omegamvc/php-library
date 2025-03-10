@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace System\Time;
 
-use System\Time\Exceptions\PropertyNotExist;
-use System\Time\Exceptions\PropertyNotSetAble;
+use System\Time\Exceptions\PropertyNotExistException;
+use System\Time\Exceptions\PropertyNotSettableException;
 use System\Time\Traits\DateTimeFormatTrait;
 
 /**
@@ -87,7 +87,7 @@ class Now
             return $this->{$name};
         }
 
-        throw new PropertyNotExist($name);
+        throw new PropertyNotExistException($name);
     }
 
     /**
@@ -104,7 +104,7 @@ class Now
             return;
         }
 
-        throw new PropertyNotSetAble($name);
+        throw new PropertyNotSettableException($name);
     }
 
     /**

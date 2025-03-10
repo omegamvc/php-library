@@ -4,13 +4,12 @@ declare(strict_types=1);
 
 namespace System\File;
 
-use System\File\Exceptions\FileNotExists;
-use System\File\Exceptions\FileNotUploaded;
-use System\File\Exceptions\FolderNotExists;
-use System\File\Exceptions\MutyFileUploadDetect;
+use System\File\Exceptions\FileNotExistsException;
+use System\File\Exceptions\FileNotUploadedException;
+use System\File\Exceptions\FolderNotExistsException;
+use System\File\Exceptions\MultiFileUploadDetectException;
 
-/** {@inheritDoc} */
-final class UploadFile extends AbstarctUpload
+ class UploadFile extends AbstarctUpload
 {
     /**
      * {@inheritDoc}
@@ -30,7 +29,7 @@ final class UploadFile extends AbstarctUpload
     public function setFolderLocation(string $folder_location): self
     {
         if (!is_dir($folder_location)) {
-            throw new FolderNotExists($folder_location);
+            throw new FolderNotExistsException($folder_location);
         }
 
         $this->upload_location = $folder_location;
@@ -86,7 +85,7 @@ final class UploadFile extends AbstarctUpload
         parent::__construct($files);
 
         if (is_array($files['name'])) {
-            throw new MutyFileUploadDetect();
+            throw new MultiFileUploadDetectException();
         }
 
         $this->file_name[]  = $files['name'];
@@ -119,12 +118,12 @@ final class UploadFile extends AbstarctUpload
         $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension[0];
 
         if (!$this->_success) {
-            throw new FileNotUploaded();
+            throw new FileNotUploadedException();
         }
 
         $content = file_get_contents($destination);
         if (false === $content) {
-            throw new FileNotExists($destination);
+            throw new FileNotExistsException($destination);
         }
 
         return $content;
