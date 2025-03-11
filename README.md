@@ -248,7 +248,7 @@ Str::match('i love php', '/love/'); // love
 
 ### Custom macro
 
-costom macro string;
+custom macro string;
 
 ```php
 Str::macro('prefix', fn($text, $prefix) => $prefix.$test);
