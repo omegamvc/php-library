@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
-use System\Integrate\Console\VendorImportCommand;
+use System\Console\Commands\VendorImportCommand;
 use System\Container\ServiceProvider\AbstractServiceProvider;
 
 final class VendorImportCommandsTest extends TestCase

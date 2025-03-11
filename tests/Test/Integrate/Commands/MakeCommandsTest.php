@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
-use System\Integrate\Console\MakeCommand;
+use System\Console\Commands\MakeCommand;
 
 final class MakeCommandsTest extends CommandTest
 {

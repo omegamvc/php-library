@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Style\ProgressBar;
@@ -26,7 +26,7 @@ class ViewCommand extends Command
      *
      * @var array<int, array<string, mixed>>
      */
-    public static $command = [
+    public static array $command = [
         [
             'pattern' => 'view:cache',
             'fn'      => [ViewCommand::class, 'cache'],
@@ -45,7 +45,7 @@ class ViewCommand extends Command
     /**
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
@@ -70,11 +70,11 @@ class ViewCommand extends Command
         }
         info('build compiler cache')->out(false);
         $count     = 0;
-        $proggress = new ProgressBar(':progress :percent - :current', [
+        $progress = new ProgressBar(':progress :percent - :current', [
             ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
         ]);
 
-        $proggress->maks = count($files);
+        $progress->maks = count($files);
         $watch_start     = microtime(true);
         foreach ($files as $file) {
             if (is_file($file)) {
@@ -82,10 +82,10 @@ class ViewCommand extends Command
                 $templator->compile($filename);
                 $count++;
             }
-            $proggress->current++;
+            $progress->current++;
             $time                = round(microtime(true) - $watch_start, 3) * 1000;
-            $proggress->complete = static fn (): string => (string) ok("Success, {$count} file compiled ({$time} ms).");
-            $proggress->tick();
+            $progress->complete = static fn (): string => (string) ok("Success, {$count} file compiled ({$time} ms).");
+            $progress->tick();
         }
 
         return 0;
@@ -103,20 +103,20 @@ class ViewCommand extends Command
         }
 
         $count     = 0;
-        $proggress = new ProgressBar(':progress :percent - :current', [
+        $progress = new ProgressBar(':progress :percent - :current', [
             ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
         ]);
 
-        $proggress->maks = count($files);
+        $progress->maks = count($files);
         $watch_start     = microtime(true);
         foreach ($files as $file) {
             if (is_file($file)) {
                 $count += unlink($file) ? 1 : 0;
             }
-            $proggress->current++;
+            $progress->current++;
             $time                = round(microtime(true) - $watch_start, 3) * 1000;
-            $proggress->complete = static fn (): string => (string) ok("Success, {$count} cache clear ({$time} ms).");
-            $proggress->tick();
+            $progress->complete = static fn (): string => (string) ok("Success, {$count} cache clear ({$time} ms).");
+            $progress->tick();
         }
 
         return 0;

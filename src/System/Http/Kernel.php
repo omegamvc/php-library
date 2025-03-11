@@ -2,10 +2,8 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Http;
+namespace System\Http;
 
-use System\Http\Request;
-use System\Http\Response;
 use System\Application\Application;
 use System\Bootstrap\BootProviders;
 use System\Bootstrap\ConfigProviders;
@@ -13,7 +11,7 @@ use System\Bootstrap\HandleExceptions;
 use System\Bootstrap\RegisterFacades;
 use System\Bootstrap\RegisterProviders;
 use System\Exceptions\Handler;
-use System\Integrate\Http\Middleware\MaintenanceMiddleware;
+use System\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 
 class Kernel

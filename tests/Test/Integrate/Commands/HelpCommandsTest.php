@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Console\Command;
 use System\Config\ConfigRepository;
-use System\Integrate\Console\HelpCommand;
+use System\Console\Commands\HelpCommand;
 
 final class HelpCommandsTest extends CommandTest
 {

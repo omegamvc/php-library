@@ -8,7 +8,7 @@ use System\Container\Container;
 use System\Http\Exceptions;
 use System\Http\Request;
 use System\Http\Response;
-use System\Integrate\Http\Exception\HttpException;
+use System\Http\Exceptions\HttpException;
 use System\View\Templator;
 use System\View\TemplatorFinder;
 

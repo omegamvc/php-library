@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Http\Exception;
+namespace System\Http\Exceptions;
 
-class HttpException extends \RuntimeException
+use RuntimeException;
+use Throwable;
+
+class HttpException extends RuntimeException
 {
     /**
      * Http status code.
      */
-    private int $status_code;
+    private int $statusCode;
 
     /**
      * Http Headers information.
@@ -22,20 +25,21 @@ class HttpException extends \RuntimeException
      * @param array<string, string> $headers
      */
     public function __construct(
-        int $status_code,
+        int $statusCode,
         string $message,
-        ?\Throwable $previous = null,
+        ?Throwable $previous = null,
         array $headers = [],
         int $code = 0,
     ) {
-        $this->status_code = $status_code;
+        $this->statusCode = $statusCode;
         $this->headers     = $headers;
+
         parent::__construct($message, $code, $previous);
     }
 
     public function getStatusCode(): int
     {
-        return $this->status_code;
+        return $this->statusCode;
     }
 
     /**

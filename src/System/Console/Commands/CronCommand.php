@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Style\Style;
@@ -42,9 +42,9 @@ class CronCommand extends Command
     {
         return [
             'commands'  => [
-                'cron'      => 'Run cron job (all shadule)',
-                'cron:work' => 'Run virtual cron job in terminal (ansync)',
-                'cron:list' => 'Get list of shadule',
+                'cron'      => 'Run cron job (all schedule)',
+                'cron:work' => 'Run virtual cron job in terminal (async)',
+                'cron:list' => 'Get list of schedule',
             ],
             'options'   => [],
             'relation'  => [],

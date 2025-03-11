@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Traits\CommandTrait;
@@ -89,7 +89,7 @@ class MakeCommand extends Command
             'template_location' => __DIR__ . '/stubs/controller',
             'save_location'     => controllers_path(),
             'pattern'           => '__controller__',
-            'surfix'            => 'Controller.php',
+            'suffix'            => 'Controller.php',
         ]);
 
         if ($success) {
@@ -111,7 +111,7 @@ class MakeCommand extends Command
             'template_location' => __DIR__ . '/stubs/view',
             'save_location'     => view_path(),
             'pattern'           => '__view__',
-            'surfix'            => '.template.php',
+            'suffix'            => '.template.php',
         ]);
 
         if ($success) {
@@ -133,7 +133,7 @@ class MakeCommand extends Command
             'template_location' => __DIR__ . '/stubs/service',
             'save_location'     => services_path(),
             'pattern'           => '__service__',
-            'surfix'            => 'Service.php',
+            'suffix'            => 'Service.php',
         ]);
 
         if ($success) {
@@ -171,7 +171,7 @@ class MakeCommand extends Command
         $class->uses(['System\Database\MyModel\Model']);
         $class->extend('Model');
 
-        $primery_key = 'id';
+        $primaryKey = 'id';
         $table_name  = $this->OPTION[0];
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
@@ -180,7 +180,7 @@ class MakeCommand extends Command
                 foreach (DB::table($table_name)->info() as $column) {
                     $class->addComment('@property mixed $' . $column['COLUMN_NAME']);
                     if ('PRI' === $column['COLUMN_KEY']) {
-                        $primery_key = $column['COLUMN_NAME'];
+                        $primaryKey = $column['COLUMN_NAME'];
                     }
                 }
             } catch (\Throwable $th) {
@@ -189,7 +189,7 @@ class MakeCommand extends Command
         }
 
         $class->addProperty('table_name')->visibility(Property::PROTECTED_)->dataType('string')->expecting(" = '{$table_name}'");
-        $class->addProperty('primery_key')->visibility(Property::PROTECTED_)->dataType('string')->expecting("= '{$primery_key}'");
+        $class->addProperty('primaryKey')->visibility(Property::PROTECTED_)->dataType('string')->expecting("= '{$primaryKey}'");
 
         if (false === file_put_contents($model_location, $class->generate())) {
             fail('Failed Create model file')->out();
@@ -203,18 +203,18 @@ class MakeCommand extends Command
     }
 
     /**
-     * Replece template to new class/resoure.
+     * Replace template to new class/resource.
      *
      * @param string                $argument    Name of Class/file
      * @param array<string, string> $make_option Configuration to replace template
      * @param string                $folder      Create folder for save location
      *
-     * @return bool True if templete success copie
+     * @return bool True if template success copy
      */
     private function makeTemplate(string $argument, array $make_option, string $folder = ''): bool
     {
         $folder = ucfirst($folder);
-        if (file_exists($file_name = $make_option['save_location'] . $folder . $argument . $make_option['surfix'])) {
+        if (file_exists($file_name = $make_option['save_location'] . $folder . $argument . $make_option['suffix'])) {
             warn('File already exist')->out(false);
 
             return false;
@@ -240,7 +240,8 @@ class MakeCommand extends Command
             'template_location' => __DIR__ . '/stubs/command',
             'save_location'     => commands_path(),
             'pattern'           => '__command__',
-            'surfix'            => 'Command.php',
+            'suf
+            fix'            => 'Command.php',
         ]);
 
         if ($success) {

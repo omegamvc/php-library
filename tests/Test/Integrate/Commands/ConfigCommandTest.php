@@ -6,7 +6,7 @@ namespace System\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
 use System\Application\Application;
-use System\Integrate\Console\ConfigCommand;
+use System\Console\Commands\ConfigCommand;
 
 class ConfigCommandTest extends TestCase
 {

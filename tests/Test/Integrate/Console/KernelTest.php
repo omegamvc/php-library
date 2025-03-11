@@ -7,7 +7,7 @@ namespace System\Test\Integrate\Console;
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Application\Application;
-use System\Integrate\Console\Kernel;
+use System\Console\Kernel;
 use System\Application\PackageManifest;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
@@ -218,7 +218,7 @@ final class KernelTest extends TestCase
     public function itCanBootstrap()
     {
         $this->assertFalse($this->app->isBootstrapped());
-        $this->app->make(Kernel::class)->bootstrap();
+        $this->app->make(\System\Console\Kernel::class)->bootstrap();
         $this->assertTrue($this->app->isBootstrapped());
     }
 
@@ -238,7 +238,7 @@ final class KernelTest extends TestCase
      */
     public function itCanGetSimilarCommand()
     {
-        $kernel = new Kernel($this->app);
+        $kernel = new \System\Console\Kernel($this->app);
         $result = (fn () => $this->{'getSimilarity'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($kernel);
         $this->assertArrayHasKey('make:view', $result);
         $this->assertArrayHasKey('make:controller', $result);

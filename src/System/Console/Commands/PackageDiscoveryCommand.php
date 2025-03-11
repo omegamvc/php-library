@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Application\Application;
 use System\Application\PackageManifest;
 
+use Throwable;
 use function System\Console\fail;
 use function System\Console\info;
 
@@ -29,11 +30,11 @@ class PackageDiscoveryCommand extends Command
     /**
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
-                'package:discovery' => 'Discovery packe in composer',
+                'package:discovery' => 'Discovery package in composer',
             ],
             'options'   => [],
             'relation'  => [],
@@ -50,13 +51,13 @@ class PackageDiscoveryCommand extends Command
             $packages = (fn () => $this->{'getPackageManifest'}())->call($package) ?? [];
             $style    = new Style();
             foreach (array_keys($packages) as $name) {
-                $lenght = $this->getWidth(40, 60) - strlen($name) - 4;
-                $style->push($name)->repeat('.', $lenght)->textDim()->push('DONE')->textGreen()->newLines();
+                $length = $this->getWidth(40, 60) - strlen($name) - 4;
+                $style->push($name)->repeat('.', $length)->textDim()->push('DONE')->textGreen()->newLines();
             }
             $style->out(false);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             fail($th->getMessage())->out(false);
-            fail('Can\'t create package mainfest cahce file.')->out();
+            fail('Can\'t create package manifest cache file.')->out();
 
             return 1;
         }

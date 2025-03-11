@@ -5,7 +5,7 @@ use System\Http\Request;
 use System\Application\Application;
 use System\Config\ConfigRepository;
 use System\Application\Exceptions\ApplicationNotAvailableException;
-use System\Integrate\Http\Exception\HttpException;
+use System\Http\Exceptions\HttpException;
 
 class ApplicationTest extends TestCase
 {

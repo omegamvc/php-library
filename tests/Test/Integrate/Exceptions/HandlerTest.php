@@ -9,8 +9,8 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
 use System\Exceptions\Handler;
-use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Kernel;
+use System\Http\Exceptions\HttpException;
+use System\Http\Kernel;
 use System\Application\PackageManifest;
 use System\Text\Str;
 use System\View\Templator;
@@ -145,7 +145,7 @@ final class HandlerTest extends TestCase
 
         $content = $response->getContent();
         $this->assertEquals('Too Many Request', $content['messages']['message']);
-        $this->assertEquals('System\Integrate\Http\Exception\HttpException', $content['messages']['exception']);
+        $this->assertEquals('System\Http\Exceptions\HttpException', $content['messages']['exception']);
         // skip meggase.file issue test with diferent platform
         $this->assertEquals(56, $content['messages']['line']);
         $this->assertEquals(429, $response->getStatusCode());

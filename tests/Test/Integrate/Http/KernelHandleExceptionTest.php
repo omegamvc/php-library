@@ -7,8 +7,8 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
 use System\Exceptions\Handler;
-use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Kernel;
+use System\Http\Exceptions\HttpException;
+use System\Http\Kernel;
 use System\Application\PackageManifest;
 
 final class KernelHandleExceptionTest extends TestCase

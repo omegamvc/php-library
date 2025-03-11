@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Traits\PrintHelpTrait;
@@ -33,12 +33,12 @@ class MaintenanceCommand extends Command
     /**
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
-                'down' => 'Active maintenance mode',
-                'up'   => 'Deactive maintenance mode',
+                'down' => 'Activate maintenance mode',
+                'up'   => 'Deactivate maintenance mode',
             ],
             'options'   => [],
             'relation'  => [],
@@ -48,7 +48,7 @@ class MaintenanceCommand extends Command
     public function down(): int
     {
         if (app()->isDownMaintenanceMode()) {
-            warn('Application is alredy under maintenance mode.')->out();
+            warn('Application is already under maintenance mode.')->out();
 
             return 1;
         }
@@ -58,7 +58,7 @@ class MaintenanceCommand extends Command
         }
 
         file_put_contents(app()->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php', file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . 'maintenance'));
-        ok('Successfull, your apllication now in under maintenance.')->out();
+        ok('Successfully, your application now in under maintenance.')->out();
 
         return 0;
     }
@@ -72,13 +72,13 @@ class MaintenanceCommand extends Command
         }
 
         if (false === unlink($up = app()->storage_path() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php')) {
-            warn('Application stil maintenance mode.')->out(false);
-            info("Remove manualy mantenance file in `{$up}`.")->out();
+            warn('Application still maintenance mode.')->out(false);
+            info("Remove manually maintenance file in `{$up}`.")->out();
 
             return 1;
         }
 
-        ok('Successfull, your apllication now live.')->out();
+        ok('Successfully, your application now live.')->out();
 
         return 0;
     }

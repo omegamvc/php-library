@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
-use System\Integrate\Console\SeedCommand;
+use System\Console\Commands\SeedCommand;
 
 final class SeedCommandsTest extends CommandTest
 {

@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace System\Integrate\ValueObjects;
 
+use ArrayAccess;
+use Exception;
+use InvalidArgumentException;
 use System\Text\Str;
 
 /**
- * @implements \ArrayAccess<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)>
+ * @implements ArrayAccess<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)>
  */
-class CommandMap implements \ArrayAccess
+class CommandMap implements ArrayAccess
 {
     /** @var array<string, string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)> */
-    private $command = [
+    private array $command = [
         'cmd'       => '',
         'mode'      => '',
         'class'     => '',
@@ -32,7 +35,7 @@ class CommandMap implements \ArrayAccess
      *
      * @return string[]
      */
-    public function cmd()
+    public function cmd(): array
     {
         if (false === array_key_exists('cmd', $this->command)) {
             return [];
@@ -52,7 +55,7 @@ class CommandMap implements \ArrayAccess
      *
      * @return string[]
      */
-    public function patterns()
+    public function patterns(): array
     {
         if (false === array_key_exists('pattern', $this->command)) {
             return [];
@@ -72,13 +75,13 @@ class CommandMap implements \ArrayAccess
             return $this->command['class'];
         }
 
-        throw new \InvalidArgumentException('Command map require class in (class or fn).');
+        throw new InvalidArgumentException('Command map require class in (class or fn).');
     }
 
     /**
      * @return string|string[]
      */
-    public function fn()
+    public function fn(): array|string
     {
         return $this->command['fn'] ?? 'main';
     }
@@ -158,8 +161,6 @@ class CommandMap implements \ArrayAccess
             : [$this->class(), $this->fn()];
     }
 
-    // arrayaccess
-
     public function offsetExists($offset): bool
     {
         return array_key_exists($offset, $this->command);
@@ -168,19 +169,29 @@ class CommandMap implements \ArrayAccess
     /**
      * @return string|string[]|(array<string, string|bool|int|null>)|(callable(string): bool)
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->command[$offset];
     }
 
-    public function offsetSet($offset, $value): void
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     * @throws Exception
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        throw new \Exception('CommandMap cant be reassigmnet');
+        throw new Exception('CommandMap cant be reassignment');
     }
 
-    public function offsetUnset($offset): void
+    /**
+     * @param mixed $offset
+     * @return void
+     * @throws Exception
+     */
+    public function offsetUnset(mixed $offset): void
     {
-        throw new \Exception('CommandMap cant be reassigmnet');
+        throw new Exception('CommandMap cant be reassignment');
     }
 }

@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Application\Application;
+use System\Console\Util;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
@@ -23,7 +24,7 @@ class HelpCommand extends Command
      * @var string[]
      */
     protected array $class_namespace = [
-        // register namesapce commands
+        // register namespace commands
     ];
 
     /**
@@ -40,18 +41,18 @@ class HelpCommand extends Command
             'fn'      => [self::class, 'commandList'],
         ], [
             'pattern' => 'help',
-            'fn'      => [self::class, 'commandhelp'],
+            'fn'      => [self::class, 'commandHelp'],
         ],
     ];
 
     /**
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
-                'help' => 'Get help for avilable command',
+                'help' => 'Get help for available command',
             ],
             'options'   => [],
             'relation'  => [
@@ -75,7 +76,7 @@ class HelpCommand extends Command
         $has_visited      = [];
         $this->print_help = [
             'margin-left'         => 8,
-            'column-1-min-lenght' => 16,
+            'column-1-min-length' => 16,
         ];
 
         foreach ($this->commandMaps() as $command) {
@@ -127,7 +128,7 @@ class HelpCommand extends Command
             ->push('[option]')->textDim()
             ->newLines(2)
 
-            ->push('Avilable flag:')
+            ->push('Available flag:')
             ->newLines(2)->tabs()
             ->push('--help')->textDim()
             ->tabs(3)
@@ -139,10 +140,10 @@ class HelpCommand extends Command
             ->newLines(2)
         ;
 
-        $printer->push('Avilabe command:')->newLines(2);
+        $printer->push('Available command:')->newLines(2);
         $printer = $this->printCommands($printer)->newLines();
 
-        $printer->push('Avilabe options:')->newLines();
+        $printer->push('Available options:')->newLines();
         $printer = $this->printOptions($printer);
 
         $printer->out();
@@ -159,15 +160,15 @@ class HelpCommand extends Command
         $commands = $this->commandMaps();
         foreach ($commands as $command) {
             $option = array_merge($command->cmd(), $command->patterns());
-            $lenght = Str::length(implode(', ', $option));
+            $length = Str::length(implode(', ', $option));
 
-            if ($lenght > $maks1) {
-                $maks1 = $lenght;
+            if ($length > $maks1) {
+                $maks1 = $length;
             }
 
-            $lenght = Str::length($command->class());
-            if ($lenght > $maks2) {
-                $maks2 = $lenght;
+            $length = Str::length($command->class());
+            if ($length > $maks2) {
+                $maks2 = $length;
             }
         }
 
@@ -175,12 +176,12 @@ class HelpCommand extends Command
             $option = array_merge($command->cmd(), $command->patterns());
             style(implode(', ', $option))->textLightYellow()->out(false);
 
-            $lenght1 = Str::length(implode(', ', $option));
-            $lenght2 = Str::length($command->class());
+            $length1 = Str::length(implode(', ', $option));
+            $length2 = Str::length($command->class());
             style('')
-                ->repeat(' ', $maks1 - $lenght1 + 4)
+                ->repeat(' ', $maks1 - $length1 + 4)
                 ->push($command->class())->textGreen()
-                ->repeat('.', $maks2 - $lenght2 + 8)->textDim()
+                ->repeat('.', $maks2 - $length2 + 8)->textDim()
                 ->push($command->method())
                 ->out();
         }
@@ -194,7 +195,7 @@ class HelpCommand extends Command
             style('')
                 ->tap(info('To see help command, place provide command_name'))
                 ->textYellow()
-                ->push('php cli help <command_nama>')->textDim()
+                ->push('php cli help <command_name>')->textDim()
                 ->newLines()
                 ->push('              ^^^^^^^^^^^^')->textRed()
                 ->out()
@@ -238,10 +239,10 @@ class HelpCommand extends Command
                     $this->command_relation = $help['relation'];
                 }
 
-                style('Avilabe command:')->newLines()->out();
+                style('Available command:')->newLines()->out();
                 $this->printCommands(new Style())->out();
 
-                style('Avilable options:')->newLines()->out();
+                style('Available options:')->newLines()->out();
                 $this->printOptions(new Style())->out();
 
                 return 0;
@@ -254,11 +255,11 @@ class HelpCommand extends Command
     }
 
     /**
-     * Transform commandsmap array to CommandMap.
+     * Transform commands map array to CommandMap.
      *
      * @return CommandMap[]
      */
-    private function commandMaps()
+    private function commandMaps(): array
     {
         return Util::loadCommandFromConfig(Application::getIntance());
     }

@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Cron\InterpolateInterface;
 use System\Cron\Schedule;
-use System\Integrate\Console\CronCommand;
+use System\Console\Commands\CronCommand;
 use System\Support\Facades\Schedule as FacadesSchedule;
 
 final class CronCommandsTest extends CommandTest

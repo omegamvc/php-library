@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console;
 
 use System\Console\Style\Style;
 use System\Application\Application;
@@ -19,10 +19,10 @@ class Kernel
      */
     protected Application $app;
 
-    /** @var int concole exit status */
-    protected $exit_code;
+    /** @var int console exit status */
+    protected int $exit_code;
 
-    /** @var array<int, class-string> Apllication bootstrap register. */
+    /** @var array<int, class-string> Application bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
         RegisterFacades::class,
@@ -45,7 +45,7 @@ class Kernel
      *
      * @return int Exit code
      */
-    public function handle($arguments)
+    public function handle(string|array $arguments): int
     {
         // handle command empty
         $baseArgs = $arguments[1] ?? '--help';
@@ -95,7 +95,7 @@ class Kernel
     }
 
     /**
-     * Register bootstraper application.
+     * Register bootstrap application.
      */
     public function bootstrap(): void
     {
@@ -104,8 +104,8 @@ class Kernel
 
     /**
      * Call command using know signature.
-     * The signature doset require php as prefix.
-     * For better parse use `handle` method istead.
+     * The signature doesn't require php as prefix.
+     * For better parse use `handle` method instead.
      *
      * @param array<string, string|bool|int|null> $parameter
      *
@@ -137,7 +137,7 @@ class Kernel
      *
      * @param string[] $commands
      *
-     * @return array<string, float> Sorted from simalar
+     * @return array<string, float> Sorted from similar
      */
     private function getSimilarity(string $find, array $commands, float $threshold = 0.8): array
     {
@@ -243,11 +243,11 @@ class Kernel
     }
 
     /**
-     * Get karne exit status code.
+     * Get kernel exit status code.
      *
      * @return int Exit status code
      */
-    public function exit_code()
+    public function exit_code(): int
     {
         return $this->exit_code;
     }

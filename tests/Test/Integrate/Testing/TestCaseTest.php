@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Testing;
 
 use System\Application\Application;
-use System\Integrate\Http\Kernel;
+use System\Http\Kernel;
 use System\Testing\TestCase;
 
 final class TestCaseTest extends TestCase

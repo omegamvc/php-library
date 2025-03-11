@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Collection\Collection;
 use System\Console\Command;
@@ -11,6 +11,7 @@ use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Database\MyQuery;
 use System\Database\MySchema\Table\Create;
+use System\Console\Commands\SeedCommand;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
@@ -89,17 +90,17 @@ class MigrationCommand extends Command
                 'migrate:reset'            => 'Rolling back all migrations (down)',
                 'migrate:refresh'          => 'Rolling back and run migration all',
                 'migrate:rollback'         => 'Rolling back last migrations (down)',
-                'migrate:init'             => 'Initialize migartion table',
-                'migrate:status'           => 'Show migartion status.',
+                'migrate:init'             => 'Initialize migration table',
+                'migrate:status'           => 'Show migration status.',
                 'database:create'          => 'Create database',
                 'database:drop'            => 'Drop database',
                 'database:show'            => 'Show database table',
             ],
             'options'   => [
                 '--take'              => 'Limit of migrations to be run.',
-                '--batch'             => 'Batch migration excution.',
-                '--dry-run'           => 'Excute migration but olny get query output.',
-                '--force'             => 'Force runing migration/database query in production.',
+                '--batch'             => 'Batch migration execution.',
+                '--dry-run'           => 'Execute migration but only get query output.',
+                '--force'             => 'Force running migration/database query in production.',
                 '--seed'              => 'Run seeder after migration.',
                 '--seed-namespace'    => 'Run seeder after migration using class namespace.',
                 '--yes'               => 'Accept it without having it ask any questions',
@@ -127,7 +128,7 @@ class MigrationCommand extends Command
         }
 
         /* @var bool */
-        return (new Prompt(style('Runing migration/database in production?')->textRed(), [
+        return (new Prompt(style('Running migration/database in production?')->textRed(), [
             'yes' => fn () => true,
             'no'  => fn () => false,
         ], 'no'))
@@ -168,11 +169,11 @@ class MigrationCommand extends Command
      */
     public function baseMigrate(&$batch = false): Collection
     {
-        $migartion_batch = $this->getMigrationTable();
-        $hights          = $migartion_batch->lenght() > 0
-            ? $migartion_batch->max() + 1
+        $migrationBatch = $this->getMigrationTable();
+        $highs         = $migrationBatch->lenght() > 0
+            ? $migrationBatch->max() + 1
             : 0;
-        $batch = false === $batch ? $hights : $batch;
+        $batch = false === $batch ? $highs : $batch;
 
         $paths   = [migration_path(), ...static::$vendor_paths];
         $migrate = new Collection([]);
@@ -183,13 +184,13 @@ class MigrationCommand extends Command
                 }
 
                 $migration_name = pathinfo($file->getBasename(), PATHINFO_FILENAME);
-                $hasMigration   = $migartion_batch->has($migration_name);
+                $hasMigration   = $migrationBatch->has($migration_name);
 
                 if (false == $batch && $hasMigration) {
-                    if ($migartion_batch->get($migration_name) <= $hights - 1) {
+                    if ($migrationBatch->get($migration_name) <= $higths - 1) {
                         $migrate->set($migration_name, [
                             'file_name' => $dir . $file->getFilename(),
-                            'batch'     => $migartion_batch->get($migration_name),
+                            'batch'     => $migrationBatch->get($migration_name),
                         ]);
                         continue;
                     }
@@ -198,19 +199,19 @@ class MigrationCommand extends Command
                 if (false === $hasMigration) {
                     $migrate->set($migration_name, [
                         'file_name' => $dir . $file->getFilename(),
-                        'batch'     => $hights,
+                        'batch'     => $higths,
                     ]);
                     $this->insertMigrationTable([
                         'migration' => $migration_name,
-                        'batch'     => $hights,
+                        'batch'     => $higths,
                     ]);
                     continue;
                 }
 
-                if ($migartion_batch->get($migration_name) <= $batch) {
+                if ($migrationBatch->get($migration_name) <= $batch) {
                     $migrate->set($migration_name, [
                         'file_name' => $dir . $file->getFilename(),
-                        'batch'     => $migartion_batch->get($migration_name),
+                        'batch'     => $migrationBatch->get($migration_name),
                     ]);
                     continue;
                 }
@@ -377,7 +378,7 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Rolling backs migartion.
+     * Rolling backs migration.
      *
      * @param int|false $batch
      */
@@ -506,11 +507,11 @@ class MigrationCommand extends Command
             $name   = $table['table_name'];
             $time   = $table['create_time'];
             $size   = $table['size'];
-            $lenght = strlen($name) + strlen($time) + strlen($size);
+            $length = strlen($name) + strlen($time) + strlen($size);
 
             style($name)
                 ->push(' ' . $size . ' Mb ')->textDim()
-                ->repeat('.', $width - $lenght)->textDim()
+                ->repeat('.', $width - $length)->textDim()
                 ->push(' ' . $time)
                 ->out();
         }
@@ -536,11 +537,11 @@ class MigrationCommand extends Command
             }
 
             $info   = implode(', ', $will_print);
-            $lenght = strlen($column['COLUMN_NAME']) + strlen($column['COLUMN_TYPE']) + strlen($info);
+            $length = strlen($column['COLUMN_NAME']) + strlen($column['COLUMN_TYPE']) + strlen($info);
 
             $print->push($column['COLUMN_NAME'])->bold()->resetDecorate();
             $print->push(' ' . $info . ' ')->textDim();
-            $print->repeat('.', $width - $lenght)->textDim();
+            $print->repeat('.', $width - $length)->textDim();
             $print->push(' ' . $column['COLUMN_TYPE']);
             $print->newLines();
         }
@@ -556,11 +557,11 @@ class MigrationCommand extends Command
         $print->tap(info('show migration status'));
         $width = $this->getWidth(40, 60);
         foreach ($this->getMigrationTable() as $migration_name => $batch) {
-            $lenght = strlen($migration_name) + strlen((string) $batch);
+            $length = strlen($migration_name) + strlen((string) $batch);
             $print
                 ->push($migration_name)
                 ->push(' ')
-                ->repeat('.', $width - $lenght)->textDim()
+                ->repeat('.', $width - $length)->textDim()
                 ->push(' ')
                 ->push($batch)
                 ->newLines();
@@ -616,7 +617,7 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Create migarion table schema.
+     * Create migration table schema.
      */
     private function createMigrationTable(): bool
     {
@@ -629,7 +630,7 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Get migration batch file in migation table.
+     * Get migration batch file in migration table.
      *
      * @return Collection<string, int>
      */
@@ -663,7 +664,7 @@ class MigrationCommand extends Command
         $has_migration_table = $this->hasMigrationTable();
 
         if ($has_migration_table) {
-            info('Migration table alredy exist on your database table.')->out(false);
+            info('Migration table already exist on your database table.')->out(false);
 
             return 0;
         }
@@ -688,7 +689,7 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Flush migration vendor ptahs.
+     * Flush migration vendor paths.
      */
     public static function flushVendorMigrationPaths(): void
     {

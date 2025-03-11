@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Prompt;
@@ -66,7 +66,7 @@ class SeedCommand extends Command
         }
 
         /* @var bool */
-        return (new Prompt(style('Runing seeder in production?')->textRed(), [
+        return (new Prompt(style('Running seeder in production?')->textRed(), [
             'yes' => fn () => true,
             'no'  => fn () => false,
         ], 'no'))

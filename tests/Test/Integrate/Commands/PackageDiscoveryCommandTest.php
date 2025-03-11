@@ -6,7 +6,7 @@ namespace System\Integrate\Commands;
 
 use PHPUnit\Framework\TestCase;
 use System\Application\Application;
-use System\Integrate\Console\PackageDiscoveryCommand;
+use System\Console\Commands\PackageDiscoveryCommand;
 use System\Application\PackageManifest;
 
 class PackageDiscoveryCommandTest extends TestCase

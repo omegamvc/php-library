@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Style\Alert;
@@ -23,7 +23,7 @@ class RouteCommand extends Command
      *
      * @var array<int, array<string, mixed>>
      */
-    public static $command = [
+    public static array $command = [
         [
             'cmd' => 'route:list',
             'fn'  => [RouteCommand::class, 'main'],
@@ -33,7 +33,7 @@ class RouteCommand extends Command
     /**
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
@@ -49,7 +49,7 @@ class RouteCommand extends Command
         $print = new Style();
         $print->tap(Alert::render()->ok('route list'));
         foreach (Router::getRoutes() as $key => $route) {
-            $method = $this->methodToStye($route['method']);
+            $method = $this->methodToStyle($route['method']);
             $name   = style($route['name'])->textWhite();
             $length = $method->length() + $name->length();
 
@@ -71,7 +71,7 @@ class RouteCommand extends Command
     /**
      * @param string|string[] $methods
      */
-    private function methodToStye($methods): Style
+    private function methodToStyle(string|array$methods): Style
     {
         if (is_array($methods)) {
             $group  = new Style();

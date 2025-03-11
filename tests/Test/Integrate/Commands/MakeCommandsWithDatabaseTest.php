@@ -6,7 +6,7 @@ namespace System\Test\Integrate\Commands;
 
 use System\Database\MyQuery;
 use System\Application\Application;
-use System\Integrate\Console\MakeCommand;
+use System\Console\Commands\MakeCommand;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
 use System\Text\Str;

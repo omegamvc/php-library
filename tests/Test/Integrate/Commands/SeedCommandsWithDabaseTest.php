@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Commands;
 
 use System\Application\Application;
-use System\Integrate\Console\SeedCommand;
+use System\Console\Commands\SeedCommand;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO as FacadesPDO;
 use System\Support\Facades\Schema;

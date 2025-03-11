@@ -12,7 +12,7 @@ class __controller__Controller extends Controller
     public function index(): Response
     {
         return view('__controller__', [
-            "title" => "Documnet Title",
+            "title" => "Document Title",
         ]);
     }
 }

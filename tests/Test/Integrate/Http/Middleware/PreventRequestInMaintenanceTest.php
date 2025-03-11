@@ -9,8 +9,8 @@ use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
 use System\Config\ConfigRepository;
-use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Middleware\MaintenanceMiddleware;
+use System\Http\Exceptions\HttpException;
+use System\Http\Middleware\MaintenanceMiddleware;
 
 final class PreventRequestInMaintenanceTest extends TestCase
 {
@@ -51,7 +51,7 @@ final class PreventRequestInMaintenanceTest extends TestCase
         $app        = new Application(dirname(__DIR__, 2));
         $app->setStoragePath(DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage3' . DIRECTORY_SEPARATOR);
 
-        $middleware = new MaintenanceMiddleware($app);
+        $middleware = new \System\Http\Middleware\MaintenanceMiddleware($app);
         $response   = new Response('test');
         $handle     = $middleware->handle(new Request('/'), fn (Request $request) => $response);
 

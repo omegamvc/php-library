@@ -8,7 +8,7 @@ use System\Config\ConfigRepository;
 use System\Container\Container;
 use System\Container\ServiceProvider\ServiceProvider;
 use System\Http\Request;
-use System\Integrate\Http\Exception\HttpException;
+use System\Http\Exceptions\HttpException;
 use System\Support\Vite;
 use System\View\Templator;
 

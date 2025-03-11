@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console\Commands;
 
 use System\Console\Command;
 use System\Console\Traits\CommandTrait;
@@ -44,7 +44,7 @@ class ClearCacheCommand extends Command
             ],
             'options'   => [
                 '--all'     => 'Clear all registered cache driver.',
-                '--drivers' => 'Clear spesific driver name.',
+                '--drivers' => 'Clear specific driver name.',
             ],
             'relation'  => [
                 'cache:clear' => ['--all', '--drivers'],
@@ -71,7 +71,7 @@ class ClearCacheCommand extends Command
 
         if ($this->option('all', false) && false === $user_drivers) {
             $drivers = array_keys(
-                (fn (): array => $this->{'driver'})->call($cache) // @phpstan-ignore-line
+                (fn (): array => $this->{'driver'})->call($cache)
             );
         }
 

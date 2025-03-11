@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Console;
+namespace System\Console;
 
 use System\Application\Application;
 use System\Config\ConfigRepository;

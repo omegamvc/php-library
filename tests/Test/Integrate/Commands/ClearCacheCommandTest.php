@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use System\Cache\CacheManager;
 use System\Cache\Storage\ArrayStorage;
 use System\Application\Application;
-use System\Integrate\Console\ClearCacheCommand;
+use System\Console\Commands\ClearCacheCommand;
 
 class ClearCacheCommandTest extends TestCase
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Test\Integrate\Commands;
 
-use System\Integrate\Console\RouteCommand;
+use System\Console\Commands\RouteCommand;
 use System\Router\Router;
 
 final class RouteCommandsTest extends CommandTest

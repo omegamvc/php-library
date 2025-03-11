@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\Http\Middleware;
+namespace System\Http\Middleware;
 
 use System\Http\Request;
 use System\Http\Response;
 use System\Application\Application;
-use System\Integrate\Http\Exception\HttpException;
+use System\Http\Exceptions\HttpException;
 
 class MaintenanceMiddleware
 {
