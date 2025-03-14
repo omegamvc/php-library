@@ -1,16 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
+namespace Test\Collection;
+
 use PHPUnit\Framework\TestCase;
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
 
+use function array_filter;
+use function array_keys;
+use function array_map;
+use function array_reverse;
+use function array_values;
+use function in_array;
+use function json_encode;
+use function str_contains;
+
 class CollectionTest extends TestCase
 {
     /** @test */
-    public function itCollectionFunctionalWorKProperly(): void
+    public function testItCollectionFunctionalWorKProperly(): void
     {
         $original = [
-            'buah_1' => 'mangga',
+            'buah_1' => 'manga',
             'buah_2' => 'jeruk',
             'buah_3' => 'apel',
             'buah_4' => 'melon',
@@ -20,26 +33,26 @@ class CollectionTest extends TestCase
         $test = new Collection($original);
 
         // getter
-        $this->assertEquals($test->buah_1, 'mangga', 'add new item colection using __set');
-        $this->assertEquals($test->get('buah_1'), 'mangga', 'add new item collection using set()');
+        $this->assertEquals('manga', $test->buah_1, 'add new item collection using __set');
+        $this->assertEquals('manga', $test->get('buah_1'), 'add new item collection using set()');
 
         // add new item
         $test->set('buah_7', 'kelengkeng');
         $test->buah_8 = 'cherry';
-        $this->assertEquals($test->buah_8, 'cherry', 'get item colection using __get');
-        $this->assertEquals($test->get('buah_7'), 'kelengkeng', 'get item colection using get()');
+        $this->assertEquals('cherry', $test->buah_8, 'get item collection using __get');
+        $this->assertEquals('kelengkeng', $test->get('buah_7'), 'get item collection using get()');
 
-        // raname item
+        // rename item
         $test->set('buah_7', 'durian');
-        $test->buah_8 = 'nanas';
-        $this->assertEquals($test->buah_8, 'nanas', 'replece exis item colection using __get');
-        $this->assertEquals($test->get('buah_7'), 'durian', 'replece exis item colection using get()');
+        $test->buah_8 = 'jolly';
+        $this->assertEquals('jolly', $test->buah_8, 'replace exists item collection using __get');
+        $this->assertEquals('durian', $test->get('buah_7'), 'replace exists item collection using get()');
 
         // cek array key
         $this->assertTrue($test->has('buah_1'), 'collection have item with key');
 
         // cek contain
-        $this->assertTrue($test->contain('mangga'), 'collection have item');
+        $this->assertTrue($test->contain('manga'), 'collection have item');
 
         // remove item
         $test->remove('buah_2');
@@ -49,17 +62,17 @@ class CollectionTest extends TestCase
         $test->replace($original);
 
         // count
-        $this->assertEquals($test->count(), 6, 'count item in collection');
+        $this->assertEquals(6, $test->count(), 'count item in collection');
 
         // count by
         $countIf = $test->countIf(function ($item) {
             // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return str_contains($item, 'e');
         });
         $this->assertEquals(4, $countIf, 'count item in collection with some condition');
 
         // first and last item cek
-        $this->assertEquals('mangga', $test->first('bukan buah'), 'get first item in collection');
+        $this->assertEquals('manga', $test->first('bukan buah'), 'get first item in collection');
         $this->assertEquals('peer', $test->last('bukan buah'), 'get last item in collection');
 
         // test clear and empty cek
@@ -70,47 +83,47 @@ class CollectionTest extends TestCase
         $test->replace($original);
         $this->assertEquals($test->all(), $original, 'replace axis collection with new data');
 
-        // test array keys and vules
+        // test array keys and values
         $keys  = array_keys($original);
         $items = array_values($original);
         $this->assertEquals($keys, $test->keys(), 'get all key in collection');
         $this->assertEquals($items, $test->items(), 'get all item value in collection');
 
-        // each funtion
+        // each function
         $test->each(function ($item, $key) use ($original) {
             $this->assertTrue(in_array($item, $original), 'test each with value');
-            $this->assertTrue(array_key_exists($key, $original), 'test each with key');
+            $this->assertArrayHasKey($key, $original, 'test each with key');
         });
 
-        // map funtion
+        // map function
         $test->map(fn ($item) => ucfirst($item));
-        $copy_origin = array_map(fn ($item) => ucfirst($item), $original);
-        $this->assertEquals($test->all(), $copy_origin, 'replace some/all item using map');
+        $copyOrigin = array_map(fn ($item) => ucfirst($item), $original);
+        $this->assertEquals($test->all(), $copyOrigin, 'replace some/all item using map');
         $test->replace($original);
 
-        // filter funtion
+        // filter function
         $test->filter(function ($item) {
             // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return str_contains($item, 'e');
         });
-        $copy_origin = array_filter($original, function ($item) {
+        $copyOrigin = array_filter($original, function ($item) {
             // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return str_contains($item, 'e');
         });
-        $this->assertEquals($test->all(), $copy_origin, 'filter item in collection');
+        $this->assertEquals($test->all(), $copyOrigin, 'filter item in collection');
         $test->replace($original);
 
         // test the collection have item with e letter
         $some = $test->some(function ($item) {
             // find letter contain 'e' letter
-            return strpos($item, 'e') !== false ? true : false;
+            return str_contains($item, 'e');
         });
         $this->assertTrue($some, 'test the collection have item with "e" letter');
 
         // test the collection every item dont have 'x' letter
         $every = $test->every(function ($item) {
             // find letter contain 'x' letter
-            return strpos($item, 'x') === false ? true : false;
+            return !str_contains($item, 'x');
         });
         $this->assertTrue($every, 'collection every item dont have "x" letter');
 
@@ -119,10 +132,10 @@ class CollectionTest extends TestCase
         $this->assertJsonStringEqualsJsonString($test->json(), $json, 'collection convert to json string');
 
         // collection reverse
-        $copy_origin = $original;
+        $copyOrigin = $original;
         $this->assertEquals(
             $test->reverse()->all(),
-            array_reverse($copy_origin),
+            array_reverse($copyOrigin),
             'test reverse collection'
         );
         $test->replace($original);
@@ -130,17 +143,17 @@ class CollectionTest extends TestCase
         // sort collection
         // sort asc
         $this->assertEquals(
-            $test->sort()->first(),
             'apel',
+            $test->sort()->first(),
             'testing sort asc collection'
         );
         // sort desc
         $this->assertEquals(
-            $test->sortDesc()->first(),
             'rambutan',
+            $test->sortDesc()->first(),
             'testing sort desc collection'
         );
-        // sort using collback
+        // sort using callback
         $test->sortBy(function ($a, $b) {
             if ($a == $b) {
                 return 0;
@@ -149,11 +162,11 @@ class CollectionTest extends TestCase
             return ($a < $b) ? -1 : 1;
         });
         $this->assertEquals(
-            $test->first(),
             'apel',
-            'sort using user define asceding'
+            $test->first(),
+            'sort using user define ascending'
         );
-        $test->sortByDecs(function ($a, $b) {
+        $test->sortByDesc(function ($a, $b) {
             if ($a == $b) {
                 return 0;
             }
@@ -161,20 +174,20 @@ class CollectionTest extends TestCase
             return ($a < $b) ? -1 : 1;
         });
         $this->assertEquals(
-            $test->first(),
             'rambutan',
-            'sort using user define decsending'
+            $test->first(),
+            'sort using user define descending'
         );
 
-        // sort colection by key
+        // sort collection by key
         $this->assertEquals(
+            'manga',
             $test->sortKey()->first(),
-            'mangga',
             'sort collection asc with key'
         );
         $this->assertEquals(
-            $test->sortKeyDesc()->first(),
             'peer',
+            $test->sortKeyDesc()->first(),
             'sort collection desc with key'
         );
         $test->replace($original);
@@ -183,7 +196,7 @@ class CollectionTest extends TestCase
         $this->assertEquals(
             $test->clone()->reverse()->first(),
             $test->last(),
-            'clone collection without interupt original'
+            'clone collection without interrupt original'
         );
 
         // reject
@@ -192,14 +205,14 @@ class CollectionTest extends TestCase
         $this->assertEquals(
             $test->reject(fn ($item) => $item == 'jeruk')->all(),
             $copy_origin,
-            'its like filter but the oposite'
+            'its like filter but the opposite'
         );
 
         // chunk
         $chunk = $test->clone()->chunk(3)->all();
         $this->assertEquals(
             [
-                ['buah_1' => 'mangga', 'buah_3' => 'apel', 'buah_4' => 'melon'],
+                ['buah_1' => 'manga', 'buah_3' => 'apel', 'buah_4' => 'melon'],
                 ['buah_5' => 'rambutan', 'buah_6' => 'peer'],
             ],
             $chunk,
@@ -210,7 +223,7 @@ class CollectionTest extends TestCase
         $split = $test->clone()->split(3)->all();
         $this->assertEquals(
             [
-                ['buah_1' => 'mangga', 'buah_3' => 'apel'],
+                ['buah_1' => 'manga', 'buah_3' => 'apel'],
                 ['buah_4' => 'melon', 'buah_5' => 'rambutan'],
                 ['buah_6' => 'peer'],
             ],
@@ -220,21 +233,21 @@ class CollectionTest extends TestCase
 
         $only = $test->clone()->only(['buah_1', 'buah_5']);
         $this->assertEquals(
-            ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
+            ['buah_1' => 'manga', 'buah_5' => 'rambutan'],
             $only->all(),
             'show only some'
         );
 
         $except = $test->clone()->except(['buah_3', 'buah_4', 'buah_6']);
         $this->assertEquals(
-            ['buah_1' => 'mangga', 'buah_5' => 'rambutan'],
+            ['buah_1' => 'manga', 'buah_5' => 'rambutan'],
             $except->all(),
             'show list with except'
         );
 
-        // fletten
+        // flatten
         $array_nesting = [
-            'first' => ['buah_1' => 'mangga', ['buah_2' => 'jeruk', 'buah_3' => 'apel', 'buah_4' => 'melon']],
+            'first' => ['buah_1' => 'manga', ['buah_2' => 'jeruk', 'buah_3' => 'apel', 'buah_4' => 'melon']],
             'mid'   => ['buah_4' => 'melon', ['buah_5' => 'rambutan']],
             'last'  => ['buah_6' => 'peer'],
         ];
@@ -247,7 +260,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCollectionChainWorkGreat(): void
+    public function testItCollectionChainWorkGreat(): void
     {
         $origin     = [0, 1, 2, 3, 4];
         $collection = new Collection($origin);
@@ -272,7 +285,7 @@ class CollectionTest extends TestCase
 
                 return ($a < $b) ? -1 : 1;
             })
-            ->sortByDecs(function ($a, $b) {
+            ->sortByDesc(function ($a, $b) {
                 if ($b == $a) {
                     return 0;
                 }
@@ -282,11 +295,11 @@ class CollectionTest extends TestCase
             ->all()
         ;
 
-        $this->assertEquals($chain, $origin, 'all collection with chain is wotk');
+        $this->assertEquals($chain, $origin, 'all collection with chain is work');
     }
 
     /** @test */
-    public function itCanAddCollectionFromCollection()
+    public function testItCanAddCollectionFromCollection()
     {
         $arr_1 = ['a' => 'b'];
         $arr_2 = ['c' => 'd'];
@@ -297,11 +310,11 @@ class CollectionTest extends TestCase
         $collect = new Collection([]);
         $collect->ref($collect_1)->ref($collect_2);
 
-        $this->assertEquals(['a'=>'b', 'c'=>'d'], $collect->all());
+        $this->assertEquals(['a' => 'b', 'c' => 'd'], $collect->all());
     }
 
     /** @test */
-    public function itCanActingLikeArray()
+    public function testItCanActingLikeArray()
     {
         $coll = new Collection(['one' => 1, 'two' => 2, 'three' => 3]);
 
@@ -311,7 +324,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanDoLikeArray()
+    public function testItCanDoLikeArray()
     {
         $arr  = ['one' => 1, 'two' => 2, 'three' => 3];
         $coll = new Collection($arr);
@@ -334,7 +347,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanByIterator()
+    public function testItCanByIterator()
     {
         $coll = new Collection(['one' => 1, 'two' => 2, 'three' => 3]);
 
@@ -344,7 +357,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanByShuffle()
+    public function testItCanByShuffle()
     {
         $arr  = ['one' => 1, 'two' => 2, 'three' => 3];
         $coll = new Collection($arr);
@@ -357,7 +370,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanMapWithKeys()
+    public function testItCanMapWithKeys()
     {
         $arr = new Collection([
             [
@@ -365,20 +378,20 @@ class CollectionTest extends TestCase
                 'email' => 'taylor@laravel.com',
             ], [
                 'name'  => 'giovannini',
-                'email' => 'agisoftt@gmail.com',
+                'email' => 'giovannini@gmail.com',
             ],
         ]);
 
         $assocBy = $arr->assocBy(fn ($item) => [$item['name'] => $item['email']]);
 
         $this->assertEquals([
-            'taylor'  => 'taylor@laravel.com',
-            'agisoftt' => 'agisoftt@gmail.com',
+            'taylor'     => 'taylor@laravel.com',
+            'giovannini' => 'giovannini@gmail.com',
         ], $assocBy->toArray());
     }
 
     /** @test */
-    public function itCanCloneColection()
+    public function testItCanCloneCollection()
     {
         $ori = new Collection([
             'one' => 'one',
@@ -399,17 +412,17 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetSumUsingReduce()
+    public function testItCanGetSumUsingReduce()
     {
         $collection = new Collection([1, 2, 3, 4]);
 
-        $sum = $collection->reduse(fn ($carry, $item) => $carry + $item);
+        $sum = $collection->reduce(fn ($carry, $item) => $carry + $item);
 
         $this->assertTrue($sum === 10);
     }
 
     /** @test */
-    public function itCanGetTakeFirst()
+    public function testItCanGetTakeFirst()
     {
         $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
 
@@ -417,7 +430,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetTakeLast()
+    public function testItCanGetTakeLast()
     {
         $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
 
@@ -425,7 +438,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanPushNewItem()
+    public function testItCanPushNewItem()
     {
         $coll = new Collection([10, 20, 30, 40, 50, 60, 70, 80, 90]);
         $coll->push(100);
@@ -434,7 +447,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetDiff()
+    public function testItCanGetDiff()
     {
         $coll = new Collection([1, 2, 3, 4, 5]);
         $coll->diff([2, 4, 6, 8]);
@@ -443,10 +456,10 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetDiffUsingKey()
+    public function testItCanGetDiffUsingKey()
     {
         $coll = new Collection([
-            'buah_1' => 'mangga',
+            'buah_1' => 'manga',
             'buah_2' => 'jeruk',
             'buah_3' => 'apel',
             'buah_4' => 'melon',
@@ -454,20 +467,20 @@ class CollectionTest extends TestCase
         ]);
         $coll->diffKeys([
             'buah_2' => 'orange',
-            'buah_4' => 'water malon',
+            'buah_4' => 'water melon',
             'buah_6' => 'six',
             'buah_8' => 'eight',
         ]);
 
         $this->assertEquals([
-            'buah_1' => 'mangga',
+            'buah_1' => 'manga',
             'buah_3' => 'apel',
             'buah_5' => 'rambutan',
         ], $coll->toArray());
     }
 
     /** @test */
-    public function itCanGetDiffUsingAssoc()
+    public function testItCanGetDiffUsingAssoc()
     {
         $coll = new Collection([
             'color'   => 'green',
@@ -489,7 +502,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetcomplement()
+    public function testItCanGetComplement()
     {
         $coll = new Collection([1, 2, 3, 4, 5]);
         $coll->complement([2, 4, 6, 8]);
@@ -498,10 +511,10 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetComplementUsingKey()
+    public function testItCanGetComplementUsingKey()
     {
         $coll = new Collection([
-            'buah_1' => 'mangga',
+            'buah_1' => 'manga',
             'buah_2' => 'jeruk',
             'buah_3' => 'apel',
             'buah_4' => 'melon',
@@ -509,7 +522,7 @@ class CollectionTest extends TestCase
         ]);
         $coll->complementKeys([
             'buah_2' => 'orange',
-            'buah_4' => 'water malon',
+            'buah_4' => 'water melon',
             'buah_6' => 'six',
             'buah_8' => 'eight',
         ]);
@@ -521,7 +534,7 @@ class CollectionTest extends TestCase
     }
 
     /** @test */
-    public function itCanGetComplementUsingAssoc()
+    public function testItCanGetComplementUsingAssoc()
     {
         $coll = new Collection([
             'color'   => 'green',
@@ -546,7 +559,7 @@ class CollectionTest extends TestCase
     /**
      * @test
      */
-    public function itCanGetFilteredUsingWhere()
+    public function testItCanGetFilteredUsingWhere()
     {
         $data = [
             ['user' => 'user1', 'age' => 10],
@@ -565,53 +578,53 @@ class CollectionTest extends TestCase
             3 => ['user' => 'user4', 'age' => 13],
         ], $identical->toArray());
 
-        $notequal = (new Collection($data))->where('age', '!=', '13');
+        $notEqual = (new Collection($data))->where('age', '!=', '13');
         $this->assertEquals([
             ['user' => 'user1', 'age' => 10],
             ['user' => 'user2', 'age' => 12],
             ['user' => 'user3', 'age' => 10],
             4       => ['user' => 'user5', 'age' => 14],
-        ], $notequal->toArray());
+        ], $notEqual->toArray());
 
-        $notequalidentical = (new Collection($data))->where('age', '!==', 13);
+        $notEqualIdentical = (new Collection($data))->where('age', '!==', 13);
         $this->assertEquals([
             ['user' => 'user1', 'age' => 10],
             ['user' => 'user2', 'age' => 12],
             ['user' => 'user3', 'age' => 10],
             4       => ['user' => 'user5', 'age' => 14],
-        ], $notequalidentical->toArray());
+        ], $notEqualIdentical->toArray());
 
-        $greathat = (new Collection($data))->where('age', '>', 13);
+        $greaterThan = (new Collection($data))->where('age', '>', 13);
         $this->assertEquals([
             4 => ['user' => 'user5', 'age' => 14],
-        ], $greathat->toArray());
+        ], $greaterThan->toArray());
 
-        $greathatequal = (new Collection($data))->where('age', '>=', 13);
+        $greaterThanEqual = (new Collection($data))->where('age', '>=', 13);
         $this->assertEquals([
             3 => ['user' => 'user4', 'age' => 13],
             4 => ['user' => 'user5', 'age' => 14],
-        ], $greathatequal->toArray());
+        ], $greaterThanEqual->toArray());
 
-        $lessthat = (new Collection($data))->where('age', '<', 13);
+        $lessThan = (new Collection($data))->where('age', '<', 13);
         $this->assertEquals([
             ['user' => 'user1', 'age' => 10],
             ['user' => 'user2', 'age' => 12],
             ['user' => 'user3', 'age' => 10],
-        ], $lessthat->toArray());
+        ], $lessThan->toArray());
 
-        $lessthatequal = (new Collection($data))->where('age', '<=', 13);
+        $lessThanEqual = (new Collection($data))->where('age', '<=', 13);
         $this->assertEquals([
             ['user' => 'user1', 'age' => 10],
             ['user' => 'user2', 'age' => 12],
             ['user' => 'user3', 'age' => 10],
             ['user' => 'user4', 'age' => 13],
-        ], $lessthatequal->toArray());
+        ], $lessThanEqual->toArray());
     }
 
     /**
      * @test
      */
-    public function itCanFilterDataUsingWhereIn()
+    public function testItCanFilterDataUsingWhereIn()
     {
         $data = [
             ['user' => 'user1', 'age' => 10],
@@ -632,7 +645,7 @@ class CollectionTest extends TestCase
     /**
      * @test
      */
-    public function itCanFilterDataUsingWhereNotIn()
+    public function testItCanFilterDataUsingWhereNotIn()
     {
         $data = [
             ['user' => 'user1', 'age' => 10],

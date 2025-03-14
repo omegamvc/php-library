@@ -4,6 +4,22 @@ declare(strict_types=1);
 
 namespace System\Collection;
 
+use function array_chunk;
+use function array_diff;
+use function array_diff_assoc;
+use function array_diff_key;
+use function array_key_exists;
+use function array_key_first;
+use function array_reverse;
+use function array_slice;
+use function array_values;
+use function arsort;
+use function call_user_func;
+use function ceil;
+use function in_array;
+use function is_array;
+use function is_callable;
+
 /**
  * @template TKey of array-key
  * @template TValue
@@ -227,7 +243,7 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @return $this
      */
-    public function sortByDecs(callable $callable): self
+    public function sortByDesc(callable $callable): self
     {
         return $this->sortBy($callable)->reverse();
     }
@@ -263,9 +279,9 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @return $this
      */
-    public function chunk(int $lenght, bool $preserve_keys = true): self
+    public function chunk(int $length, bool $preserve_keys = true): self
     {
-        $this->collection = array_chunk($this->collection, $lenght, $preserve_keys);
+        $this->collection = array_chunk($this->collection, $length, $preserve_keys);
 
         return $this;
     }
@@ -275,9 +291,9 @@ class Collection extends AbstractCollectionImmutable
      */
     public function split(int $count, bool $preserve_keys = true): self
     {
-        $lenght = (int) ceil($this->lenght() / $count);
+        $length = (int) ceil($this->length() / $count);
 
-        return $this->chunk($lenght);
+        return $this->chunk($length);
     }
 
     /**
@@ -311,9 +327,9 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function flatten($depth = INF): self
+    public function flatten(int|float $depth = INF): self
     {
-        $flatten = $this->flatten_recursing($this->collection, $depth);
+        $flatten = $this->flattenRecursing($this->collection, $depth);
         $this->replace($flatten);
 
         return $this;
@@ -325,7 +341,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return array<TKey, TValue>
      */
-    private function flatten_recursing(array $array, $depth = INF): array
+    private function flattenRecursing(array $array, int|float $depth = INF): array
     {
         $result = [];
 
@@ -337,7 +353,7 @@ class Collection extends AbstractCollectionImmutable
             } else {
                 $values = $depth === 1
                     ? array_values($item)
-                    : $this->flatten_recursing($item, $depth - 1);
+                    : $this->flattenRecursing($item, $depth - 1);
 
                 foreach ($values as $key_dept => $value) {
                     $result[$key_dept] = $value;
@@ -392,15 +408,15 @@ class Collection extends AbstractCollectionImmutable
      */
     public function assocBy(callable $callable): self
     {
-        /** @var array<TKeyItem, TValueItem> */
-        $new_collection = [];
+        /** @var array<TKeyItem, TValueItem> $newCollection */
+        $newCollection = [];
         foreach ($this->collection as $key => $item) {
-            $array_assoc          = $callable($item, $key);
-            $key                  = array_key_first($array_assoc);
-            $new_collection[$key] = $array_assoc[$key];
+            $arrayAssoc          = $callable($item, $key);
+            $key                  = array_key_first($arrayAssoc);
+            $newCollection[$key] = $arrayAssoc[$key];
         }
 
-        return $this->replace($new_collection);
+        return $this->replace($newCollection);
     }
 
     /**
@@ -411,7 +427,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return TValue|null
      */
-    public function reduse(callable $callable, $carry = null)
+    public function reduce(callable $callable, $carry = null)
     {
         foreach ($this->collection as $item) {
             $carry = $callable($carry, $item);
@@ -441,7 +457,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function diff($collection)
+    public function diff(array $collection): self
     {
         return $this->replace(
             array_diff($this->collection, $collection)
@@ -453,7 +469,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function diffKeys($collection)
+    public function diffKeys(array $collection): self
     {
         return $this->replace(
             array_diff_key($this->collection, $collection)
@@ -465,7 +481,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function diffAssoc($collection)
+    public function diffAssoc(array $collection): self
     {
         return $this->replace(
             array_diff_assoc($this->collection, $collection)
@@ -477,7 +493,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function complement($collection)
+    public function complement(array $collection): self
     {
         return $this->replace(
             array_diff($collection, $this->collection)
@@ -489,7 +505,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function complementKeys($collection)
+    public function complementKeys(array $collection): self
     {
         return $this->replace(
             array_diff_key($collection, $this->collection)
@@ -501,7 +517,7 @@ class Collection extends AbstractCollectionImmutable
      *
      * @return $this
      */
-    public function complementAssoc($collection)
+    public function complementAssoc(array $collection): self
     {
         return $this->replace(
             array_diff_assoc($collection, $this->collection)
@@ -569,6 +585,7 @@ class Collection extends AbstractCollectionImmutable
      */
     public function whereNotIn($key, $range): self
     {
-        return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && false === in_array($TValue[$key], $range));
+        return $this->filter(fn ($TValue) => array_key_exists($key, $TValue)
+            && false === in_array($TValue[$key], $range));
     }
 }

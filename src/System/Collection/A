@@ -1,35 +1,6 @@
-<?php
+Possiamo scrivere dei test per questo file?
 
-/**
- * Part of Omega - Collection Package
- * PHP version 8.3
- *
- * @link      https://omegamvc.github.io
- * @author    Adriano Giovannini <agisoftt@gmail.com>
- * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
- * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
- * @version   1.0.0
- */
-
-declare(strict_types=1);
-
-use System\Collection\Collection;
-
-/**
- * Collection Helper Functions.
- *
- * This file provides utility functions to simplify the creation and management of
- * collection instances, including mutable and immutable collections, as well as
- * a helper for retrieving values from nested arrays using dot notation.
- *
- * @category   Omega
- * @package    Collection
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
- * @version    1.0.0
- */
+```
 if (!function_exists('collection')) {
     /**
      * Creates a new mutable collection instance.
@@ -119,3 +90,70 @@ if (!function_exists('data_get')) {
         return $array;
     }
 }
+```
+
+Questi sono i test di `data_get`
+
+```
+class DataGetTest extends TestCase
+{
+    private array $array = [
+        'awesome' => [
+            'lang' => [
+                'go',
+                'rust',
+                'php',
+                'python',
+                'js',
+            ],
+        ],
+        'fav' => [
+            'lang' => [
+                'rust',
+                'php',
+            ],
+        ],
+        'dont_know' => ['lang_' => ['back_end' => ['erlang', 'h-lang']]],
+        'one'       => ['two' => ['three' => ['four' => ['five' => 6]]]],
+    ];
+
+    /** @test */
+    public function testItCanFindItemUsingDotKeys()
+    {
+        $this->assertEquals(6, data_get($this->array, 'one.two.three.four.five'));
+    }
+
+    /** @test */
+    public function testItCanFindItemUsingDotKeysButDontExist()
+    {
+        $this->assertEquals('six', data_get($this->array, '1.2.3.4.5', 'six'));
+    }
+
+    /** @test */
+    public function testItCanFindItemUsingDotKeysWithWildcard()
+    {
+        $this->assertEquals([
+            ['go', 'rust', 'php', 'python', 'js'],
+            ['rust', 'php'],
+        ], data_get($this->array, '*.lang'));
+    }
+
+    /** @test */
+    public function testItCanGeKeysAsInteger()
+    {
+        $array5 = ['foo', 'bar', 'baz'];
+        $this->assertEquals('bar', data_get($array5, 1));
+        $this->assertNull(data_get($array5, 3));
+        $this->assertEquals('qux', data_get($array5, 3, 'qux'));
+    }
+}
+```
+
+
+Ti spiego il report di phpunit.
+
+Funzione `function collection` il valore di ritorno ('return new Collection($collection);') risulta in rosa quindi non coperto da test.
+Funzione `collection_immutable` il valore di ritorno (`return new Collection($collection);`) risulta in rosa, quindi non copert da test.
+Funzione `data_get` il valore primo `return $default` e `continue` sono in rosa, quindi non coperti dai test.
+
+Possiamo fare qualcosa?

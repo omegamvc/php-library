@@ -1,10 +1,57 @@
 <?php
 
+/**
+ * Part of Omega - Collection Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   1.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Collection;
 
+use ArrayIterator;
+use InvalidArgumentException;
+use Traversable;
+
+use function array_column;
+use function array_count_values;
+use function array_key_exists;
+use function array_key_first;
+use function array_key_last;
+use function array_keys;
+use function array_rand;
+use function array_slice;
+use function array_sum;
+use function call_user_func;
+use function count;
+use function current;
+use function in_array;
+use function is_array;
+use function is_null;
+use function is_object;
+use function json_encode;
+use function max;
+use function min;
+use function next;
+use function prev;
+use function var_dump;
+
 /**
+ *
+ * @category   Omega
+ * @package    Collection
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    1.0.0
+ *
  * @template TKey of array-key
  * @template TValue
  *
@@ -20,7 +67,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @param iterable<TKey, TValue> $collection
      */
-    public function __construct($collection)
+    public function __construct(iterable $collection)
     {
         foreach ($collection as $key => $item) {
             $this->set($key, $item);
@@ -56,24 +103,27 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * @template TGetDefault
      *
-     * @param TKey             $name
+     * @param int|string $name
      * @param TGetDefault|null $default
-     *
      * @return TValue|TGetDefault|null
      */
-    public function get($name, $default = null)
+    public function get(int|string $name, $default = null)
     {
         return $this->collection[$name] ?? $default;
     }
 
     /**
-     * @param TKey   $name
+     * @param TKey|null   $name
      * @param TValue $value
-     *
      * @return $this
+     * @throws InvalidArgumentException if the  key is null.
      */
-    protected function set($name, $value): self
+    protected function set(mixed $name, $value): self
     {
+        if ($name === null) {
+            throw new InvalidArgumentException("Key cannot be null.");
+        }
+
         $this->collection[$name] = $value;
 
         return $this;
@@ -126,32 +176,47 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * Puck given value by array key.
-     *
      * @param TKey      $value Pluck key target as value
      * @param TKey|null $key   Pluck key target as key
-     *
      * @return array<TKey, TValue>
      */
-    public function pluck($value, $key = null)
+    public function pluck($value, $key = null): array
     {
         $results = [];
 
         foreach ($this->collection as $item) {
-            $itemValue = is_array($item) ? $item[$value] : $item->{$value};
+            if (is_array($item)) {
+                $itemValue = $item[$value] ?? null;
+            } elseif (is_object($item)) {
+                $itemValue = $item->{$value} ?? null;
+            } else {
+                $itemValue = null;
+            }
 
             if (is_null($key)) {
                 $results[] = $itemValue;
                 continue;
             }
 
-            $itemKey           = is_array($item) ? $item[$key] : $item->{$key};
-            $results[$itemKey] = $itemValue;
+            if (is_array($item)) {
+                $itemKey = $item[$key] ?? null;
+            } elseif (is_object($item)) {
+                $itemKey = $item->{$key} ?? null;
+            } else {
+                $itemKey = null;
+            }
+
+            if ($itemKey !== null) {
+                $results[$itemKey] = $itemValue;
+            }
         }
 
         return $results;
     }
 
+    /**
+     * @return int
+     */
     public function count(): int
     {
         return count($this->collection);
@@ -159,21 +224,22 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
 
     /**
      * @param callable(TValue, TKey=): bool $condition
+     * @return int
      */
     public function countIf(callable $condition): int
     {
         $count = 0;
         foreach ($this->collection as $key => $item) {
-            $do_somethink = call_user_func($condition, $item, $key);
+            $doSomething = call_user_func($condition, $item, $key);
 
-            $count += $do_somethink === true ? 1 : 0;
+            $count += $doSomething === true ? 1 : 0;
         }
 
         return $count;
     }
 
     /**
-     * @return array<TKey, int>
+     * @return array<int|string, int>
      */
     public function countBy(): array
     {
@@ -185,12 +251,12 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * @return $this
      */
-    public function each($callable): self
+    public function each(callable $callable): self
     {
         foreach ($this->collection as $key => $item) {
-            $do_somethink = call_user_func($callable, $item, $key);
+            $doSomething = call_user_func($callable, $item, $key);
 
-            if (false === $do_somethink) {
+            if (false === $doSomething) {
                 break;
             }
         }
@@ -240,7 +306,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return true;
     }
 
-    public function json(): string
+    /**
+     * @return string|false
+     */
+    public function json(): string|false
     {
         return json_encode($this->collection);
     }
@@ -249,7 +318,6 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      * @template TGetDefault
      *
      * @param TGetDefault|null $default
-     *
      * @return TValue|TGetDefault|null
      */
     public function first($default = null)
@@ -264,7 +332,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * @return array<TKey, TValue>
      */
-    public function firsts(int $take)
+    public function firsts(int $take): array
     {
         return array_slice($this->collection, 0, (int) $take);
     }
@@ -288,7 +356,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * @return array<TKey, TValue>
      */
-    public function lasts(int $take)
+    public function lasts(int $take): array
     {
         return array_slice($this->collection, -$take, (int) $take);
     }
@@ -310,7 +378,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return TValue|false
      */
     public function current()
     {
@@ -318,7 +386,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return TValue|false
      */
     public function next()
     {
@@ -326,7 +394,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return TValue|false
      */
     public function prev()
     {
@@ -334,7 +402,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * @return TValue|null
      */
     public function rand()
     {
@@ -348,42 +416,62 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return empty($this->collection);
     }
 
-    public function lenght(): int
+    public function length(): int
     {
         return count($this->collection);
     }
 
-    public function sum(): int
+    /**
+     * @return float|int
+     */
+    public function sum(): float|int
     {
         return array_sum($this->collection);
     }
 
-    public function avg(): int
+    /**
+     * @return float|int
+     */
+    public function avg(): float|int
     {
         return $this->sum() / $this->count();
     }
 
     /**
-     * Find higest value.
+     * Find highest value.
      *
      * @param string|int|null $key
+     * @return mixed
+     * @throws InvalidArgumentException if the array for max is empty.
      */
-    public function max($key = null): int
+    public function max(string|int|null $key = null): mixed
     {
-        return max(array_column($this->collection, $key));
+        $column = array_column($this->collection, $key);
+
+        if (empty($column)) {
+            throw new InvalidArgumentException("Array for max is empty.");
+        }
+
+        return max($column);
     }
 
     /**
      * Find lowest value.
      *
      * @param string|int|null $key
+     * @return mixed
+     * @throws InvalidArgumentException if the array for min is empty.
      */
-    public function min($key = null): int
+    public function min(string|int|null $key = null): mixed
     {
-        return min(array_column($this->collection, $key));
-    }
+        $column = array_column($this->collection, $key);
 
-    // array able
+        if (empty($column)) {
+            throw new InvalidArgumentException("Array for min is empty.");
+        }
+
+        return min($column);
+    }
 
     /**
      * @param TKey $offset
@@ -394,58 +482,74 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $offset
+     * Retrieves the value at the given offset.
      *
-     * @return TValue|null
+     * This method is required by ArrayAccess.
+     *
+     * @param TKey $offset The offset to retrieve.
+     * @return TValue|null The value at the given offset.
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->__get($offset);
     }
 
+    /**
+     * Sets a value at the given offset.
+     *
+     * This method is required by ArrayAccess.
+     *
+     * @param TKey|null $offset The offset to assign the value to.
+     * @param TValue    $value  The value to store.
+     * @return void
+     */
     public function offsetSet($offset, $value): void
     {
         $this->set($offset, $value);
     }
 
+    /**
+     * Unsets the value at the given offset.
+     *
+     * This method is required by ArrayAccess.
+     *
+     * @param TKey $offset The offset to unset.
+     * @return void
+     */
     public function offsetUnset($offset): void
     {
     }
 
     /**
-     * @return \Traversable<TKey, TValue>
+     * @return Traversable<TKey, TValue>
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->all());
+        return new ArrayIterator($this->all());
     }
 
     public function __clone()
     {
+        /** @phpstan-ignore-next-line */
         $this->collection = $this->deepClone($this->collection);
     }
 
     /**
      * @param array<TKey, TValue> $collection
-     *
      * @return array<TKey, TValue>
      */
-    protected function deepClone($collection)
+    /** @phpstan-ignore-next-line */
+    protected function deepClone(array $collection): array
     {
         $clone = [];
         foreach ($collection as $key => $value) {
             if (is_array($value)) {
                 $clone[$key] = $this->deepClone($value);
-                continue;
-            }
-
-            if (is_object($value)) {
+            } elseif (is_object($value)) {
                 $clone[$key] = clone $value;
-                continue;
+            } else {
+                $clone[$key] = $value;
             }
-
-            $clone[$key] = $value;
         }
 
         return $clone;
