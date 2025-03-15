@@ -150,7 +150,7 @@ class Validation
      */
     public function __construct(string $lang = 'en')
     {
-        $lang_file_location = __DIR__.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$lang.'.php';
+        $lang_file_location = __DIR__ . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $lang . '.php';
 
         if (!EnvHelpers::file_exists($lang_file_location)) {
             throw new Exception(sprintf("'%s' language is not supported.", $lang));
@@ -771,7 +771,7 @@ class Validation
      */
     protected function get_messages()
     {
-        $lang_file = __DIR__.DIRECTORY_SEPARATOR.'lang'.DIRECTORY_SEPARATOR.$this->lang.'.php';
+        $lang_file = __DIR__ . DIRECTORY_SEPARATOR . 'lang' . DIRECTORY_SEPARATOR . $this->lang . '.php';
         $messages = include $lang_file;
 
         return array_merge($messages, self::$validation_methods_errors);
@@ -1374,7 +1374,7 @@ class Validation
      */
     protected function validate_alpha($field, array $input, array $params = [], $value = null)
     {
-        return preg_match('/^(['.self::$alpha_regex.'])+$/i', $value) > 0;
+        return preg_match('/^([' . self::$alpha_regex . '])+$/i', $value) > 0;
     }
 
     /**
@@ -1388,7 +1388,7 @@ class Validation
      */
     protected function validate_alpha_numeric($field, array $input, array $params = [], $value = null)
     {
-        return preg_match('/^(['.self::$alpha_regex.'0-9])+$/i', $value) > 0;
+        return preg_match('/^([' . self::$alpha_regex . '0-9])+$/i', $value) > 0;
     }
 
     /**
@@ -1402,7 +1402,7 @@ class Validation
      */
     protected function validate_alpha_dash($field, array $input, array $params = [], $value = null)
     {
-        return preg_match('/^(['.self::$alpha_regex.'_-])+$/i', $value) > 0;
+        return preg_match('/^([' . self::$alpha_regex . '_-])+$/i', $value) > 0;
     }
 
     /**
@@ -1416,7 +1416,7 @@ class Validation
      */
     protected function validate_alpha_numeric_dash($field, array $input, array $params = [], $value = null)
     {
-        return preg_match('/^(['.self::$alpha_regex.'0-9_-])+$/i', $value) > 0;
+        return preg_match('/^([' . self::$alpha_regex . '0-9_-])+$/i', $value) > 0;
     }
 
     /**
@@ -1430,7 +1430,7 @@ class Validation
      */
     protected function validate_alpha_numeric_space($field, array $input, array $params = [], $value = null)
     {
-        return preg_match('/^(['.self::$alpha_regex.'\s0-9])+$/i', $value) > 0;
+        return preg_match('/^([' . self::$alpha_regex . '\s0-9])+$/i', $value) > 0;
     }
 
     /**
@@ -1444,7 +1444,7 @@ class Validation
      */
     protected function validate_alpha_space($field, array $input, array $params = [], $value = null)
     {
-        return preg_match('/^(['.self::$alpha_regex.'\s])+$/i', $value) > 0;
+        return preg_match('/^([' . self::$alpha_regex . '\s])+$/i', $value) > 0;
     }
 
     /**
@@ -1681,7 +1681,7 @@ class Validation
         }
 
         $iban = str_replace(' ', '', $value);
-        $iban = substr($iban, 4).substr($iban, 0, 4);
+        $iban = substr($iban, 4) . substr($iban, 0, 4);
         $iban = strtr($iban, $character);
 
         return bcmod($iban, 97) == 1;

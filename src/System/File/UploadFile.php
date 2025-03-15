@@ -9,7 +9,7 @@ use System\File\Exceptions\FileNotUploadedException;
 use System\File\Exceptions\FolderNotExistsException;
 use System\File\Exceptions\MultiFileUploadDetectException;
 
- class UploadFile extends AbstarctUpload
+class UploadFile extends AbstarctUpload
 {
     /**
      * {@inheritDoc}

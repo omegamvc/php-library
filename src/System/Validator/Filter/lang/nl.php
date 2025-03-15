@@ -1,4 +1,5 @@
 <?php
+
 return array(
     'required'             => 'Het veld {field} is verplicht',
     'valid_email'          => 'Het veld {field} moet een geldige e-mail zijn',

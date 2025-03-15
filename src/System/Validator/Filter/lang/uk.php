@@ -1,4 +1,5 @@
 <?php
+
 return array(
     'required' => 'Поле {field} є обов’язковим',
     'valid_email' => 'Поле {field} має бути Email адресою',

@@ -427,7 +427,7 @@ class MigrationCommand extends Command
         return 0;
     }
 
-    public function databaseCreate(bool $silent=false): int
+    public function databaseCreate(bool $silent = false): int
     {
         $db_name = $this->DbName();
         $message = style("Do you want to create database `{$db_name}`?")->textBlue();

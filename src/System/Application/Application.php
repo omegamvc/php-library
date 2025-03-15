@@ -1089,12 +1089,14 @@ final class Application extends Container
      */
     protected function registerAlias(): void
     {
-        foreach ([
+        foreach (
+            [
             'request'       => [Request::class],
             'view.instance' => [Templator::class],
             'vite.gets'     => [Vite::class],
             'config'        => [ConfigRepository::class],
-        ] as $abstrack => $aliases) {
+            ] as $abstrack => $aliases
+        ) {
             foreach ($aliases as $alias) {
                 $this->alias($abstrack, $alias);
             }

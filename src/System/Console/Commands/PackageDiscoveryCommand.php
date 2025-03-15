@@ -8,8 +8,8 @@ use System\Console\Command;
 use System\Console\Style\Style;
 use System\Application\Application;
 use System\Application\PackageManifest;
-
 use Throwable;
+
 use function System\Console\fail;
 use function System\Console\info;
 

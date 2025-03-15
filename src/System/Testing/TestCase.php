@@ -89,7 +89,7 @@ class TestCase extends BaseTestCase
      * @param array<string, string> $post
      * @param array<string, string> $files
      */
-    protected function post(string $url, array $post, array $files =[]): TestResponse
+    protected function post(string $url, array $post, array $files = []): TestResponse
     {
         return $this->call(url: $url, post: $post, files: $files, method: 'POST');
     }
