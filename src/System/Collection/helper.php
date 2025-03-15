@@ -91,7 +91,6 @@ if (!function_exists('data_get')) {
             if (!is_array($array)) {
                 return $default;
             }
-
             if (array_key_exists($segment, $array)) {
                 $array = $array[$segment];
             } elseif ('*' === $segment) {
@@ -103,14 +102,15 @@ if (!function_exists('data_get')) {
 
                     /** @var array<array-key, TValue> $item */
                     $value = data_get($item, implode('.', array_slice($segments, 1)), $default);
-
-                    if (null !== $value) {
+                    if (is_array($value)) {
+                        $values = array_merge($values, $value);
+                    } elseif (null !== $value) {
                         $values[] = $value;
                     }
                 }
 
                 /** @var array<array-key, TValue> $values */
-                return count($values) > 0 ? $values : $default;
+                return count($values) > 0 ? $values : [];
             } else {
                 return $default;
             }

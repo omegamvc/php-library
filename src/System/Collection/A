@@ -1,100 +1,136 @@
-Possiamo scrivere dei test per questo file?
+Questi sono i test che falliscono.
 
 ```
-if (!function_exists('collection')) {
-    /**
-     * Creates a new mutable collection instance.
-     *
-     * This helper provides an easy way to instantiate a `Collection` object
-     * from an iterable data source.
-     *
-     * @template TKey of array-key
-     * @template TValue
-     *
-     * @param iterable<TKey, TValue> $collection The iterable data source.
-     * @return Collection<TKey, TValue> The created collection instance.
-     */
-    function collection(iterable $collection = []): Collection
-    {
-        return new Collection($collection);
-    }
-}
+root@localhost:/home/morpheus/www/php-mvc# vendor/bin/phpunit vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php
+PHPUnit 12.0.7 by Sebastian Bergmann and contributors.
 
-if (!function_exists('collection_immutable')) {
-    /**
-     * Creates a new immutable collection instance.
-     *
-     * This helper allows creating an immutable collection from an iterable
-     * data source, ensuring that its contents cannot be modified after initialization.
-     *
-     * @template TKey of array-key
-     * @template TValue
-     *
-     * @param iterable<TKey, TValue> $collection The iterable data source.
-     * @return Collection<TKey, TValue> The created immutable collection instance.
-     */
-    function collection_immutable(iterable $collection = []): Collection
-    {
-        return new Collection($collection);
-    }
-}
+Runtime:       PHP 8.3.19 with Xdebug 3.4.1
+Configuration: /home/morpheus/www/php-mvc/phpunit.xml.dist
 
-if (!function_exists('data_get')) {
-    /**
-     * Retrieves a value from a nested array using dot notation.
-     *
-     * This function allows accessing deeply nested values within an array
-     * structure using a string-based dot notation.
-     *
-     * @template TValue
-     * @template TGetDefault
-     *
-     * @param array<array-key, TValue> $array   The array to search within.
-     * @param array-key                $key     The dot-notation key path.
-     * @param TGetDefault              $default The default value to return if the key is not found.
-     * @return TGetDefault|array<array-key, TValue>|null The retrieved value or the default if not found.
-     */
-    function data_get(array $array, int|string $key, mixed $default = null): mixed
-    {
-        $segments = explode('.', (string) $key);
+.                                                                   1 / 1 (100%)
 
-        foreach ($segments as $segment) {
-            if (!is_array($array)) {
-                return $default;
-            }
+Time: 00:04.729, Memory: 166.00 MB
 
-            if (array_key_exists($segment, $array)) {
-                $array = $array[$segment];
-            } elseif ('*' === $segment) {
-                $values = [];
-                foreach ($array as $item) {
-                    if (!is_array($item)) {
-                        continue;
-                    }
+Data Get (Test\Collection\DataGet)
+ ✔ It handles continue in wildcard search
 
-                    /** @var array<array-key, TValue> $item */
-                    $value = data_get($item, implode('.', array_slice($segments, 1)), $default);
+Summary of tests with errors, failures, or issues:
 
-                    if (null !== $value) {
-                        $values[] = $value;
-                    }
-                }
+OK (1 test, 1 assertion)
 
-                /** @var array<array-key, TValue> $values */
-                return count($values) > 0 ? $values : $default;
-            } else {
-                return $default;
-            }
-        }
+Generating code coverage report in HTML format ... ^Croot@localhost:/home/morpheus/www/php-mvc# ^C
+root@localhost:/home/morpheus/www/php-mvc# vendor/bin/phpunit vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php
+PHPUnit 12.0.7 by Sebastian Bergmann and contributors.
 
-        return $array;
-    }
-}
+Runtime:       PHP 8.3.19 with Xdebug 3.4.1
+Configuration: /home/morpheus/www/php-mvc/phpunit.xml.dist
+
+....F..F.                                                           9 / 9 (100%)
+
+Time: 00:12.076, Memory: 164.00 MB
+
+Data Get (Test\Collection\DataGet)
+ ✔ It can find item using dot keys
+ ✔ It can find item using dot keys but dont exist
+ ✘ It can find item using dot keys with wildcard
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:43
+   ┴
+ ✔ It can ge keys as integer
+ ✔ It returns default when key is not found
+ ✔ It returns null when key is not found and no default
+ ✘ It can handle wildcard with no match
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:69
+   ┴
+ ✔ It can return default with empty array
+ ✔ It handles continue in wildcard search
+
+Summary of tests with errors, failures, or issues:
+
+Data Get (Test\Collection\DataGet)
+ ✘ It can find item using dot keys with wildcard
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:43
+   ┴
+ ✘ It can handle wildcard with no match
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:69
+   ┴
+
+FAILURES!
+Tests: 9, Assertions: 11, Failures: 2.
+
+Generating code coverage report in HTML format ... ^Croot@localhost:/home/morpheus/www/php-mvc# vendor/bin/phpunit vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php
+PHPUnit 12.0.7 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 8.3.19 with Xdebug 3.4.1
+Configuration: /home/morpheus/www/php-mvc/phpunit.xml.dist
+
+FF.......                                                           9 / 9 (100%)
+
+Time: 00:06.484, Memory: 164.00 MB
+
+Data Get (Test\Collection\DataGet)
+ ✔ It can find item using dot keys
+ ✔ It can find item using dot keys but dont exist
+ ✘ It can find item using dot keys with wildcard
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:43
+   ┴
+ ✔ It can ge keys as integer
+ ✔ It returns default when key is not found
+ ✔ It returns null when key is not found and no default
+ ✘ It can handle wildcard with no match
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:69
+   ┴
+ ✔ It can return default with empty array
+ ✔ It handles continue in wildcard search
+
+Summary of tests with errors, failures, or issues:
+
+Data Get (Test\Collection\DataGet)
+ ✘ It can find item using dot keys with wildcard
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:43
+   ┴
+ ✘ It can handle wildcard with no match
+   ┐
+   ├ null does not match expected type "array".
+   │
+   │ /home/morpheus/www/php-mvc/vendor/omegamvc/php-library/tests/Test/Collection/DataGetTest.php:69
+   ┴
+
+FAILURES!
+Tests: 9, Assertions: 11, Failures: 2.
 ```
 
-Questi sono i test di `data_get`
+E questi sono i test
 
 ```
+<?php
+
+declare(strict_types=1);
+
+namespace Test\Collection;
+
+use PHPUnit\Framework\TestCase;
+
 class DataGetTest extends TestCase
 {
     private array $array = [
@@ -117,19 +153,16 @@ class DataGetTest extends TestCase
         'one'       => ['two' => ['three' => ['four' => ['five' => 6]]]],
     ];
 
-    /** @test */
     public function testItCanFindItemUsingDotKeys()
     {
         $this->assertEquals(6, data_get($this->array, 'one.two.three.four.five'));
     }
 
-    /** @test */
     public function testItCanFindItemUsingDotKeysButDontExist()
     {
         $this->assertEquals('six', data_get($this->array, '1.2.3.4.5', 'six'));
     }
 
-    /** @test */
     public function testItCanFindItemUsingDotKeysWithWildcard()
     {
         $this->assertEquals([
@@ -138,7 +171,6 @@ class DataGetTest extends TestCase
         ], data_get($this->array, '*.lang'));
     }
 
-    /** @test */
     public function testItCanGeKeysAsInteger()
     {
         $array5 = ['foo', 'bar', 'baz'];
@@ -146,14 +178,37 @@ class DataGetTest extends TestCase
         $this->assertNull(data_get($array5, 3));
         $this->assertEquals('qux', data_get($array5, 3, 'qux'));
     }
+
+    public function testItReturnsDefaultWhenKeyIsNotFound()
+    {
+        $this->assertEquals('six', data_get($this->array, '1.2.3.4.5', 'six'));
+    }
+
+    public function testItReturnsNullWhenKeyIsNotFoundAndNoDefault()
+    {
+        $this->assertNull(data_get($this->array, 'non.existing.key'));
+    }
+
+    public function testItCanHandleWildcardWithNoMatch()
+    {
+        $this->assertEquals([], data_get($this->array, '*.non_existing_key'));
+    }
+
+    public function testItCanReturnDefaultWithEmptyArray()
+    {
+        $this->assertEquals('default', data_get([], 'some.key', 'default'));
+    }
+
+    public function testItHandlesContinueInWildcardSearch()
+    {
+        // Example array with nested array for wildcard
+        $array = [
+            ['lang' => ['go', 'rust', 'php']],
+            ['lang' => ['python', 'js']],
+            ['lang' => ['java', 'c++']],
+        ];
+
+        $this->assertEquals(['go', 'rust', 'php'], data_get($array, '*.lang'));
+    }
 }
 ```
-
-
-Ti spiego il report di phpunit.
-
-Funzione `function collection` il valore di ritorno ('return new Collection($collection);') risulta in rosa quindi non coperto da test.
-Funzione `collection_immutable` il valore di ritorno (`return new Collection($collection);`) risulta in rosa, quindi non copert da test.
-Funzione `data_get` il valore primo `return $default` e `continue` sono in rosa, quindi non coperti dai test.
-
-Possiamo fare qualcosa?
