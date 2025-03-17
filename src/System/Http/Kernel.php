@@ -7,7 +7,7 @@ namespace System\Http;
 use System\Application\Application;
 use System\Bootstrap\BootProviders;
 use System\Bootstrap\ConfigProviders;
-use System\Bootstrap\HandleExceptions;
+use System\Bootstrap\HandlerExceptions;
 use System\Bootstrap\RegisterFacades;
 use System\Bootstrap\RegisterProviders;
 use System\Exceptions\Handler;
@@ -32,7 +32,7 @@ class Kernel
     /** @var array<int, class-string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
-        HandleExceptions::class,
+        HandlerExceptions::class,
         RegisterFacades::class,
         RegisterProviders::class,
         BootProviders::class,

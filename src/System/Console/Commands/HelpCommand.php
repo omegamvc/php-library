@@ -9,7 +9,7 @@ use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Application\Application;
 use System\Console\Util;
-use System\Integrate\ValueObjects\CommandMap;
+use System\Console\CommandMap;
 use System\Text\Str;
 
 use function System\Console\info;
@@ -261,6 +261,6 @@ class HelpCommand extends Command
      */
     private function commandMaps(): array
     {
-        return Util::loadCommandFromConfig(Application::getIntance());
+        return Util::loadCommandFromConfig(Application::getInstance());
     }
 }

@@ -6,7 +6,7 @@ namespace System\Console;
 
 use System\Application\Application;
 use System\Config\ConfigRepository;
-use System\Integrate\ValueObjects\CommandMap;
+use System\Console\CommandMap;
 
 final class Util
 {

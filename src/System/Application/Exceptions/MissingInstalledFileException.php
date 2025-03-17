@@ -18,12 +18,27 @@ namespace System\Application\Exceptions;
 use RuntimeException;
 
 /**
- * Exception thrown when the application is not available.
+ * MissingInstalledFileException class.
  *
- * This exception is thrown when an attempt is made to access the application
- * container before it has been properly initialized or started. It signals that
- * the application is not yet ready for use. This exception extends the
- * `RuntimeException` class to indicate that the error occurs during runtime.
+ * The `MissingInstalledFileException` is thrown when the installed.php file is missing from the
+ * Composer vendor directory. This file contains metadata about installed packages and is essential
+ * for proper dependency resolution.
+ *
+ * Possible causes include:
+ *
+ * - Running the application before installing dependencies with Composer.
+ * - Deleting the vendor directory or its contents without reinstalling dependencies.
+ * - An incomplete or corrupted Composer installation.
+ *
+ * To resolve this issue, try running:
+ * ```sh
+ * composer dump-autoload -o
+ * ```
+ *
+ * If the problem persists, consider reinstalling dependencies with:
+ * ```sh
+ * composer install
+ * ```
  *
  * @category   System
  * @package    Application
@@ -34,18 +49,6 @@ use RuntimeException;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version    1.0.0
  */
-class ApplicationNotAvailableException extends RuntimeException
+class MissingInstalledFileException extends RuntimeException
 {
-    /**
-     * Creates a new Exception instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct(
-            'Application is not available yet.
-            Please ensure the application is properly initialized before accessing it.'
-        );
-    }
 }

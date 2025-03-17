@@ -18,12 +18,12 @@ namespace System\Application\Exceptions;
 use RuntimeException;
 
 /**
- * Exception thrown when the application is not available.
+ * Exception thrown when the singleton class cannot be determined.
  *
- * This exception is thrown when an attempt is made to access the application
- * container before it has been properly initialized or started. It signals that
- * the application is not yet ready for use. This exception extends the
- * `RuntimeException` class to indicate that the error occurs during runtime.
+ * This exception is used in situations where the singleton class name cannot
+ * be resolved, typically during the instantiation of the singleton. This may
+ * happen if the class is not properly defined or does not exist in the current
+ * context. It extends `RuntimeException` to signal a runtime error.
  *
  * @category   System
  * @package    Application
@@ -34,18 +34,6 @@ use RuntimeException;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version    1.0.0
  */
-class ApplicationNotAvailableException extends RuntimeException
+class UndefinedSingletonClassException extends RuntimeException
 {
-    /**
-     * Creates a new Exception instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct(
-            'Application is not available yet.
-            Please ensure the application is properly initialized before accessing it.'
-        );
-    }
 }

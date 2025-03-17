@@ -245,14 +245,14 @@ class MakeCommand extends Command
         ]);
 
         if ($success) {
-            $geContent = file_get_contents(config_path() . 'command.config.php');
+            $geContent = file_get_contents(config_path() . 'command.php');
             $geContent = str_replace(
                 '// more command here',
                 "// {$name} \n\t" . 'App\\Commands\\' . $name . 'Command::$' . "command\n\t// more command here",
                 $geContent
             );
 
-            file_put_contents(config_path() . 'command.config.php', $geContent);
+            file_put_contents(config_path() . 'command.php', $geContent);
 
             ok('Finish created command file')->out();
 

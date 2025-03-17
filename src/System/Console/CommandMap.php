@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate\ValueObjects;
+namespace System\Console;
 
 use ArrayAccess;
 use Exception;

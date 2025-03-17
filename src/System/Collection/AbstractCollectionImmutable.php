@@ -43,6 +43,10 @@ use function prev;
 use function var_dump;
 
 /**
+ * AbstractCollectionImmutable class.
+ *
+ * An abstract immutable collection that provides basic methods for managing key-value pairs.
+ * This class ensures immutability by only allowing modification through internal methods.
  *
  * @category   Omega
  * @package    Collection
@@ -59,13 +63,14 @@ use function var_dump;
  */
 abstract class AbstractCollectionImmutable implements CollectionInterface
 {
-    /**
-     * @var array<TKey, TValue>
-     */
+    /**@var array<TKey, TValue> Stores the collection data as an associative array. */
     protected array $collection = [];
 
     /**
-     * @param iterable<TKey, TValue> $collection
+     * Initializes the collection with the given iterable data.
+     *
+     * @param iterable<TKey, TValue> $collection Holds the initial collection of key-value pairs.
+     * @return void
      */
     public function __construct(iterable $collection)
     {
@@ -75,9 +80,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $name
+     * Retrieves a value from the collection using the object property syntax.
      *
-     * @return TValue|null
+     * @param TKey $name Holds the key to retrieve.
+     * @return TValue|null Return the value associated with the key or null if not found.
      */
     public function __get($name)
     {
@@ -85,7 +91,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return array<TKey, TValue>
+     * Returns all elements in the collection as an associative array.
+     *
+     * @return array<TKey, TValue> Holds the entire collection.
      */
     public function all(): array
     {
@@ -101,11 +109,13 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * Retrieves a value from the collection by key, with an optional default value.
+     *
      * @template TGetDefault
      *
-     * @param int|string $name
-     * @param TGetDefault|null $default
-     * @return TValue|TGetDefault|null
+     * @param int|string $name The key to retrieve.
+     * @param TGetDefault|null $default The default value if the key does not exist.
+     * @return TValue|TGetDefault|null The value associated with the key or the default value.
      */
     public function get(int|string $name, $default = null)
     {
@@ -113,10 +123,12 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey|null   $name
-     * @param TValue $value
+     * Sets a value in the collection.
+     *
+     * @param TKey|null $name The key to assign the value to.
+     * @param TValue $value The value to store.
      * @return $this
-     * @throws InvalidArgumentException if the  key is null.
+     * @throws InvalidArgumentException if the key is null.
      */
     protected function set(mixed $name, $value): self
     {
@@ -130,10 +142,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * Push item (set without key).
+     * Pushes an item into the collection without a key.
      *
-     * @param TValue $value
-     *
+     * @param TValue $value The value to append.
      * @return $this
      */
     protected function push($value): self
@@ -144,7 +155,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $key
+     * Checks if a key exists in the collection.
+     *
+     * @param TKey $key The key to check.
+     * @return bool True if the key exists, false otherwise.
      */
     public function has($key): bool
     {
@@ -152,7 +166,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TValue $item
+     * Checks if a value exists in the collection.
+     *
+     * @param TValue $item The value to check.
+     * @param bool $strict Whether to use strict comparison (default: false).
+     * @return bool True if the value is found, false otherwise.
      */
     public function contain($item, bool $strict = false): bool
     {
@@ -160,7 +178,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TKey[]
+     * Returns all the keys in the collection.
+     *
+     * @return TKey[] The list of keys.
      */
     public function keys(): array
     {
@@ -168,7 +188,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue[]
+     * Returns all values in the collection.
+     *
+     * @return TValue[] The list of values.
      */
     public function items(): array
     {
@@ -176,9 +198,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey      $value Pluck key target as value
-     * @param TKey|null $key   Pluck key target as key
-     * @return array<TKey, TValue>
+     * Extracts a specific key's values from the collection.
+     *
+     * @param TKey $value The key whose values should be extracted.
+     * @param TKey|null $key Optional key to use as index in the resulting array.
+     * @return array<TKey, TValue> The extracted values.
      */
     public function pluck($value, $key = null): array
     {
@@ -215,7 +239,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return int
+     * Returns the number of elements in the collection.
+     *
+     * @return int The total count.
      */
     public function count(): int
     {
@@ -223,8 +249,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
-     * @return int
+     * Counts the elements that satisfy a given condition.
+     *
+     * @param callable(TValue, TKey=): bool $condition The condition to check.
+     * @return int The number of elements that match the condition.
      */
     public function countIf(callable $condition): int
     {
@@ -239,7 +267,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return array<int|string, int>
+     * Counts occurrences of values in the collection.
+     *
+     * @return array<int|string, int> An associative array where keys are values and values are counts.
      */
     public function countBy(): array
     {
@@ -247,9 +277,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): (bool|void) $callable
+     * Iterates over the collection and applies a callback to each element.
      *
-     * @return $this
+     * @param callable(TValue, TKey=): (bool|void) $callable The function to apply.
+     * @return $this The current instance.
      */
     public function each(callable $callable): self
     {
@@ -265,7 +296,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return $this
+     * Dumps the collection contents for debugging.
+     *
+     * @return $this The current instance.
      */
     public function dump(): self
     {
@@ -275,7 +308,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * Checks if at least one element satisfies the given condition.
+     *
+     * @param callable(TValue, TKey=): bool $condition The condition to check.
+     * @return bool True if at least one element matches, false otherwise.
      */
     public function some(callable $condition): bool
     {
@@ -291,7 +327,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * Checks if all elements satisfy the given condition.
+     *
+     * @param callable(TValue, TKey=): bool $condition The condition to check.
+     * @return bool True if all elements match, false otherwise.
      */
     public function every(callable $condition): bool
     {
@@ -305,9 +344,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
 
         return true;
     }
-
     /**
-     * @return string|false
+     * Converts the collection to a JSON-encoded string.
+     *
+     * @return string|false The JSON representation or false on failure.
      */
     public function json(): string|false
     {
@@ -315,10 +355,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @template TGetDefault
+     * Retrieves the first element of the collection.
      *
-     * @param TGetDefault|null $default
-     * @return TValue|TGetDefault|null
+     * @template TGetDefault
+     * @param TGetDefault|null $default The default value if the collection is empty.
+     * @return TValue|TGetDefault|null The first element or the default value.
      */
     public function first($default = null)
     {
@@ -328,9 +369,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param positive-int $take
+     * Retrieves the first N elements of the collection.
      *
-     * @return array<TKey, TValue>
+     * @param positive-int $take The number of elements to retrieve.
+     * @return array<TKey, TValue> The first N elements.
      */
     public function firsts(int $take): array
     {
@@ -338,11 +380,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * Retrieves the last element of the collection.
+     *
      * @template TGetDefault
-     *
-     * @param TGetDefault|null $default
-     *
-     * @return TValue|TGetDefault|null
+     * @param TGetDefault|null $default The default value if the collection is empty.
+     * @return TValue|TGetDefault|null The last element or the default value.
      */
     public function last($default = null)
     {
@@ -352,9 +394,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param positive-int $take
+     * Retrieves the last N elements of the collection.
      *
-     * @return array<TKey, TValue>
+     * @param positive-int $take The number of elements to retrieve.
+     * @return array<TKey, TValue> The last N elements.
      */
     public function lasts(int $take): array
     {
@@ -362,7 +405,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TKey|null
+     * Retrieves the first key in the collection.
+     *
+     * @return TKey|null The first key or null if the collection is empty.
      */
     public function firstKey()
     {
@@ -370,7 +415,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TKey|null
+     * Retrieves the last key in the collection.
+     *
+     * @return TKey|null The last key or null if the collection is empty.
      */
     public function lastKey()
     {
@@ -378,7 +425,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue|false
+     * Retrieves the current element in the collection.
+     *
+     * @return TValue|false The current value or false if invalid.
      */
     public function current()
     {
@@ -386,7 +435,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue|false
+     * Advances the internal pointer and returns the next element.
+     *
+     * @return TValue|false The next value or false if at the end.
      */
     public function next()
     {
@@ -394,7 +445,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue|false
+     * Moves the internal pointer backward and returns the previous element.
+     *
+     * @return TValue|false The previous value or false if at the beginning.
      */
     public function prev()
     {
@@ -402,7 +455,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue|null
+     * Retrieves a random item from the collection.
+     *
+     * @return TValue|null The randomly selected item or null if the collection is empty.
      */
     public function rand()
     {
@@ -411,18 +466,30 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return $this->get($rand);
     }
 
+    /**
+     * Checks if the collection is empty.
+     *
+     * @return bool True if the collection has no items, false otherwise.
+     */
     public function isEmpty(): bool
     {
         return empty($this->collection);
     }
 
+    /**
+     * Gets the number of items in the collection.
+     *
+     * @return int The total count of items.
+     */
     public function length(): int
     {
         return count($this->collection);
     }
 
     /**
-     * @return float|int
+     * Computes the sum of all numeric values in the collection.
+     *
+     * @return float|int The sum of all values.
      */
     public function sum(): float|int
     {
@@ -430,7 +497,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return float|int
+     * Computes the average of all numeric values in the collection.
+     *
+     * @return float|int The average value.
      */
     public function avg(): float|int
     {
@@ -438,11 +507,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * Find highest value.
+     * Finds the highest value in the collection.
      *
-     * @param string|int|null $key
-     * @return mixed
-     * @throws InvalidArgumentException if the array for max is empty.
+     * @param string|int|null $key The key to retrieve the maximum value from, if the collection contains arrays or objects.
+     * @return mixed The highest value found.
+     * @throws InvalidArgumentException If the collection is empty.
      */
     public function max(string|int|null $key = null): mixed
     {
@@ -456,11 +525,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * Find lowest value.
+     * Finds the lowest value in the collection.
      *
-     * @param string|int|null $key
-     * @return mixed
-     * @throws InvalidArgumentException if the array for min is empty.
+     * @param string|int|null $key The key to retrieve the minimum value from, if the collection contains arrays or objects.
+     * @return mixed The lowest value found.
+     * @throws InvalidArgumentException If the collection is empty.
      */
     public function min(string|int|null $key = null): mixed
     {
@@ -474,7 +543,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $offset
+     * Checks if the given offset exists in the collection.
+     *
+     * @param TKey $offset The key to check for existence.
+     * @return bool True if the key exists, false otherwise.
      */
     public function offsetExists($offset): bool
     {
@@ -486,8 +558,8 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * This method is required by ArrayAccess.
      *
-     * @param TKey $offset The offset to retrieve.
-     * @return TValue|null The value at the given offset.
+     * @param TKey $offset The key of the item to retrieve.
+     * @return TValue|null The value at the given key or null if not found.
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -499,7 +571,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * This method is required by ArrayAccess.
      *
-     * @param TKey|null $offset The offset to assign the value to.
+     * @param TKey|null $offset The key to assign the value to.
      * @param TValue    $value  The value to store.
      * @return void
      */
@@ -513,7 +585,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
      *
      * This method is required by ArrayAccess.
      *
-     * @param TKey $offset The offset to unset.
+     * @param TKey $offset The key to remove from the collection.
      * @return void
      */
     public function offsetUnset($offset): void
@@ -521,13 +593,20 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return Traversable<TKey, TValue>
+     * Returns an iterator for traversing the collection.
+     *
+     * @return Traversable<TKey, TValue> An iterator for the collection.
      */
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->all());
     }
 
+    /**
+     * Clones the collection, ensuring deep cloning of objects and nested arrays.
+     *
+     * @return void
+     */
     public function __clone()
     {
         /** @phpstan-ignore-next-line */
@@ -535,8 +614,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param array<TKey, TValue> $collection
-     * @return array<TKey, TValue>
+     * Recursively clones an array, ensuring deep cloning of nested arrays and objects.
+     *
+     * @param array<TKey, TValue> $collection The collection to clone.
+     * @return array<TKey, TValue> The cloned collection.
      */
     /** @phpstan-ignore-next-line */
     protected function deepClone(array $collection): array

@@ -13,7 +13,15 @@
 
 declare(strict_types=1);
 
-use System\Collection\Collection;
+namespace System\Collection;
+
+use function array_key_exists;
+use function array_merge;
+use function array_slice;
+use function count;
+use function explode;
+use function implode;
+use function is_array;
 
 /**
  * Collection Helper Functions.

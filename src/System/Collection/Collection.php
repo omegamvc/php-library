@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Collection Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   1.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Collection;
@@ -21,6 +32,23 @@ use function is_array;
 use function is_callable;
 
 /**
+ * Collection class.
+ *
+ * A mutable collection that extends `AbstractCollectionImmutable` and provides methods
+ * for modifying its contents.
+ *
+ * This class allows adding, removing, and transforming elements in a structured way,
+ * making it a flexible tool for handling data collections. Unlike `AbstractCollectionImmutable`,
+ * this class permits in-place modifications.
+ *
+ * @category   Omega
+ * @package    Collection
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    1.0.0
+ *
  * @template TKey of array-key
  * @template TValue
  *
@@ -29,8 +57,11 @@ use function is_callable;
 class Collection extends AbstractCollectionImmutable
 {
     /**
-     * @param TKey   $name
-     * @param TValue $value
+     * Sets a value in the collection using property-style access.
+     *
+     * @param TKey   $name  The key to assign the value to.
+     * @param TValue $value The value to store.
+     * @return void
      */
     public function __set($name, $value): void
     {
@@ -38,10 +69,12 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Add reference from collection.
+     * Adds references from another collection.
      *
-     * @param AbstractCollectionImmutable<TKey, TValue> $collection
+     * This method merges the contents of another `AbstractCollectionImmutable`
+     * into the current collection.
      *
+     * @param AbstractCollectionImmutable<TKey, TValue> $collection The collection to merge.
      * @return $this
      */
     public function ref(AbstractCollectionImmutable $collection): self
@@ -52,6 +85,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Clears all elements from the collection.
+     *
      * @return $this
      */
     public function clear(): self
@@ -62,8 +97,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Adds elements from an array to the collection.
      *
+     * If a key already exists, its value is replaced.
+     *
+     * @param array<TKey, TValue> $collection The array of elements to add.
      * @return $this
      */
     public function add(array $collection): self
@@ -76,8 +114,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param TKey $name
+     * Removes an element from the collection by key.
      *
+     * If the key does not exist, the method does nothing.
+     *
+     * @param TKey $name The key of the element to remove.
      * @return $this
      */
     public function remove($name): self
@@ -90,10 +131,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param TKey   $name
-     * @param TValue $value
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function set($name, $value): self
     {
@@ -103,11 +141,7 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Push item (set without key).
-     *
-     * @param TValue $value
-     *
-     * @return $this
+     * {@inheritdoc}
      */
     public function push($value): self
     {
@@ -117,8 +151,12 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $new_collection
+     * Replaces the current collection with a new one.
      *
+     * This method clears the current collection and adds the elements
+     * from the new collection.
+     *
+     * @param array<TKey, TValue> $new_collection The new collection to replace the current one.
      * @return $this
      */
     public function replace(array $new_collection): self
@@ -132,8 +170,12 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param callable(TValue, TKey=): TValue $callable
+     * Applies a callback to each element in the collection.
      *
+     * This method modifies the current collection based on the result of the
+     * callback function, which receives the value and key of each item.
+     *
+     * @param callable(TValue, TKey=): TValue $callable The callback to apply to each element.
      * @return $this
      */
     public function map(callable $callable): self
@@ -153,8 +195,12 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition_true
+     * Filters the collection based on a condition.
      *
+     * This method retains only the elements for which the condition function
+     * returns `true`.
+     *
+     * @param callable(TValue, TKey=): bool $condition_true The condition to test each element.
      * @return $this
      */
     public function filter(callable $condition_true): self
@@ -178,8 +224,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition_true
+     * Rejects elements from the collection based on a condition.
      *
+     * This method removes elements for which the condition function returns `true`.
+     *
+     * @param callable(TValue, TKey=): bool $condition_true The condition to test each element.
      * @return $this
      */
     public function reject(callable $condition_true): self
@@ -203,6 +252,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Reverses the order of elements in the collection.
+     *
      * @return $this
      */
     public function reverse(): self
@@ -211,6 +262,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Sorts the collection in ascending order.
+     *
      * @return $this
      */
     public function sort(): self
@@ -221,6 +274,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Sorts the collection in descending order.
+     *
      * @return $this
      */
     public function sortDesc(): self
@@ -231,6 +286,9 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Sorts the collection by a custom comparison function.
+     *
+     * @param callable $callable The comparison function to use for sorting.
      * @return $this
      */
     public function sortBy(callable $callable): self
@@ -241,6 +299,9 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Sorts the collection by a custom comparison function in descending order.
+     *
+     * @param callable $callable The comparison function to use for sorting.
      * @return $this
      */
     public function sortByDesc(callable $callable): self
@@ -249,6 +310,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Sorts the collection by its keys in ascending order.
+     *
      * @return $this
      */
     public function sortKey(): self
@@ -259,6 +322,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
+     * Sorts the collection by its keys in descending order.
+     *
      * @return $this
      */
     public function sortKeyDesc(): self
@@ -269,7 +334,9 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return Collection<TKey, TValue>
+     * Creates a shallow copy of the current collection.
+     *
+     * @return Collection<TKey, TValue> A new collection instance.
      */
     public function clone(): Collection
     {
@@ -277,7 +344,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return $this
+     * Splits the collection into chunks of the given length.
+     *
+     * @param int  $length         The length of each chunk.
+     * @param bool $preserve_keys Whether to preserve the original keys.
+     * @return $this The current collection instance.
      */
     public function chunk(int $length, bool $preserve_keys = true): self
     {
@@ -287,7 +358,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return $this
+     * Splits the collection into the specified number of parts.
+     *
+     * @param int  $count          The number of parts.
+     * @param bool $preserve_keys Whether to preserve the original keys.
+     * @return $this The current collection instance.
      */
     public function split(int $count, bool $preserve_keys = true): self
     {
@@ -297,9 +372,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param TKey[] $excepts
+     * Excludes elements with specified keys from the collection.
      *
-     * @return $this
+     * @param TKey[] $excepts The keys to exclude from the collection.
+     * @return $this The current collection instance.
      */
     public function except(array $excepts): self
     {
@@ -310,9 +386,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param TKey[] $only
+     * Includes only elements with specified keys in the collection.
      *
-     * @return $this
+     * @param TKey[] $only The keys to include in the collection.
+     * @return $this The current collection instance.
      */
     public function only(array $only): self
     {
@@ -323,9 +400,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param int|float $depth
+     * Flattens the collection into a single-level array up to the specified depth.
      *
-     * @return $this
+     * @param int|float $depth The depth level to flatten (default is INF for unlimited depth).
+     * @return $this The current collection instance.
      */
     public function flatten(int|float $depth = INF): self
     {
@@ -336,10 +414,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $array
-     * @param int|float           $depth
+     * Recursively flattens an array up to a specified depth.
      *
-     * @return array<TKey, TValue>
+     * @param array<TKey, TValue> $array The array to flatten.
+     * @param int|float           $depth The depth level to flatten (default is INF for unlimited depth).
+     * @return array<TKey, TValue> The flattened array.
      */
     private function flattenRecursing(array $array, int|float $depth = INF): array
     {
@@ -365,7 +444,9 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return CollectionImmutable<TKey, TValue>
+     * Converts the collection into an immutable collection.
+     *
+     * @return CollectionImmutable<TKey, TValue> A new immutable collection instance.
      */
     public function immutable(): CollectionImmutable
     {
@@ -381,7 +462,9 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return $this
+     * Randomly shuffles the elements of the collection.
+     *
+     * @return $this The current collection instance.
      */
     public function shuffle(): self
     {
@@ -397,14 +480,13 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Convert array, key and value from item (also key).
+     * Converts the collection into an associative array by applying a callback function.
      *
      * @template TKeyItem of array-key
      * @template TValueItem
      *
-     * @param callable(TValue, TKey=): array<TKeyItem, TValueItem> $callable With single key/value pair per element
-     *
-     * @return $this
+     * @param callable(TValue, TKey=): array<TKeyItem, TValueItem> $callable The callback function to map the values.
+     * @return $this The current collection instance.
      */
     public function assocBy(callable $callable): self
     {
@@ -420,12 +502,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Reduce items.
+     * Reduces the collection to a single value using a callback function.
      *
-     * @param callable(TValue, TValue): TValue $callable
-     * @param TValue|null                      $carry
-     *
-     * @return TValue|null
+     * @param callable(TValue, TValue): TValue $callable The callback function to reduce the values.
+     * @param TValue|null                      $carry   The initial value to start the reduction (default is null).
+     * @return TValue|null The reduced value.
      */
     public function reduce(callable $callable, $carry = null)
     {
@@ -437,7 +518,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @return $this
+     * Returns the first `limit` elements from the collection.
+     *
+     * @param int $limit The number of elements to take from the collection.
+     * @return $this The current collection instance.
      */
     public function take(int $limit): self
     {
@@ -453,9 +537,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Returns the elements of the collection that are not present in the given collection.
      *
-     * @return $this
+     * @param array<TKey, TValue> $collection The collection to compare against.
+     * @return $this The current collection instance.
      */
     public function diff(array $collection): self
     {
@@ -465,9 +550,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Returns the elements of the collection that do not have the same keys as those in the given collection.
      *
-     * @return $this
+     * @param array<TKey, TValue> $collection The collection to compare against.
+     * @return $this The current collection instance.
      */
     public function diffKeys(array $collection): self
     {
@@ -477,9 +563,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Returns the elements of the collection that do not have the same key-value pairs as those in the given collection.
      *
-     * @return $this
+     * @param array<TKey, TValue> $collection The collection to compare against.
+     * @return $this The current collection instance.
      */
     public function diffAssoc(array $collection): self
     {
@@ -489,9 +576,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Returns the elements of the collection that are not present in the given collection.
      *
-     * @return $this
+     * @param array<TKey, TValue> $collection The collection to compare against.
+     * @return $this The current collection instance.
      */
     public function complement(array $collection): self
     {
@@ -501,9 +589,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Returns the elements of the collection that do not have the same keys as those in the given collection.
      *
-     * @return $this
+     * @param array<TKey, TValue> $collection The collection to compare against.
+     * @return $this The current collection instance.
      */
     public function complementKeys(array $collection): self
     {
@@ -513,9 +602,10 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Returns the elements of the collection that do not have the same key-value pairs as those in the given collection.
      *
-     * @return $this
+     * @param array<TKey, TValue> $collection The collection to compare against.
+     * @return $this The current collection instance.
      */
     public function complementAssoc(array $collection): self
     {
@@ -525,12 +615,12 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Filter where using operator.
+     * Filters the collection based on the specified operator and value for a given key.
      *
-     * @param TKey   $key
-     * @param TValue $value
-     *
-     * @return $this
+     * @param TKey   $key      The key to filter by.
+     * @param string $operator The operator to use for comparison.
+     * @param TValue $value    The value to compare against.
+     * @return $this The current collection instance.
      */
     public function where($key, string $operator, $value): self
     {
@@ -563,12 +653,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Filter where in range.
+     * Filters the collection where the values of a specified key are within a given range.
      *
-     * @param TKey     $key
-     * @param TValue[] $range
-     *
-     * @return $this
+     * @param TKey     $key   The key to filter by.
+     * @param TValue[] $range The range of values to filter by.
+     * @return $this The current collection instance.
      */
     public function whereIn($key, $range): self
     {
@@ -576,12 +665,11 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Filter where not in range.
+     * Filters the collection where the values of a specified key are not within a given range.
      *
-     * @param TKey     $key
-     * @param TValue[] $range
-     *
-     * @return $this
+     * @param TKey     $key   The key to filter by.
+     * @param TValue[] $range The range of values to filter by.
+     * @return $this The current collection instance.
      */
     public function whereNotIn($key, $range): self
     {

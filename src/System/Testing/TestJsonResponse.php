@@ -8,6 +8,8 @@ use PHPUnit\Framework\Assert;
 use System\Http\Response;
 use System\Testing\TestResponse;
 
+use function System\Collection\data_get;
+
 /**
  * @implements \ArrayAccess<string, mixed>
  */

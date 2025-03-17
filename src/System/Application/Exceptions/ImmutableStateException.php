@@ -15,15 +15,15 @@ declare(strict_types=1);
 
 namespace System\Application\Exceptions;
 
-use RuntimeException;
+use Exception;
 
 /**
- * Exception thrown when the application is not available.
+ * Immutable state exception.
  *
- * This exception is thrown when an attempt is made to access the application
- * container before it has been properly initialized or started. It signals that
- * the application is not yet ready for use. This exception extends the
- * `RuntimeException` class to indicate that the error occurs during runtime.
+ * The `ImmutableStateException` is thrown when there is an issue related to the
+ * Singleton pattern implementation. It typically represents situations where
+ * multiple instances of a Singleton class are attempted to be created or other
+ * violations of the Singleton pattern.
  *
  * @category   System
  * @package    Application
@@ -34,18 +34,6 @@ use RuntimeException;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version    1.0.0
  */
-class ApplicationNotAvailableException extends RuntimeException
+class ImmutableStateException extends Exception
 {
-    /**
-     * Creates a new Exception instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct(
-            'Application is not available yet.
-            Please ensure the application is properly initialized before accessing it.'
-        );
-    }
 }

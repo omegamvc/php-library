@@ -10,7 +10,7 @@ use System\Bootstrap\BootProviders;
 use System\Bootstrap\ConfigProviders;
 use System\Bootstrap\RegisterFacades;
 use System\Bootstrap\RegisterProviders;
-use System\Integrate\ValueObjects\CommandMap;
+use System\Console\CommandMap;
 
 class Kernel
 {

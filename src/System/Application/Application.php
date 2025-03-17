@@ -1,294 +1,180 @@
 <?php
 
+/**
+ * Part of Omega - Application Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Application;
 
+use DI\DependencyException;
+use DI\NotFoundException;
+use Exception;
 use System\Config\ConfigRepository;
 use System\Container\Container;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 use System\Container\ServiceProvider\ServiceProvider;
 use System\Http\Request;
 use System\Http\Exceptions\HttpException;
 use System\Support\Vite;
 use System\View\Templator;
 
-final class Application extends Container
+use function array_map;
+use function count;
+use function define;
+use function defined;
+use function file_exists;
+use function in_array;
+use function rtrim;
+
+/**
+ * Application class.
+ *
+ * This `Application` class represents the main entry point of the Omega framework.
+ * It manages the application's lifecycle, including configuration, routing, and
+ * handling HTTP requests.
+ *
+ * @category  System
+ * @package   Application
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   1.0.
+ */
+class Application extends Container implements ApplicationInterface
 {
-    /**
-     * Application instance.
-     *
-     * @var Application|null
-     */
-    private static $app;
+    use ApplicationSingletonTrait;
 
-    // path ----------------------------------
+    /** @var string The base path of the application. */
+    private string $basePath = '';
 
-    /**
-     * Base path.
-     *
-     * @var string
-     */
-    private $base_path;
+    /** @var ServiceProvider[] List of all registered service providers. */
+    private array $providers = [];
 
-    /**
-     * App path.
-     *
-     * @var string
-     */
-    private $app_path;
+    /** @var ServiceProvider[] List of booted service providers. */
+    private array $bootedProviders = [];
 
-    /**
-     * Model path.
-     *
-     * @var string
-     */
-    private $model_path;
+    /** @var ServiceProvider[] List of loaded service providers. */
+    private array $loadedProviders = [];
 
-    /**
-     * Controller path.
-     *
-     * @var string
-     */
-    private $controller_path;
+    /** @var bool Indicates whether the application has been booted. */
+    private bool $isBooted = false;
 
-    /**
-     * Service path.
-     *
-     * @var string
-     */
-    private $services_path;
-
-    /**
-     * Compponent path.
-     *
-     * @var string
-     */
-    private $component_path;
-
-    /**
-     * Command path.
-     *
-     * @var string
-     */
-    private $command_path;
-
-    /**
-     * Storage_path.
-     */
-    private string $storage_path;
-
-    /**
-     * Cache path.
-     *
-     * @var string
-     *
-     * @deprecated version 0.32 use compiled_view_path isnted.
-     */
-    private $cache_path;
-
-    /**
-     * Compaile view path.
-     */
-    private string $compiled_view_path;
-
-    /**
-     * Config path.
-     *
-     * @var string
-     */
-    private $config_path;
-
-    /**
-     * Middleware path.
-     *
-     * @var string
-     */
-    private $middleware_path;
-
-    /**
-     * Service provider path.
-     *
-     * @var string
-     */
-    private $service_provider_path;
-
-    /**
-     * Base view path.
-     */
-    private string $view_path;
-
-    /**
-     * View paths.
-     *
-     * @var string[]
-     */
-    private array $view_paths;
-
-    /**
-     * Migration path.
-     */
-    private string $migraton_path;
-
-    /**
-     * Seeder path.
-     */
-    private string $seeder_path;
-
-    /**
-     * Public path.
-     */
-    private string $public_path;
-
-    // property ------------------------------
-
-    /**
-     * All service provider.
-     *
-     * @var ServiceProvider[]
-     */
-    private $providers = [];
-
-    /**
-     * Booted service provider.
-     *
-     * @var \System\Container\ServiceProvider\ServiceProvider[]
-     */
-    private $booted_providers = [];
-
-    /**
-     * Looded service provider.
-     *
-     * @var ServiceProvider[]
-     */
-    private $looded_providers = [];
-
-    /**
-     * Detect appliaction has been booted.
-     *
-     * @var bool
-     */
-    private $isBooted = false;
-
-    /**
-     * Detect application has been bootstrapped.
-     */
+    /** @var bool Indicates whether the application has been bootstrapped. */
     private bool $isBootstrapped = false;
 
-    /**
-     * Terminate callback register.
-     *
-     * @var callable[]
-     */
-    private $terminateCallback = [];
+    /** @var callable[] List of registered termination callbacks. */
+    private array $terminateCallback = [];
+
+    /** @var callable[] List of registered callbacks to execute before booting completes. */
+    protected array $bootingCallbacks = [];
+
+    /** @var callable[] List of registered callbacks to execute after booting completes. */
+    protected array $bootedCallbacks = [];
 
     /**
-     * Registered booting callback.
+     * Application constructor.
      *
-     * @var callable[]
+     * @param string $basePath Hods the base path of the application.
+     * @return void
+     * @throws Exception
      */
-    protected array $booting_callbacks = [];
-
-    /**
-     * Registered booted callback.
-     *
-     * @var callable[]
-     */
-    protected array $booted_callbacks = [];
-
-    /**
-     * Contructor.
-     *
-     * @param string $base_path application path
-     */
-    public function __construct(string $base_path)
+    public function __construct(string $basePath)
     {
         parent::__construct();
 
         // set base path
-        $this->setBasePath($base_path);
-        $this->setConfigPath($_ENV['CONFIG_PATH'] ?? DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR);
+        $this->setBasePath($basePath);
+        $this->setConfigPath(
+            $_ENV['CONFIG_PATH']
+                ?? static::DS
+            . 'app'
+            . static::DS
+            . 'config'
+            . static::DS
+        );
 
-        // base binding
         $this->setBaseBinding();
 
-        // register base provider
         $this->register(ServiceProvider::class);
 
-        // register container alias
         $this->registerAlias();
     }
 
     /**
-     * Get intance Application container.
+     * Register base bindings int the container.
      *
-     * @return Application|null
-     */
-    public static function getIntance()
-    {
-        return static::$app;
-    }
-
-    /**
-     * Register base binding container.
+     * @return void
      */
     protected function setBaseBinding(): void
     {
-        static::$app = $this;
         $this->set('app', $this);
         $this->set(Application::class, $this);
         $this->set(Container::class, $this);
 
-        $this->set(PackageManifest::class, fn () => new PackageManifest($this->base_path, $this->getApplicationCachePath()));
+        $this->set(
+            PackageManifest::class,
+            fn () => new PackageManifest(
+                $this->basePath,
+                $this->getApplicationCachePath()
+            )
+        );
     }
 
     /**
-     * Load and set Configuration to application.
+     * {@inheritdoc}
      */
-    public function loadConfig(ConfigRepository $configs): void
+    public function loadConfig(ConfigRepository $config): void
     {
         // give access to get config directly
-        $this->set('config', fn (): ConfigRepository => $configs);
+        $this->set('config', fn (): ConfigRepository => $config);
 
         // base env
-        $this->set('environment', $configs['APP_ENV'] ?? $configs['ENVIRONMENT']);
-        $this->set('app.debug', $configs['APP_DEBUG'] === 'true');
+        $this->set('environment', $config['APP_ENV'] ?? $config['ENVIRONMENT']);
+        $this->set('app.debug', $config['APP_DEBUG'] === 'true');
         // application path
-        $this->setAppPath($this->basePath());
-        $this->setModelPath($configs['MODEL_PATH']);
-        $this->setViewPath($configs['VIEW_PATH']);
-        $this->setViewPaths($configs['VIEW_PATHS']);
-        $this->setContollerPath($configs['CONTROLLER_PATH']);
-        $this->setServicesPath($configs['SERVICES_PATH']);
-        $this->setComponentPath($configs['COMPONENT_PATH']);
-        $this->setCommandPath($configs['COMMAND_PATH']);
-        $this->setCachePath($configs['CACHE_PATH']);
-        $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
-        $this->setMiddlewarePath($configs['MIDDLEWARE']);
-        $this->setProviderPath($configs['SERVICE_PROVIDER']);
-        $this->setMigrationPath($configs['MIGRATION_PATH']);
-        $this->setPublicPath($configs['PUBLIC_PATH']);
-        $this->setSeederPath($configs['SEEDER_PATH']);
-        $this->setStoragePath($configs['STORAGE_PATH']);
+        $this->setAppPath($this->getBasePath());
+        $this->setModelPath($config['MODEL_PATH']);
+        $this->setViewPath($config['VIEW_PATH']);
+        $this->setViewPaths($config['VIEW_PATHS']);
+        $this->setControllerPath($config['CONTROLLER_PATH']);
+        $this->setServicesPath($config['SERVICES_PATH']);
+        $this->setComponentPath($config['COMPONENT_PATH']);
+        $this->setCommandPath($config['COMMAND_PATH']);
+        $this->setCachePath($config['CACHE_PATH']);
+        $this->setCompiledViewPath($config['COMPILED_VIEW_PATH']);
+        $this->setMiddlewarePath($config['MIDDLEWARE']);
+        $this->setProviderPath($config['SERVICE_PROVIDER']);
+        $this->setMigrationPath($config['MIGRATION_PATH']);
+        $this->setPublicPath($config['PUBLIC_PATH']);
+        $this->setSeederPath($config['SEEDER_PATH']);
+        $this->setStoragePath($config['STORAGE_PATH']);
         // other config
-        $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
-        $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
-        $this->set('config.pusher_secret', $configs['PUSHER_APP_SECRET']);
-        $this->set('config.pusher_cluster', $configs['PUSHER_APP_CLUSTER']);
-        $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
+        $this->set('config.pusher_id', $config['PUSHER_APP_ID']);
+        $this->set('config.pusher_key', $config['PUSHER_APP_KEY']);
+        $this->set('config.pusher_secret', $config['PUSHER_APP_SECRET']);
+        $this->set('config.pusher_cluster', $config['PUSHER_APP_CLUSTER']);
+        $this->set('config.view.extensions', $config['VIEW_EXTENSIONS']);
         // load provider
-        $this->providers = $configs['PROVIDERS'];
-        $this->defineder($configs->toArray());
+        $this->providers = $config['PROVIDERS'];
+        $this->defined($config->toArray());
     }
 
     /**
-     * Default config, prevent for empety config.
-     *
-     * @return array<string, mixed> Configs
+     * {@inheritdoc}
      */
-    public function defaultConfigs()
+    public function defaultConfig(): array
     {
         return [
-            // app config
             'BASEURL'               => '/',
             'time_zone'             => 'UTC',
             'APP_KEY'               => '',
@@ -297,21 +183,21 @@ final class Application extends Container
             'BCRYPT_ROUNDS'         => 12,
             'CACHE_STORE'           => 'file',
 
-            'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
-            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Middlewares' . DIRECTORY_SEPARATOR,
-            'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
-            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'services' . DIRECTORY_SEPARATOR,
-            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
-            'STORAGE_PATH'          => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR,
-            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-            'CACHE_VIEW_PATH'       => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
-            'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
-            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
-            'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
+            'COMMAND_PATH'          => static::DS . 'app' . static::DS . 'Commands' . static::DS,
+            'CONTROLLER_PATH'       => static::DS . 'app' . static::DS . 'Controllers' . static::DS,
+            'MODEL_PATH'            => static::DS . 'app' . static::DS . 'Models' . static::DS,
+            'MIDDLEWARE'            => static::DS . 'app' . static::DS . 'Middlewares' . static::DS,
+            'SERVICE_PROVIDER'      => static::DS . 'app' . static::DS . 'Providers' . static::DS,
+            'CONFIG'                => static::DS . 'app' . static::DS . 'config' . static::DS,
+            'SERVICES_PATH'         => static::DS . 'app' . static::DS . 'services' . static::DS,
+            'VIEW_PATH'             => static::DS . 'resources' . static::DS . 'views' . static::DS,
+            'COMPONENT_PATH'        => static::DS . 'resources' . static::DS . 'components' . static::DS,
+            'STORAGE_PATH'          => static::DS . 'storage' . static::DS . 'app' . static::DS,
+            'CACHE_PATH'            => static::DS . 'storage' . static::DS . 'app' . static::DS . 'cache' . static::DS,
+            'CACHE_VIEW_PATH'       => static::DS . 'storage' . static::DS . 'app' . static::DS . 'view' . static::DS,
+            'PUBLIC_PATH'           => static::DS . 'public' . static::DS,
+            'MIGRATION_PATH'        => static::DS . 'database' . static::DS . 'migration' . static::DS,
+            'SEEDER_PATH'           => static::DS . 'database' . static::DS . 'seeders' . static::DS,
 
             'PROVIDERS'             => [
                 // provider class name
@@ -334,525 +220,410 @@ final class Application extends Container
             'REDIS_PASS'            => '',
             'REDIS_PORT'            => 6379,
 
-            // memcahe
+            // memcached
             'MEMCACHED_HOST'        => '127.0.0.1',
             'MEMCACHED_PASS'        => '',
             'MEMCACHED_PORT'        => 6379,
 
             // view config
             'VIEW_PATHS' => [
-                DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
+                static::DS . 'resources' . static::DS . 'views' . static::DS,
             ],
             'VIEW_EXTENSIONS' => [
                 '.template.php',
                 '.php',
             ],
-            'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
+            'COMPILED_VIEW_PATH' => static::DS . 'storage' . static::DS . 'app' . static::DS . 'view' . static::DS,
         ];
     }
 
     /**
-     * Helper add define for legency API.
+     * Define constants for legacy API configurations.
      *
-     * @param array<string, string> $configs Array configuration
-     *
+     * @param array<string, string> $config Configuration array for legacy API settings.
      * @return void
      */
-    private function defineder(array $configs)
+    private function defined(array $config): void
     {
-        // redis
-        defined('REDIS_HOST') || define('REDIS_HOST', $configs['REDIS_HOST']);
-        defined('REDIS_PASS') || define('REDIS_PASS', $configs['REDIS_PASS']);
-        defined('REDIS_PORT') || define('REDIS_PORT', $configs['REDIS_PORT']);
-        // memcache
-        defined('MEMCACHED_HOST') || define('MEMCACHED_HOST', $configs['MEMCACHED_HOST']);
-        defined('MEMCACHED_PASS') || define('MEMCACHED_PASS', $configs['MEMCACHED_PASS']);
-        defined('MEMCACHED_PORT') || define('MEMCACHED_PORT', $configs['MEMCACHED_PORT']);
+        // Redis
+        defined('REDIS_HOST') || define('REDIS_HOST', $config['REDIS_HOST']);
+        defined('REDIS_PASS') || define('REDIS_PASS', $config['REDIS_PASS']);
+        defined('REDIS_PORT') || define('REDIS_PORT', $config['REDIS_PORT']);
+
+        // Memcache
+        defined('MEMCACHED_HOST') || define('MEMCACHED_HOST', $config['MEMCACHED_HOST']);
+        defined('MEMCACHED_PASS') || define('MEMCACHED_PASS', $config['MEMCACHED_PASS']);
+        defined('MEMCACHED_PORT') || define('MEMCACHED_PORT', $config['MEMCACHED_PORT']);
     }
 
-    // setter region ---------------------------------------
-
     /**
-     * Set Base path.
-     *
-     * @param string $path Base path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setBasePath(string $path)
+    public function setBasePath(string $path): self
     {
-        $this->base_path = $path;
+        $this->basePath = $path;
         $this->set('path.base', $path);
 
         return $this;
     }
 
     /**
-     * Set app path.
-     *
-     * @param string $path App path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setAppPath(string $path)
+    public function setAppPath(string $path): self
     {
-        $this->app_path = $path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR;
-        $this->set('path.app', $this->app_path);
+        $this->set('path.app', $path . static::DS . 'app' . static::DS);
 
         return $this;
     }
 
     /**
-     * Set model path.
-     *
-     * @param string $path Model path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setModelPath(string $path)
+    public function setModelPath(string $path): self
     {
-        $this->model_path = $this->base_path . $path;
-        $this->set('path.model', $this->model_path);
+        $this->set('path.model', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set base view path.
-     *
-     * @param string $path Base view path
+     * {@inheritdoc}
      */
     public function setViewPath(string $path): self
     {
-        $this->view_path = $this->base_path . $path;
-        $this->set('path.view', $this->view_path);
+        $this->set('path.view', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set view paths.
-     *
-     * @param string[] $paths View paths
+     * {@inheritdoc}
      */
     public function setViewPaths(array $paths): self
     {
-        $this->view_paths = array_map(fn ($path) => $this->base_path . $path, $paths);
-        $this->set('paths.view', $this->view_paths);
+        $viewPaths = array_map(fn ($path) => $this->basePath . $path, $paths);
+        $this->set('paths.view', $viewPaths);
 
         return $this;
     }
 
     /**
-     * Set controller path.
-     *
-     * @param string $path Controller path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setContollerPath(string $path)
+    public function setControllerPath(string $path): self
     {
-        $this->controller_path = $this->base_path . $path;
-        $this->set('path.controller', $this->controller_path);
+        $this->set('path.controller', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set services path.
-     *
-     * @param string $path Services path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setServicesPath(string $path)
+    public function setServicesPath(string $path): self
     {
-        $this->services_path = $this->base_path . $path;
-        $this->set('path.services', $this->services_path);
+        $this->set('path.services', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set component path.
-     *
-     * @param string $path Component path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setComponentPath(string $path)
+    public function setComponentPath(string $path): self
     {
-        $this->component_path = $this->base_path . $path;
-        $this->set('path.component', $this->component_path);
+        $this->set('path.component', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set command path.
-     *
-     * @param string $path Command path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setCommandPath(string $path)
+    public function setCommandPath(string $path): self
     {
-        $this->command_path = $this->base_path . $path;
-        $this->set('path.command', $this->command_path);
+        $this->set('path.command', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set storage path.
-     *
-     * @param string $path Storage path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setStoragePath(string $path)
+    public function setStoragePath(string $path): self
     {
-        $this->storage_path = $this->base_path . $path;
-        $this->set('path.storage', $this->storage_path);
+        $this->set('path.storage', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set cache path.
-     *
-     * @param string $path Cache path
-     *
-     * @return self
-     *
-     * @deprecated version 0.32 use compiled_view_path isnted.
+     * {@inheritdoc}
      */
-    public function setCachePath(string $path)
+    public function setCachePath(string $path): self
     {
-        $this->cache_path = $this->base_path . $path;
-        $this->set('path.cache', $this->cache_path);
+        $this->set('path.cache', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set compiled view path.
-     *
-     * @param string $path Compil view path
+     * {@inheritdoc}
      */
     public function setCompiledViewPath(string $path): self
     {
-        $this->compiled_view_path = $this->base_path . $path;
-        $this->set('path.compiled_view_path', $this->compiled_view_path);
+        $this->set('path.compiled_view_path', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set config path.
-     *
-     * @param string $path config path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setConfigPath(string $path)
+    public function setConfigPath(string $path): self
     {
-        $this->config_path = $this->base_path . $path;
-        $this->set('path.config', $this->config_path);
+        $this->set('path.config', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set middleware path.
-     *
-     * @param string $path middleware path
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setMiddlewarePath(string $path)
+    public function setMiddlewarePath(string $path): self
     {
-        $this->middleware_path = $this->base_path . $path;
-        $this->set('path.middleware', $this->middleware_path);
+        $this->set('path.middleware', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set serviece provider path.
-     *
-     * @return self
+     * {@inheritdoc}
      */
-    public function setProviderPath(string $path)
+    public function setProviderPath(string $path): self
     {
-        $this->service_provider_path = $this->base_path . $path;
-        $this->set('path.provider', $this->service_provider_path);
+        $this->set('path.provider', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set migration path.
+     * {@inheritdoc}
      */
     public function setMigrationPath(string $path): self
     {
-        $this->migraton_path = $this->base_path . $path;
-        $this->set('path.migration', $this->migraton_path);
+        $this->set('path.migration', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set seeder path.
+     * {@inheritdoc}
      */
     public function setSeederPath(string $path): self
     {
-        $this->seeder_path = $this->base_path . $path;
-        $this->set('path.seeder', $this->seeder_path);
+        $this->set('path.seeder', $this->basePath . $path);
 
         return $this;
     }
 
     /**
-     * Set public path.
+     * {@inheritdoc}
      */
     public function setPublicPath(string $path): self
     {
-        $this->public_path = $this->base_path . $path;
-        $this->set('path.public', $this->public_path);
+        $this->set('path.public', $this->basePath . $path);
 
         return $this;
     }
 
-    // getter region ---------------------------------------------
-
     /**
-     * Get base path/dir.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function basePath()
+    public function getBasePath(): string
     {
         return $this->get('path.base');
     }
 
     /**
-     * Get app path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function appPath()
+    public function getApplicationPath(): string
     {
         return $this->get('path.app');
     }
 
     /**
-     * Get application (bootstrapper) cach path.
-     * default './boostrap/cache/'.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function getApplicationCachePath()
+    public function getApplicationCachePath(): string
     {
-        return rtrim($this->basePath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+        return rtrim($this->getBasePath(), static::DS) . static::DS . 'bootstrap' . static::DS . 'cache' . static::DS;
     }
 
     /**
-     * Get model path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function modelPath()
+    public function getModelPath(): string
     {
         return $this->get('path.model');
     }
 
     /**
-     * Get base view path.
+     * {@inheritdoc}
      */
-    public function viewPath(): string
+    public function getViewPath(): string
     {
         return $this->get('path.view');
     }
 
     /**
-     * Get view paths.
-     *
-     * @return string[]
+     * {@inheritdoc}
      */
-    public function view_paths(): array
+    public function getViewPaths(): array
     {
         return $this->get('paths.view');
     }
 
     /**
-     * Get controller path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function controllerPath()
+    public function getControllerPath(): string
     {
         return $this->get('path.controller');
     }
 
     /**
-     * Get Services path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function servicesPath()
+    public function getServicesPath(): string
     {
         return $this->get('path.services');
     }
 
     /**
-     * Get component path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function componentPath()
+    public function getComponentPath(): string
     {
         return $this->get('path.component');
     }
 
     /**
-     * Get command path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function commandPath()
+    public function getCommandPath(): string
     {
         return $this->get('path.command');
     }
 
     /**
-     * Get storage path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function storagePath()
+    public function getStoragePath(): string
     {
         return $this->get('path.storage');
     }
 
     /**
-     * Get cache path.
-     *
-     * @return string
-     *
-     * @deprecated version 0.32 use compiled_view_path isnted.
+     * {@inheritdoc}
      */
-    public function cachePath()
+    public function getCachePath(): string
     {
         return $this->get('path.cache');
     }
 
     /**
-     * Get compailed path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function compiledViewPath()
+    public function getCompiledViewPath(): string
     {
         return $this->get('path.compiled_view_path');
     }
 
     /**
-     * Get config path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function configPath()
+    public function getConfigPath(): string
     {
         return $this->get('path.config');
     }
 
     /**
-     * Get middleware path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function middlewarePath()
+    public function getMiddlewarePath(): string
     {
         return $this->get('path.middleware');
     }
 
     /**
-     * Get provider path.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function providerPath()
+    public function getProviderPath(): string
     {
         return $this->get('path.provider');
     }
 
     /**
-     * Get migration path.
+     * {@inheritdoc}
      */
-    public function migrationPath(): string
+    public function getMigrationPath(): string
     {
         return $this->get('path.migration');
     }
 
     /**
-     * Get seeder path.
+     * {@inheritdoc}
      */
-    public function seederPath(): string
+    public function getSeederPath(): string
     {
         return $this->get('path.seeder');
     }
 
     /**
-     * Get public path.
+     * {@inheritdoc}
      */
-    public function publicPath(): string
+    public function getPublicPath(): string
     {
         return $this->get('path.public');
     }
 
     /**
-     * Detect application environment.
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function environment()
+    public function getEnvironment(): string
     {
         return $this->get('environment');
     }
 
     /**
-     * Detect application debug enable.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isDebugMode()
+    public function isDebugMode(): bool
     {
         return $this->get('app.debug');
     }
 
     /**
-     * Detect application prodaction mode.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isProduction()
+    public function isProduction(): bool
     {
-        return $this->environment() === 'prod';
+        return $this->getEnvironment() === 'prod';
     }
 
     /**
-     * Detect application development mode.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isDev()
+    public function isDev(): bool
     {
-        return $this->environment() === 'dev';
+        return $this->getEnvironment() === 'dev';
     }
 
     /**
-     * Detect appliaction has been booted.
+     * {@inheritdoc}
      */
     public function isBooted(): bool
     {
@@ -860,80 +631,70 @@ final class Application extends Container
     }
 
     /**
-     * Detect application has been bootstrapped.
+     * {@inheritdoc}
      */
     public function isBootstrapped(): bool
     {
         return $this->isBootstrapped;
     }
 
-    // core region
-
     /**
-     * Bootstrapper.
-     *
-     * @param array<int, class-string> $bootstrappers
+     * {@inheritdoc}
      */
-    public function bootstrapWith($bootstrappers): void
+    public function bootstrapWith(array $bootstrapped): void
     {
         $this->isBootstrapped = true;
 
-        foreach ($bootstrappers as $bootstrapper) {
+        foreach ($bootstrapped as $bootstrapper) {
             $this->make($bootstrapper)->bootstrap($this);
         }
     }
 
     /**
-     * Boot service provider.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function bootProvider()
+    public function bootProvider(): void
     {
         if ($this->isBooted) {
             return;
         }
 
-        $this->callBootCallbacks($this->booting_callbacks);
+        $this->callBootCallbacks($this->bootingCallbacks);
 
         foreach ($this->getMergeProviders() as $provider) {
-            if (in_array($provider, $this->booted_providers)) {
+            if (in_array($provider, $this->bootedProviders)) {
                 continue;
             }
 
             $this->call([$provider, 'boot']);
-            $this->booted_providers[] = $provider;
+            $this->bootedProviders[] = $provider;
         }
 
-        $this->callBootCallbacks($this->booted_callbacks);
+        $this->callBootCallbacks($this->bootedCallbacks);
 
         $this->isBooted = true;
     }
 
     /**
-     * Register service providers.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function registerProvider()
+    public function registerProvider(): void
     {
         foreach ($this->getMergeProviders() as $provider) {
-            if (in_array($provider, $this->looded_providers)) {
+            if (in_array($provider, $this->loadedProviders)) {
                 continue;
             }
 
             $this->call([$provider, 'register']);
 
-            $this->looded_providers[] = $provider;
+            $this->loadedProviders[] = $provider;
         }
     }
 
     /**
-     * Call the registered booting callbacks.
-     *
-     * @param callable[] $bootCallBacks
+     * {@inheritdoc}
      */
-    public function callBootCallbacks($bootCallBacks): void
+    public function callBootCallbacks(array $bootCallBacks): void
     {
         $index = 0;
 
@@ -945,23 +706,19 @@ final class Application extends Container
     }
 
     /**
-     * Add booting call back, call before boot is calling.
-     *
-     * @param callable $callback
+     * {@inheritdoc}
      */
-    public function bootingCallback($callback): void
+    public function bootingCallback(callable $callback): void
     {
-        $this->booting_callbacks[] = $callback;
+        $this->bootingCallbacks[] = $callback;
     }
 
     /**
-     * Add booted call back, call after boot is called.
-     *
-     * @param callable $callback
+     * {@inheritdoc}
      */
-    public function bootedCallback($callback): void
+    public function bootedCallback(callable $callback): void
     {
-        $this->booted_callbacks[] = $callback;
+        $this->bootedCallbacks[] = $callback;
 
         if ($this->isBooted()) {
             $this->call($callback);
@@ -969,53 +726,45 @@ final class Application extends Container
     }
 
     /**
-     * Flush or reset application (static).
+     * {@inheritdoc}
      */
     public function flush(): void
     {
-        static::$app = null;
-
         $this->providers         = [];
-        $this->looded_providers  = [];
-        $this->booted_providers  = [];
+        $this->loadedProviders  = [];
+        $this->bootedProviders  = [];
         $this->terminateCallback = [];
-        $this->booting_callbacks = [];
-        $this->booted_callbacks  = [];
+        $this->bootingCallbacks = [];
+        $this->bootedCallbacks  = [];
 
         parent::flush();
     }
 
     /**
-     * Register service provider.
-     *
-     * @param string $provider Class-name service provider
-     *
-     * @return AbstractServiceProvider
+     * {@inheritdoc}
      */
-    public function register($provider)
+    public function register(string $provider): AbstractServiceProvider
     {
-        $provider_class_name = $provider;
-        $provider            = new $provider($this);
+        $providerClassName = $provider;
+        $provider          = new $provider($this);
 
         $provider->register();
-        $this->looded_providers[] = $provider_class_name;
+        $this->loadedProviders[] = $providerClassName;
 
         if ($this->isBooted) {
             $provider->boot();
-            $this->booted_providers[] = $provider_class_name;
+            $this->bootedProviders[] = $providerClassName;
         }
 
-        $this->providers[] = $provider_class_name;
+        $this->providers[] = $providerClassName;
 
         return $provider;
     }
 
     /**
-     * Register terminating callbacks.
-     *
-     * @param callable $terminateCallback
+     * {@inheritdoc}
      */
-    public function registerTerminate($terminateCallback): self
+    public function registerTerminate(callable $terminateCallback): self
     {
         $this->terminateCallback[] = $terminateCallback;
 
@@ -1023,7 +772,7 @@ final class Application extends Container
     }
 
     /**
-     * Terminate the application.
+     * {@inheritdoc}
      */
     public function terminate(): void
     {
@@ -1037,17 +786,15 @@ final class Application extends Container
     }
 
     /**
-     * Determinate application maintenence mode.
+     * {@inheritdoc}
      */
     public function isDownMaintenanceMode(): bool
     {
-        return file_exists($this->storagePath() . 'app' . DIRECTORY_SEPARATOR . 'maintenance.php');
+        return file_exists($this->getStoragePath() . 'app' . static::DS . 'maintenance.php');
     }
 
     /**
-     * Get down maintenance file config.
-     *
-     * @return array<string, string|int|null>
+     * {@inheritdoc}
      */
     public function getDownData(): array
     {
@@ -1058,11 +805,11 @@ final class Application extends Container
             'template' => null,
         ];
 
-        if (false === file_exists($down = $this->storagePath() . 'app' . DIRECTORY_SEPARATOR . 'down')) {
+        if (false === file_exists($down = $this->getStoragePath() . 'app' . static::DS . 'down')) {
             return $default;
         }
 
-        /** @var array<string, string|int|null> */
+        /** @var array<string, string|int|null> $config */
         $config = include $down;
 
         foreach ($config as $key => $value) {
@@ -1073,11 +820,7 @@ final class Application extends Container
     }
 
     /**
-     * Abrot application to http exception.
-     *
-     * @param array<string, string> $headers
-     *
-     * @throws HttpException
+     * {@inheritdoc}
      */
     public function abort(int $code, string $message = '', array $headers = []): void
     {
@@ -1085,7 +828,10 @@ final class Application extends Container
     }
 
     /**
-     * Register aliases to container.
+     * Register container aliases.
+     *
+     * @return void
+     * @throws Exception
      */
     protected function registerAlias(): void
     {
@@ -1095,18 +841,20 @@ final class Application extends Container
             'view.instance' => [Templator::class],
             'vite.gets'     => [Vite::class],
             'config'        => [ConfigRepository::class],
-            ] as $abstrack => $aliases
+            ] as $abstract => $aliases
         ) {
             foreach ($aliases as $alias) {
-                $this->alias($abstrack, $alias);
+                $this->alias($abstract, $alias);
             }
         }
     }
 
     /**
-     * Merge applicationproveder and vendor package provider.
+     * Merge application service providers with vendor package providers.
      *
-     * @return AbstractServiceProvider[]
+     * @return AbstractServiceProvider[] Return the merged list of service providers.
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If a required service provider is not found.
      */
     protected function getMergeProviders(): array
     {

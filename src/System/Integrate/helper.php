@@ -19,7 +19,7 @@ if (!function_exists('app_path')) {
      */
     function app_path(string $folder_name): string
     {
-        $path = app()->appPath();
+        $path = app()->getApplicationPath();
 
         return $path . DIRECTORY_SEPARATOR . $folder_name;
     }
@@ -35,7 +35,7 @@ if (!function_exists('model_path')) {
      */
     function model_path(string $surfix_path = ''): string
     {
-        $path = app()->modelPath() . $surfix_path;
+        $path = app()->getModelPath() . $surfix_path;
 
         return $path;
     }
@@ -55,7 +55,7 @@ if (!function_exists('view_path')) {
      */
     function view_path(string $surfix_path = ''): string
     {
-        $path = app()->viewPath() . $surfix_path;
+        $path = app()->getViewPath() . $surfix_path;
 
         return $path;
     }
@@ -71,7 +71,7 @@ if (!function_exists('view_paths')) {
      */
     function view_paths(): array
     {
-        return app()->view_paths();
+        return app()->getViewPaths();
     }
 }
 
@@ -85,7 +85,7 @@ if (!function_exists('controllers_path')) {
      */
     function controllers_path(string $surfix_path = ''): string
     {
-        $path = app()->controllerPath() . $surfix_path;
+        $path = app()->getControllerPath() . $surfix_path;
 
         return $path;
     }
@@ -101,7 +101,7 @@ if (!function_exists('services_path')) {
      */
     function services_path(string $surfix_path = ''): string
     {
-        $path = app()->servicesPath() . $surfix_path;
+        $path = app()->getServicesPath() . $surfix_path;
 
         return $path;
     }
@@ -117,7 +117,7 @@ if (!function_exists('component_path')) {
      */
     function component_path(string $surfix_path = ''): string
     {
-        $path = app()->componentPath() . $surfix_path;
+        $path = app()->getComponentPath() . $surfix_path;
 
         return $path;
     }
@@ -133,7 +133,7 @@ if (!function_exists('commands_path')) {
      */
     function commands_path(string $surfix_path = ''): string
     {
-        $path = app()->commandPath() . $surfix_path;
+        $path = app()->getCommandPath() . $surfix_path;
 
         return $path;
     }
@@ -149,7 +149,7 @@ if (!function_exists('storage_path')) {
      */
     function storage_path(string $surfix_path = ''): string
     {
-        $path = app()->storagePath() . $surfix_path;
+        $path = app()->getStoragePath() . $surfix_path;
 
         return $path;
     }
@@ -167,7 +167,7 @@ if (!function_exists('cache_path')) {
      */
     function cache_path(string $surfix_path = ''): string
     {
-        $path = app()->cachePath() . $surfix_path;
+        $path = app()->getCachePath() . $surfix_path;
 
         return $path;
     }
@@ -179,7 +179,7 @@ if (!function_exists('compiled_view_path')) {
      */
     function compiled_view_path(): string
     {
-        $path = app()->compiledViewPath();
+        $path = app()->getCompiledViewPath();
 
         return $path;
     }
@@ -195,7 +195,7 @@ if (!function_exists('config_path')) {
      */
     function config_path(string $surfix_path = ''): string
     {
-        $path = app()->configPath() . $surfix_path;
+        $path = app()->getConfigPath() . $surfix_path;
 
         return $path;
     }
@@ -211,7 +211,7 @@ if (!function_exists('middleware_path')) {
      */
     function middleware_path(string $surfix_path = ''): string
     {
-        $path = app()->middlewarePath() . $surfix_path;
+        $path = app()->getMiddlewarePath() . $surfix_path;
 
         return $path;
     }
@@ -220,7 +220,7 @@ if (!function_exists('middleware_path')) {
 if (!function_exists('provider_path')) {
     function provider_path(string $surfix_path = ''): string
     {
-        $path = app()->providerPath() . $surfix_path;
+        $path = app()->getProviderPath() . $surfix_path;
 
         return $path;
     }
@@ -229,7 +229,7 @@ if (!function_exists('provider_path')) {
 if (!function_exists('migration_path')) {
     function migration_path(string $surfix_path = ''): string
     {
-        $path = app()->migrationPath() . $surfix_path;
+        $path = app()->getMigrationPath() . $surfix_path;
 
         return $path;
     }
@@ -238,7 +238,7 @@ if (!function_exists('migration_path')) {
 if (!function_exists('seeder_path')) {
     function seeder_path(string $surfix_path = ''): string
     {
-        $path = app()->seederPath() . $surfix_path;
+        $path = app()->getSeederPath() . $surfix_path;
 
         return $path;
     }
@@ -254,7 +254,7 @@ if (!function_exists('base_path')) {
      */
     function base_path(string $insert_path = ''): string
     {
-        return app()->basePath() . $insert_path;
+        return app()->getBasePath() . $insert_path;
     }
 }
 
@@ -268,7 +268,7 @@ if (!function_exists('app_env')) {
      */
     function app_env(): string
     {
-        return app()->environment();
+        return app()->getEnvironment();
     }
 }
 
@@ -299,10 +299,12 @@ if (!function_exists('is_dev')) {
 if (!function_exists('app')) {
     /**
      * Get Application container.
+     *
+     * @return Application Return a single instance of Application.
      */
     function app(): Application
     {
-        $app = Application::getIntance();
+        $app = Application::getInstance();
         if (null === $app) {
             throw new ApplicationNotAvailableException();
         }

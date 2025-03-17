@@ -46,7 +46,7 @@ class ConfigCommand extends Command
 
     public function main(): int
     {
-        $app = Application::getIntance();
+        $app = Application::getInstance();
         (new ConfigProviders())->bootstrap($app);
 
         $this->clear();
@@ -64,7 +64,7 @@ class ConfigCommand extends Command
 
     public function clear(): int
     {
-        if (file_exists($file = Application::getIntance()->getApplicationCachePath() . 'config.php')) {
+        if (file_exists($file = Application::getInstance()->getApplicationCachePath() . 'config.php')) {
             @unlink($file);
             ok('Clear config file has successfully.')->out();
 
