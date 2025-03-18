@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace System\Validator\Filter;
 
+use Exception;
+
 class Validation
 {
     /**
@@ -89,6 +91,7 @@ class Validation
 
     // ** ------------------------- Validation Data ------------------------------- ** //
 
+    // phpcs:ignore
     public static $basic_tags = '<br><p><a><strong><b><i><em><img><blockquote><code><dd><dl><hr><h1><h2><h3><h4><h5><h6><label><ul><li><span><sub><sup>';
 
     public static $en_noise_words = "about,after,all,also,an,and,another,any,are,as,at,be,because,been,before,
@@ -862,8 +865,11 @@ class Validation
      * @return array|string
      * @throws Exception if validator doesn't have an error message to set
      */
-    public function get_readable_errors(bool $convert_to_string = false, string $field_class = 'gump-field', string $error_class = 'gump-error-message')
-    {
+    public function get_readable_errors(
+        bool $convert_to_string = false,
+        string $field_class = 'gump-field',
+        string $error_class = 'gump-error-message'
+    ) {
         if (empty($this->errors)) {
             return $convert_to_string ? '' : [];
         }
@@ -1081,7 +1087,8 @@ class Validation
     }
 
     /**
-     * Converts ['1', 1, 'true', true, 'yes', 'on'] to true, anything else is false ('on' is useful for form checkboxes).
+     * Converts ['1', 1, 'true', true, 'yes', 'on'] to true, anything else is false
+     * ('on' is useful for form checkboxes).
      *
      * @param string $value
      * @param array  $params
@@ -1176,7 +1183,32 @@ class Validation
     protected function filter_slug($value, array $params = [])
     {
         $delimiter = '-';
-        return mb_strtolower(trim(preg_replace('/[\s-]+/', $delimiter, preg_replace('/[^A-Za-z0-9-]+/', $delimiter, preg_replace('/[&]/', 'and', preg_replace('/[\']/', '', iconv('UTF-8', 'ASCII//TRANSLIT', $value))))), $delimiter));
+        return mb_strtolower(
+            trim(
+                preg_replace(
+                    '/[\s-]+/',
+                    $delimiter,
+                    preg_replace(
+                        '/[^A-Za-z0-9-]+/',
+                        $delimiter,
+                        preg_replace(
+                            '/[&]/',
+                            'and',
+                            preg_replace(
+                                '/[\']/',
+                                '',
+                                iconv(
+                                    'UTF-8',
+                                    'ASCII//TRANSLIT',
+                                    $value
+                                )
+                            )
+                        )
+                    )
+                ),
+                $delimiter
+            )
+        );
     }
 
     // ** ------------------------- Validators ------------------------------------ ** //
@@ -1219,7 +1251,9 @@ class Validation
     }
 
     /**
-     * Verify that a value is contained within the pre-defined value set. Error message will NOT show the list of possible values.
+     * Verify that a value is contained within the pre-defined value set.
+     *
+     * Error message will NOT show the list of possible values.
      *
      * @example_parameter value1;value2
      *
@@ -1236,7 +1270,9 @@ class Validation
     }
 
     /**
-     * Verify that a value is contained within the pre-defined value set. Error message will NOT show the list of possible values.
+     * Verify that a value is contained within the pre-defined value set.
+     *
+     * Error message will NOT show the list of possible values.
      *
      * @example_parameter value1;value2
      *
@@ -1253,7 +1289,10 @@ class Validation
     }
 
     /**
-     * Determine if the provided value is a valid boolean. Returns true for: yes/no, on/off, 1/0, true/false. In strict mode (optional) only true/false will be valid which you can combine with boolean filter.
+     * Determine if the provided value is a valid boolean.
+     *
+     * Returns true for: yes/no, on/off, 1/0, true/false. In strict mode (optional) only true/false
+     * will be valid which you can combine with boolean filter.
      *
      * @example_parameter strict
      *
@@ -1540,8 +1579,6 @@ class Validation
 
     /**
      * Determine if the provided value is a valid IPv4 address.
-     *
-     * @see What about private networks? What about loop-back address? 127.0.0.1 http://en.wikipedia.org/wiki/Private_network
      *
      * @param string $field
      * @param array $input
@@ -1866,7 +1903,10 @@ class Validation
      */
     protected function validate_guidv4($field, array $input, array $params = [], $value = null)
     {
-        return preg_match("/\{?[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}\}?$/", $value) > 0;
+        return preg_match(
+            "/\{?[a-zA-Z0-9]{8}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{4}-[a-zA-Z0-9]{12}\}?$/",
+            $value
+        ) > 0;
     }
 
     /**

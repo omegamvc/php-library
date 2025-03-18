@@ -81,7 +81,7 @@ class PackageManifest
     public function __construct(
         private readonly string $basePath,
         private readonly string $applicationCachePath,
-        private ?string         $vendorPath = null,
+        private ?string $vendorPath = null,
     ) {
         $this->vendorPath ??= DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR;
     }
@@ -225,4 +225,3 @@ class PackageManifest
         $this->packageManifest = $packageData;
     }
 }
-

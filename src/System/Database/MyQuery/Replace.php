@@ -20,6 +20,6 @@ class Replace extends Insert
         $stringBinds  = implode(', ', $strings_binds);
         $stringColumn = implode(', ', $columns);
 
-        return $this->_query = "REPLACE INTO {$this->_table} ({$stringColumn}) VALUES {$stringBinds}";
+        return $this->query = "REPLACE INTO {$this->table} ({$stringColumn}) VALUES {$stringBinds}";
     }
 }

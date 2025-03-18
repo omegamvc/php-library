@@ -14,33 +14,48 @@ class Generate
 
     // for config
     private bool $is_final = false;
+
     private int $rule;
+
     private bool $end_with_newline = false;
+
     public const SET_CLASS         = 0;
+
     public const SET_ABSTRACT      = 1;
+
     public const SET_TRAIT         = 2;
 
     // builder property
     private ?string $name      = null;
+
     private ?string $namespace = null;
+
     /** @var string[] */
     private $uses           = [];
+
     private ?string $extend = null;
+
     /** @var string[] */
     private $implements = [];
+
     /** @var string[] */
     private $traits     = [];
+
     /** @var string[] */
     private $consts     = [];
+
     /** @var string[] */
     private $propertys  = [];
+
     /** @var string[] */
     private $methods    = [];
+
     /** @var string[] */
     private $body       = [];
 
     /** @var string[][] */
     private $pre_replace = [[], []];
+
     /** @var string[][] */
     private $replace     = [[], []];
 
@@ -69,7 +84,8 @@ class Generate
 
     private function planTemplate(): string
     {
-        return $this->customize_template ?? "<?php\n{{before}}{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}";
+        return $this->customize_template
+            ?? "<?php\n{{before}}{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}\n}{{end}}";
     }
 
     public function generate(): string
@@ -341,17 +357,15 @@ class Generate
     }
 
     /**
-     * @param callable(ConstPool): void|Constant|ConstPool $new_const callabe with param pools constan, single constans or constPool
+     * @param callable(ConstPool): void|Constant|ConstPool $new_const Callabe with param pools constan,
+     *                                                                single constans or constPool
      */
     public function consts($new_const): self
     {
         // detect if single const
         if ($new_const instanceof Constant) {
             $this->consts[] = $new_const;
-        }
-
-        // detect if multy const with constPool
-        elseif (is_callable($new_const)) {
+        } elseif (is_callable($new_const)) { // Detect if multi const with constPool
             $const = new ConstPool();
 
             call_user_func_array($new_const, [$const]);
@@ -361,10 +375,7 @@ class Generate
                     $this->consts[] = $pool;
                 }
             }
-        }
-
-        // detect parameter is instance constPool
-        elseif ($new_const instanceof ConstPool) {
+        } elseif ($new_const instanceof ConstPool) { // Detect parameter is instance constPool
             foreach ($new_const->getPools() as $pool) {
                 if ($pool instanceof Constant) {
                     $this->consts[] = $pool;
@@ -381,17 +392,15 @@ class Generate
     }
 
     /**
-     * @param callable(PropertyPool): void|Property|PropertyPool $new_property callabe with param pools constan or single property
+     * @param callable(PropertyPool): void|Property|PropertyPool $new_property Callabe with param pools constan
+     *                                                                         or single property
      */
     public function propertys($new_property): self
     {
         // detect if single propertys
         if ($new_property instanceof Property) {
             $this->propertys[] = $new_property;
-        }
-
-        // detect if multy property with porpertyPool
-        elseif (is_callable($new_property)) {
+        } elseif (is_callable($new_property)) { // Detect it multi property with propertyPool
             $property = new PropertyPool();
 
             call_user_func_array($new_property, [$property]);
@@ -401,10 +410,7 @@ class Generate
                     $this->propertys[] = $pool;
                 }
             }
-        }
-
-        // detect parameter is instance methodpool
-        elseif ($new_property instanceof PropertyPool) {
+        } elseif ($new_property instanceof PropertyPool) { // Detect parameter is instance methodpool
             foreach ($new_property->getPools() as $pool) {
                 if ($pool instanceof Property) {
                     $this->propertys[] = $pool;
@@ -421,17 +427,15 @@ class Generate
     }
 
     /**
-     * @param callable(MethodPool): void|Method|MethodPool $new_method callabe with param pools constan or single property
+     * @param callable(MethodPool): void|Method|MethodPool $new_method Callabe with param pools constan
+     *                                                                 or single property
      */
     public function methods($new_method): self
     {
         // detect if single propertys
         if ($new_method instanceof Method) {
             $this->methods[] = $new_method;
-        }
-
-        // detect if multy property with methodspool
-        elseif (is_callable($new_method)) {
+        } elseif (is_callable($new_method)) { // Detect if multu property with methodspool
             $method = new MethodPool();
 
             call_user_func_array($new_method, [$method]);
@@ -441,9 +445,7 @@ class Generate
                     $this->methods[] = $pool;
                 }
             }
-        }
-        // detect parameter is instance methodpool
-        elseif ($new_method instanceof MethodPool) {
+        } elseif ($new_method instanceof MethodPool) { // Detect parameter is instance methodpool
             foreach ($new_method->getPools() as $pool) {
                 if ($pool instanceof Method) {
                     $this->methods[] = $pool;

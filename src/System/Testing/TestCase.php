@@ -69,7 +69,18 @@ class TestCase extends BaseTestCase
     ): TestResponse {
         /** @var Kernel */
         $kernel   = $this->app->make(Kernel::class);
-        $request  = new Request($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
+        $request  = new Request(
+            $url,
+            $query,
+            $post,
+            $attributes,
+            $cookies,
+            $files,
+            $headers,
+            $method,
+            $remoteAddress,
+            $rawBody
+        );
         $response = $kernel->handle($request);
 
         $kernel->terminate($request, $response);

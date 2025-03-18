@@ -64,7 +64,14 @@ class Kernel
 
             $pipeline = array_reduce(
                 array_merge($this->middleware, $dispatcher['middleware']),
-                fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
+                fn ($next, $middleware) => fn ($req) => $this->app->call(
+                    [
+                        $middleware, 'handle'
+                    ],
+                    [
+                        'request' => $req, 'next' => $next
+                    ]
+                ),
                 fn ()                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
             );
 

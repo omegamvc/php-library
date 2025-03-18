@@ -9,62 +9,50 @@ use System\Database\MyQuery\Select;
 
 abstract class MyModel
 {
-    /**
-     * Kumpulan array filter.
-     *
-     * @var array<int, array<string, string[]|bool>>
-     */
-    protected $_GROUP_FILTER = [];
+    /** @var array<int, array<string, string[]|bool>> Holds an arry ofo group filter. */
+    protected array $groupFilter = [];
 
-    /**
-     * Primery filter.
-     *
-     * @var string[]
-     */
-    protected $_FILTERS = [];
-    /** duplicate filter for where statmment */
-    protected bool $_ALLOW_DUPLICATE_FILTERS = true;
+    /** @var string[] Holds an array of primary filter. */
+    protected array $filters = [];
 
-    /**
-     * Table yang dugunakan.
-     *
-     * @var string[]
-     */
-    protected $_TABELS  = [];
+    /** @var bool Allow duplicate filter for where statement */
+    protected bool $allowDuplicateFilters = true;
 
-    /** column yang dugunaka.
-     * @var array<int|string, string>
-     */
-    protected $_COLUMNS = ['*'];
+    /** @var string[] Holds an array of tables. */
+    protected array $tables  = [];
 
-    /** column order */
-    protected string $_SORT_ORDER = 'id DESC';
-    /** Logica where stactment [AND / OR] */
-    protected bool $_STRICT_SEARCH = true;
+    /** @var array<int|string, string> */
+    protected array $columns = ['*'];
 
-    /**
-     * costume where optional added to where statment.
-     *
-     * @var array<int, array<string, array<string|int, string>>>
-     */
-    protected $_COSTUME_WHERE = [];
+    /** @var string Define column order. */
+    protected string $sortOrder = 'id DESC';
 
-    /** @var int Limit start from */
-    protected $_limit_start = 0;
-    /** @var int Limit end to */
-    protected $_limit_end = 10;
-    /** @var string costume join */
-    protected $_COSTUME_JOIN = '';
-    /** @var string[] costume join */
-    protected $_JOIN = [];
+    /** @var bool Determine logic where statement [AND / OR] */
+    protected bool $strictSearch = true;
 
-    public const ORDER_ASC  = 0;
-    public const ORDER_DESC = 1;
+    /** @var array<int, array<string, array<string|int, string>>> Custom where optional added to where statement. */
+    protected array $customWhere = [];
+
+    /** @var int Limit start from. */
+    protected int $limitStart = 0;
+
+    /** @var int Limit end to. */
+    protected int $limitEnd = 10;
+
+    /** @var string Holds custom join. */
+    protected string $customJoin = '';
+
+    /** @var string[] Holds an array of custom join. */
+    protected array $join = [];
+
+    /** @var int Ascending order. */
+    public const int ORDER_ASC  = 0;
+
+    /** @var int Descending order. */
+    public const int ORDER_DESC = 1;
 
     /** @var MyPDO */
-    protected $PDO;
-
-    // setter
+    protected MyPDO $pdo;
 
     /**
      * Combine where condition with 'AND' or 'OR'.
@@ -74,7 +62,7 @@ abstract class MyModel
      */
     public function setStrictSearch(bool $strict_mode)
     {
-        $this->_STRICT_SEARCH = $strict_mode;
+        $this->strictSearch = $strict_mode;
 
         return $this;
     }
@@ -88,7 +76,7 @@ abstract class MyModel
      */
     public function limitStart(int $val)
     {
-        $this->_limit_start = $val;
+        $this->limitStart = $val;
 
         return $this;
     }
@@ -103,7 +91,7 @@ abstract class MyModel
      */
     public function limitEnd(int $val)
     {
-        $this->_limit_end = $val;
+        $this->limitEnd = $val;
 
         return $this;
     }
@@ -117,7 +105,7 @@ abstract class MyModel
     public function order(string $column_name, int $order_using = MyModel::ORDER_ASC)
     {
         $order             = $order_using == 0 ? 'ASC' : 'DESC';
-        $this->_SORT_ORDER = "$column_name $order";
+        $this->sortOrder = "$column_name $order";
 
         return $this;
     }
@@ -132,7 +120,7 @@ abstract class MyModel
      */
     public function costumeWhere(string $statment, array $bind)
     {
-        $this->_COSTUME_WHERE[] = [
+        $this->customWhere[] = [
             'statment' => "($statment)",
             'bind'     => $bind,
         ];
@@ -146,10 +134,10 @@ abstract class MyModel
      */
     public function reset(bool $costumeWhere = true): void
     {
-        $this->_FILTERS      = [];
-        $this->_GROUP_FILTER = [];
+        $this->filters      = [];
+        $this->groupFilter = [];
         if ($costumeWhere) {
-            $this->_COSTUME_WHERE = [];
+            $this->customWhere = [];
         }
     }
 
@@ -165,10 +153,10 @@ abstract class MyModel
     {
         // rewrite table relation with this current table
         if ($use_parent_table) {
-            $join->table($this->_TABELS[0]);
+            $join->table($this->tables[0]);
         }
 
-        $this->_JOIN[] = $join->stringJoin();
+        $this->join[] = $join->stringJoin();
 
         return $this;
     }
@@ -205,16 +193,16 @@ abstract class MyModel
      */
     protected function query(): string
     {
-        $table          = $this->_TABELS[0];
-        $column         = implode(', ', $this->_COLUMNS);
+        $table          = $this->tables[0];
+        $column         = implode(', ', $this->columns);
         $where_statment = $this->getWhere();
         $where_statment = $where_statment == '' ? '' : "WHERE $where_statment";
-        $sortOrder      = $this->_SORT_ORDER;
-        $limit          = $this->_limit_start < 0 ? "LIMIT $this->_limit_end" : "LIMIT $this->_limit_start, $this->_limit_end";
-        $limit          = $this->_limit_end < 1 ? '' : $limit;
+        $sortOrder      = $this->sortOrder;
+        $limit          = $this->limitStart < 0 ? "LIMIT $this->limitEnd" : "LIMIT $this->limitStart, $this->limitEnd";
+        $limit          = $this->limitEnd < 1 ? '' : $limit;
         // merge join
-        $this->_JOIN[] = $this->_COSTUME_JOIN;
-        $join          = implode(' ', $this->_JOIN);
+        $this->join[] = $this->customJoin;
+        $join          = implode(' ', $this->join);
 
         return "SELECT $column FROM $table
       $join $where_statment ORDER BY $sortOrder $limit";
@@ -225,12 +213,12 @@ abstract class MyModel
      */
     protected function originQuery(): string
     {
-        $table     = $this->_TABELS[0];
-        $column    = implode(', ', $this->_COLUMNS);
-        $sortOrder = $this->_SORT_ORDER;
+        $table     = $this->tables[0];
+        $column    = implode(', ', $this->columns);
+        $sortOrder = $this->sortOrder;
         // merge join
-        $this->_JOIN[] = $this->_COSTUME_JOIN;
-        $join          = implode(' ', $this->_JOIN);
+        $this->join[] = $this->customJoin;
+        $join          = implode(' ', $this->join);
 
         return "SELECT $column FROM $table
       $join ORDER BY $sortOrder";
@@ -246,12 +234,12 @@ abstract class MyModel
      */
     protected function mergeFilters(): array
     {
-        $new_grups_filters = $this->_GROUP_FILTER;
+        $new_grups_filters = $this->groupFilter;
         // menambahkan filter group yg sudah ada, dengan filter
-        if (empty($this->_FILTERS) == false) {
+        if (empty($this->filters) == false) {
             $new_grups_filters[] = [
-                'filters' => $this->_FILTERS,
-                'strict'  => $this->_STRICT_SEARCH,
+                'filters' => $this->filters,
+                'strict'  => $this->strictSearch,
             ];
         }
 
@@ -265,7 +253,7 @@ abstract class MyModel
     protected function grupQueryFilters(array $grup_fillters): string
     {
         /** @var string[] */
-        $where_statment = array_values(array_column($this->_COSTUME_WHERE, 'statment'));
+        $where_statment = array_values(array_column($this->customWhere, 'statment'));
         foreach ($grup_fillters as $filter) {
             $query = $this->queryfilters($filter['filters'], $filter['strict']);
             if (!empty($query)) {
@@ -304,8 +292,11 @@ abstract class MyModel
     /**
      * @param array<string, string|string[]> $option
      */
-    protected function queryBuilder(string $key, ?string $val, array $option = ['imperssion' => ["'%", "%'"], 'operator' => 'LIKE']): string
-    {
+    protected function queryBuilder(
+        string $key,
+        ?string $val,
+        array $option = ['imperssion' => ["'%", "%'"], 'operator' => 'LIKE']
+    ): string {
         $column   = $option['column'] != '' ? $option['column'] . '.' : '';
         $operator = $option['operator'];
         $sur      = $option['imperssion'][0];
@@ -331,16 +322,16 @@ abstract class MyModel
                     }
 
                     $type = $val['type'] ?? null;
-                    $this->PDO->bind($param, $val['value'], $type);
+                    $this->pdo->bind($param, $val['value'], $type);
                 }
             }
         }
 
         // binding from costume where
-        $bindWhere = array_values(array_column($this->_COSTUME_WHERE, 'bind'));
+        $bindWhere = array_values(array_column($this->customWhere, 'bind'));
         foreach ($bindWhere as $binds) {
             foreach ($binds as $bind) {
-                $this->PDO->bind($bind[0], $bind[1]);
+                $this->pdo->bind($bind[0], $bind[1]);
             }
         }
     }
@@ -352,13 +343,13 @@ abstract class MyModel
      */
     public function single()
     {
-        if ($this->PDO === null) {
+        if ($this->pdo === null) {
             return [];
         }
-        $this->PDO->query($this->query());
+        $this->pdo->query($this->query());
         $this->bindingFilters();
 
-        return $this->PDO->single();
+        return $this->pdo->single();
     }
 
     /**
@@ -368,13 +359,13 @@ abstract class MyModel
      */
     public function result()
     {
-        if ($this->PDO == null) {
+        if ($this->pdo == null) {
             return [];
         }                              // return null jika db belum siap
-        $this->PDO->query($this->query());
+        $this->pdo->query($this->query());
         $this->bindingFilters();
 
-        return $this->PDO->resultset();
+        return $this->pdo->resultset();
     }
 
     /**
@@ -384,10 +375,10 @@ abstract class MyModel
      */
     public function resultAll()
     {
-        if ($this->PDO == null) {
+        if ($this->pdo == null) {
             return [];
         }                          // return null jika db belum siap
-        $this->PDO->query($this->originQuery());
+        $this->pdo->query($this->originQuery());
 
         // binding from filter
         foreach ($this->mergeFilters() as $filters) {
@@ -395,20 +386,20 @@ abstract class MyModel
                 if (isset($val['value']) && $val['value'] != '') {
                     $param = $val['param'] ?? $key;
                     $type  = $val['type'] ?? null;
-                    $this->PDO->bind(':' . $param, $val['value'], $type);
+                    $this->pdo->bind(':' . $param, $val['value'], $type);
                 }
             }
         }
 
         // binding from costume where
-        $bindWhere = array_values(array_column($this->_COSTUME_WHERE, 'bind'));
+        $bindWhere = array_values(array_column($this->customWhere, 'bind'));
         foreach ($bindWhere as $binds) {
             foreach ($binds as $bind) {
-                $this->PDO->bind($bind[0], $bind[1]);
+                $this->pdo->bind($bind[0], $bind[1]);
             }
         }
 
-        return $this->PDO->resultset();
+        return $this->pdo->resultset();
     }
 
     /**
@@ -428,6 +419,6 @@ abstract class MyModel
      */
     public function select(): Select
     {
-        return new Select($this->_TABELS[0], $this->_COLUMNS, $this->PDO, ['query' => $this->query()]);
+        return new Select($this->tables[0], $this->columns, $this->pdo, ['query' => $this->query()]);
     }
 }

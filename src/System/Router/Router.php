@@ -9,23 +9,23 @@ class Router
     /** @var Route[] */
     private static $routes           = [];
     /** @var ?callable(string): mixed */
-    private static $pathNotFound;
+    private static mixed $pathNotFound;
     /** @var ?callable(string, string): mixed */
-    private static $methodNotAllowed;
+    private static mixxed $methodNotAllowed;
     /** @var array<string, string|string[]> */
     public static $group             = [
         'prefix'     => '',
         'middleware' => [],
     ];
     /** @var Route|null */
-    private static $current;
+    private static ?Route $current;
 
     /**
      * Alias router param to readable regex url.
      *
      * @var array<string, string>
      */
-    public static $patterns = [
+    public static array $patterns = [
         '(:id)'   => '(\d+)',
         '(:num)'  => '([0-9]*)',
         '(:text)' => '([a-zA-Z]*)',
@@ -35,11 +35,11 @@ class Router
     ];
 
     /**
-     * Repalce alias to regex.
+     * Replace alias to regex.
      *
-     * @param string $url Alias patern url
+     * @param string $url Alias pattern url
      *
-     * @return string Patern regex
+     * @return string Pattern regex
      */
     public static function mapPatterns(string $url): string
     {
@@ -435,20 +435,24 @@ class Router
     /**
      * Run/execute routes.
      *
-     * @param string $basepath               Base Path
-     * @param bool   $case_matters           Cese sensitive metters
-     * @param bool   $trailing_slash_matters Trailing slash matters
-     * @param bool   $multimatch             Return Multy route
+     * @param string $basePath             Base Path
+     * @param bool   $caseMatters          Case sensitive metters
+     * @param bool   $trailingSlashMatters Trailing slash matters
+     * @param bool   $multiMatch           Return Multi route
      */
-    public static function run($basepath = '', $case_matters = false, $trailing_slash_matters = false, $multimatch = false): mixed
-    {
+    public static function run(
+        string $basePath = '',
+        bool $caseMatters = false,
+        bool $trailingSlashMatters = false,
+        bool $multiMatch = false
+    ): mixed {
         $dispatcher = RouteDispatcher::dispatchFrom($_SERVER['REQUEST_URI'], $_SERVER['REQUEST_METHOD'], self::$routes);
 
         $dispatch = $dispatcher
-            ->basePath($basepath)
-            ->caseMatters($case_matters)
-            ->trailingSlashMatters($trailing_slash_matters)
-            ->multimatch($multimatch)
+            ->basePath($basePath)
+            ->caseMatters($caseMatters)
+            ->trailingSlashMatters($trailingSlashMatters)
+            ->multimatch($multiMatch)
             ->run(
                 fn ($current, $params) => call_user_func_array($current, $params),
                 fn ($path)          => call_user_func_array(self::$pathNotFound, [$path]),

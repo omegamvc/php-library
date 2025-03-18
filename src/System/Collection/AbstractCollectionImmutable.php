@@ -509,7 +509,8 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * Finds the highest value in the collection.
      *
-     * @param string|int|null $key The key to retrieve the maximum value from, if the collection contains arrays or objects.
+     * @param string|int|null $key The key to retrieve the maximum value from, if the collection
+     *                             contains arrays or objects.
      * @return mixed The highest value found.
      * @throws InvalidArgumentException If the collection is empty.
      */
@@ -527,7 +528,8 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     /**
      * Finds the lowest value in the collection.
      *
-     * @param string|int|null $key The key to retrieve the minimum value from, if the collection contains arrays or objects.
+     * @param string|int|null $key The key to retrieve the minimum value from, if the collection
+     *                             contains arrays or objects.
      * @return mixed The lowest value found.
      * @throws InvalidArgumentException If the collection is empty.
      */

@@ -163,7 +163,9 @@ class MakeCommand extends Command
         info('Creating Model class in ' . $model_location)->out(false);
 
         $class = new Generate($name);
-        $class->customizeTemplate("<?php\n\ndeclare(strict_types=1);\n{{before}}{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}}{{end}}");
+        $class->customizeTemplate(
+            "<?php\n\ndeclare(strict_types=1);\n{{before}}{{comment}}\n{{rule}}class\40{{head}}\n{\n{{body}}}{{end}}"
+        );
         $class->tabSize(4);
         $class->tabIndent(' ');
         $class->setEndWithNewLine();
@@ -188,8 +190,25 @@ class MakeCommand extends Command
             }
         }
 
-        $class->addProperty('table_name')->visibility(Property::PROTECTED_)->dataType('string')->expecting(" = '{$table_name}'");
-        $class->addProperty('primaryKey')->visibility(Property::PROTECTED_)->dataType('string')->expecting("= '{$primaryKey}'");
+        $class->addProperty(
+            'table_name'
+        )->visibility(
+            Property::PROTECTED_
+        )->dataType(
+            'string'
+        )->expecting(
+            " = '{$table_name}'"
+        );
+
+        $class->addProperty(
+            'primaryKey'
+        )->visibility(
+            Property::PROTECTED_
+        )->dataType(
+            'string'
+        )->expecting(
+            "= '{$primaryKey}'"
+        );
 
         if (false === file_put_contents($model_location, $class->generate())) {
             fail('Failed Create model file')->out();

@@ -13,28 +13,28 @@ class Text
      *
      * @var string
      */
-    private $_original;
+    private string $original;
 
     /**
      * Current string.
      *
      * @var string
      */
-    private $_current;
+    private string $current;
 
     /**
      * Log string modifier.
      *
      * @var array<string, array<string, string>>
      */
-    private $_latest;
+    private array $latest;
 
     /**
      * Throw when string method return 'false' instance 'string'.
      *
      * @var bool
      */
-    private $_throw_on_failure = false;
+    private bool $throwOnFailure = false;
 
     /**
      * Create string class.
@@ -43,7 +43,7 @@ class Text
      */
     public function __construct(string $text)
     {
-        $this->_original = $text;
+        $this->original = $text;
         $this->execute($text, __FUNCTION__);
     }
 
@@ -58,10 +58,10 @@ class Text
     private function execute($text, string $function_name)
     {
         if (Str::isString($text)) {
-            $this->_current = $text;
+            $this->current = $text;
         }
 
-        $this->_latest[] = [
+        $this->latest[] = [
             'function'  => $function_name,
             'return'    => $text,
             'type'      => \gettype($text),
@@ -91,7 +91,7 @@ class Text
      */
     public function getText()
     {
-        return $this->_current;
+        return $this->current;
     }
 
     /**
@@ -111,7 +111,7 @@ class Text
      */
     public function logs()
     {
-        return $this->_latest;
+        return $this->latest;
     }
 
     /**
@@ -121,9 +121,9 @@ class Text
      */
     public function reset()
     {
-        $this->_current          = $this->_original;
-        $this->_latest           = [];
-        $this->_throw_on_failure = false;
+        $this->current          = $this->original;
+        $this->latest           = [];
+        $this->throwOnFailure = false;
 
         return $this;
     }
@@ -137,7 +137,7 @@ class Text
      */
     public function refresh(string $text)
     {
-        $this->_original = $text;
+        $this->original = $text;
 
         return $this->reset();
     }
@@ -151,7 +151,7 @@ class Text
      */
     public function throwOnFailure(bool $throw_error)
     {
-        $this->_throw_on_failure = $throw_error;
+        $this->throwOnFailure = $throw_error;
 
         return $this;
     }
@@ -167,7 +167,7 @@ class Text
      */
     public function chartAt(int $index)
     {
-        $text = Str::chartAt($this->_current, $index);
+        $text = Str::chartAt($this->current, $index);
 
         $this->execute($text, __FUNCTION__);
 
@@ -184,10 +184,10 @@ class Text
      */
     public function slice(int $start, ?int $length = null)
     {
-        $text = Str::slice($this->_current, $start, $length);
+        $text = Str::slice($this->current, $start, $length);
 
-        if ($this->_throw_on_failure && false === $text) {
-            throw new NoReturnException(__FUNCTION__, $this->_current);
+        if ($this->throwOnFailure && false === $text) {
+            throw new NoReturnException(__FUNCTION__, $this->current);
         }
 
         $this->execute($text, __FUNCTION__);
@@ -202,7 +202,7 @@ class Text
      */
     public function lower()
     {
-        $text = Str::toLowerCase($this->_current);
+        $text = Str::toLowerCase($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -215,7 +215,7 @@ class Text
      */
     public function upper()
     {
-        $text = Str::toUpperCase($this->_current);
+        $text = Str::toUpperCase($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -228,7 +228,7 @@ class Text
      */
     public function firstUpper()
     {
-        $text = Str::firstUpper($this->_current);
+        $text = Str::firstUpper($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -241,7 +241,7 @@ class Text
      */
     public function firstUpperAll()
     {
-        $text = Str::firstUpperAll($this->_current);
+        $text = Str::firstUpperAll($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -254,7 +254,7 @@ class Text
      */
     public function snack()
     {
-        $text = Str::toSnackCase($this->_current);
+        $text = Str::toSnackCase($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -267,7 +267,7 @@ class Text
      */
     public function kebab()
     {
-        $text = Str::toKebabCase($this->_current);
+        $text = Str::toKebabCase($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -280,7 +280,7 @@ class Text
      */
     public function pascal()
     {
-        $text = Str::toPascalCase($this->_current);
+        $text = Str::toPascalCase($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -293,7 +293,7 @@ class Text
      */
     public function camel()
     {
-        $text = Str::toCamelCase($this->_current);
+        $text = Str::toCamelCase($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -306,7 +306,7 @@ class Text
      */
     public function slug()
     {
-        $text = Str::slug($this->_current);
+        $text = Str::slug($this->current);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -322,7 +322,7 @@ class Text
      */
     public function fill(string $fill, $length)
     {
-        $text = Str::fill($this->_current, $fill, $length);
+        $text = Str::fill($this->current, $fill, $length);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -338,7 +338,7 @@ class Text
      */
     public function fillEnd(string $fill, $length)
     {
-        $text = Str::fillEnd($this->_current, $fill, $length);
+        $text = Str::fillEnd($this->current, $fill, $length);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -355,7 +355,7 @@ class Text
      */
     public function mask(string $mask, int $start, int $mask_length = 9999)
     {
-        $text = Str::mask($this->_current, $mask, $start, $mask_length);
+        $text = Str::mask($this->current, $mask, $start, $mask_length);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -371,7 +371,7 @@ class Text
      */
     public function limit(int $length, string $truncate_caracter = '...')
     {
-        $text = Str::limit($this->_current, $length, $truncate_caracter);
+        $text = Str::limit($this->current, $length, $truncate_caracter);
         $this->execute($text, __FUNCTION__);
 
         return $this;
@@ -383,7 +383,7 @@ class Text
     public function after(string $find): self
     {
         $this->execute(
-            Str::after($this->_current, $find),
+            Str::after($this->current, $find),
             __FUNCTION__
         );
 
@@ -399,7 +399,7 @@ class Text
      */
     public function length()
     {
-        return Str::length($this->_current);
+        return Str::length($this->current);
     }
 
     /**
@@ -411,7 +411,7 @@ class Text
      */
     public function indexOf(string $find)
     {
-        return Str::indexOf($this->_current, $find);
+        return Str::indexOf($this->current, $find);
     }
 
     /**
@@ -423,7 +423,7 @@ class Text
      */
     public function lastIndexOf(string $find)
     {
-        return Str::lastIndexOf($this->_current, $find);
+        return Str::lastIndexOf($this->current, $find);
     }
 
     // boolean -------------------------------------------
@@ -435,7 +435,7 @@ class Text
      */
     public function isEmpty()
     {
-        return Str::isEmpty($this->_current);
+        return Str::isEmpty($this->current);
     }
 
     /**
@@ -447,7 +447,7 @@ class Text
      */
     public function is(string $pattern)
     {
-        return Str::isMatch($this->_current, $pattern);
+        return Str::isMatch($this->current, $pattern);
     }
 
     /**
@@ -471,7 +471,7 @@ class Text
      */
     public function contains(string $find)
     {
-        return Str::contains($this->_current, $find);
+        return Str::contains($this->current, $find);
     }
 
     /**
@@ -483,7 +483,7 @@ class Text
      */
     public function startsWith(string $start_with)
     {
-        return Str::startsWith($this->_current, $start_with);
+        return Str::startsWith($this->current, $start_with);
     }
 
     /**
@@ -495,6 +495,6 @@ class Text
      */
     public function endsWith(string $end_with)
     {
-        return Str::endsWith($this->_current, $end_with);
+        return Str::endsWith($this->current, $end_with);
     }
 }

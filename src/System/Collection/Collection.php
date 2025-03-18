@@ -563,7 +563,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Returns the elements of the collection that do not have the same key-value pairs as those in the given collection.
+     * Returns the elements of the collection that do not have the same key-value pairs as ù
+     * those in the given collection.
      *
      * @param array<TKey, TValue> $collection The collection to compare against.
      * @return $this The current collection instance.
@@ -602,7 +603,8 @@ class Collection extends AbstractCollectionImmutable
     }
 
     /**
-     * Returns the elements of the collection that do not have the same key-value pairs as those in the given collection.
+     * Returns the elements of the collection that do not have the same key-value pairs as those in the
+     * given collection.
      *
      * @param array<TKey, TValue> $collection The collection to compare against.
      * @return $this The current collection instance.
@@ -627,24 +629,31 @@ class Collection extends AbstractCollectionImmutable
         if ('=' === $operator || '==' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] == $value);
         }
+
         if ('===' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] === $value);
         }
+
         if ('!=' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] != $value);
         }
+
         if ('!==' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] !== $value);
         }
+
         if ('>' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] > $value);
         }
+
         if ('>=' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] >= $value);
         }
+
         if ('<' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] < $value);
         }
+
         if ('<=' === $operator) {
             return $this->filter(fn ($TValue) => array_key_exists($key, $TValue) && $TValue[$key] <= $value);
         }

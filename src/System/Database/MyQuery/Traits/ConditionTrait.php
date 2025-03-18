@@ -51,14 +51,14 @@ trait ConditionTrait
      */
     public function where(string $where_condition, array $binder = [])
     {
-        $this->_where[] = $where_condition;
+        $this->where[] = $where_condition;
 
         foreach ($binder as $bind) {
             if ($bind instanceof Bind) {
-                $this->_binds[] = $bind;
+                $this->binds[] = $bind;
                 continue;
             }
-            $this->_binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
+            $this->binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
         }
 
         return $this;
@@ -75,15 +75,15 @@ trait ConditionTrait
      */
     public function between(string $column_name, $value_1, $value_2)
     {
-        $table_name = null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
+        $table_name = null === $this->subQuery ? $this->table : $this->subQuery->getAlias();
 
         $this->where(
             "({$table_name}.{$column_name} BETWEEN :b_start AND :b_end)",
             []
         );
 
-        $this->_binds[] = Bind::set('b_start', $value_1);
-        $this->_binds[] = Bind::set('b_end', $value_2);
+        $this->binds[] = Bind::set('b_start', $value_1);
+        $this->binds[] = Bind::set('b_end', $value_2);
 
         return $this;
     }
@@ -105,7 +105,7 @@ trait ConditionTrait
             $binder[] = [":in_$key", $bind];
         }
         $bindString = implode(', ', $binds);
-        $table_name = null === $this->_sub_query ? "{$this->_table}" : $this->_sub_query->getAlias();
+        $table_name = null === $this->subQuery ? "{$this->table}" : $this->subQuery->getAlias();
 
         $this->where(
             "({$table_name}.{$column_name} IN ({$bindString}))",
@@ -128,8 +128,8 @@ trait ConditionTrait
     public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
     {
         $escape_bind           = str_replace('.', '__', $bind);
-        $this->_binds[]        = Bind::set($escape_bind, $value);
-        $this->_filters[$bind] = [
+        $this->binds[]        = Bind::set($escape_bind, $value);
+        $this->filters[$bind] = [
             'value'       => $value,
             'comparation' => $comparation,
             'bind'        => $escape_bind,
@@ -147,7 +147,7 @@ trait ConditionTrait
      */
     public function strictMode(bool $strict): self
     {
-        $this->_strict_mode = $strict;
+        $this->strictMode = $strict;
 
         return $this;
     }

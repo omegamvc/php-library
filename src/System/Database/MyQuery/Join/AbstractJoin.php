@@ -11,29 +11,29 @@ abstract class AbstractJoin
     /**
      * @var string
      */
-    protected $_mainTable     = '';
+    protected string $mainTable = '';
 
     /**
      * @var string
      */
-    protected $_tableName     = '';
+    protected string $tableName = '';
 
     /**
      * @var string
      */
-    protected $_colomnName    = '';
+    protected string $columnName = '';
 
     /**
      * @var string[]
      */
-    protected $_compereColumn = [];
+    protected array $compareColumn = [];
 
     /**
      * @var string
      */
-    protected $_stringJoin    = '';
+    protected string $stringJoin = '';
 
-    protected ?InnerQuery $sub_query = null;
+    protected ?InnerQuery $subQuery = null;
 
     final public function __construct()
     {
@@ -44,7 +44,7 @@ abstract class AbstractJoin
      */
     public function __invoke(string $main_table)
     {
-        $this->_mainTable = $main_table;
+        $this->mainTable = $main_table;
 
         return $this;
     }
@@ -87,15 +87,15 @@ abstract class AbstractJoin
      */
     public function table(string $main_table)
     {
-        $this->_mainTable = $main_table;
+        $this->mainTable = $main_table;
 
         return $this;
     }
 
     public function clausa(InnerQuery $select): self
     {
-        $this->sub_query  = $select;
-        $this->_tableName = $select->getAlias();
+        $this->subQuery  = $select;
+        $this->tableName = $select->getAlias();
 
         return $this;
     }
@@ -109,7 +109,7 @@ abstract class AbstractJoin
      */
     public function tableRef(string $ref_table)
     {
-        $this->_tableName = $ref_table;
+        $this->tableName = $ref_table;
 
         return $this;
     }
@@ -124,8 +124,8 @@ abstract class AbstractJoin
      */
     public function tableRelation(string $main_table, string $ref_table)
     {
-        $this->_mainTable = $main_table;
-        $this->_tableName = $ref_table;
+        $this->mainTable = $main_table;
+        $this->tableName = $ref_table;
 
         return $this;
     }
@@ -142,7 +142,7 @@ abstract class AbstractJoin
     {
         $compire_column ??= $main_column;
 
-        $this->_compereColumn[] = [
+        $this->compareColumn[] = [
             $main_column, $compire_column,
         ];
 
@@ -169,7 +169,7 @@ abstract class AbstractJoin
      */
     protected function joinBuilder(): string
     {
-        return $this->_stringJoin;
+        return $this->stringJoin;
     }
 
     /**
@@ -179,11 +179,11 @@ abstract class AbstractJoin
     protected function splitJoin(): string
     {
         $on = [];
-        foreach ($this->_compereColumn as $column) {
+        foreach ($this->compareColumn as $column) {
             $masterColumn  = $column[0];
             $compireColumn = $column[1];
 
-            $on[] = "$this->_mainTable.$masterColumn = $this->_tableName.$compireColumn";
+            $on[] = "$this->mainTable.$masterColumn = $this->tableName.$compireColumn";
         }
 
         return implode(' AND ', $on);
@@ -191,6 +191,6 @@ abstract class AbstractJoin
 
     protected function getAlias(): string
     {
-        return null === $this->sub_query ? $this->_tableName : (string) $this->sub_query;
+        return null === $this->subQuery ? $this->tableName : (string) $this->subQuery;
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'required'                 => 'Das Feld "{field}" ist erforderlich.',
     'valid_email'              => 'Das Feld "{field}" muss eine g&uuml;ltige E-Mail-Adresse sein.',
     'max_len'                  => 'Das Feld "{field}" darf maximal {param} Zeichen enthalten.',
@@ -41,7 +41,9 @@ return array(
     'phone_number'             => 'Das Feld "{field}" muss eine g&uuml;ltige Telefonnummer sein.',
     'regex'                    => 'Das Feld "{field}" muss einen Wert im g&uuml;ltigem Format enthalten.',
     'valid_json_string'        => 'Das Feld "{field}" muss eine g&uuml;ltige JSON-Format-Zeichenfolge enthalten.',
+    // phpcs:ignore
     'valid_array_size_greater' => 'Das Feld "{field}" muss ein Array mit einer Gr&ouml;&szlig;e gr&ouml;&szlig;ergleich {param} sein.',
+    // phpcs:ignore
     'valid_array_size_lesser'  => 'Das Feld "{field}" muss ein Array mit einer Gr&ouml;&szlig;e kleinergleich {param} sein.',
     'valid_array_size_equal'   => 'Das Feld "{field}" muss ein Array mit einer Gr&ouml;&szlig;e gleich {param} sein.',
-);
+];

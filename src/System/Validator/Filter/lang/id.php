@@ -1,13 +1,13 @@
 <?php
 
-return array(
+return [
     'required'                 => 'Bagian {field} harus diisi',
     'valid_email'              => 'Bagian {field} harus berisi alamat email yang benar',
     'max_len'                  => 'Bagian {field} harus memiliki {param} karakter atau kurang',
     'min_len'                  => 'Bagian {field} memiliki sedikitnya {param} karakter',
     'exact_len'                => 'Bagian {field} harus memiliki tepat {param} karakter',
-    'between_len'           => 'Bagian {field} harus memiliki panjang antara {param1} dan {param2} karakter',
-    'alpha_numeric_dash'    => 'Bagian {field} hanya boleh berisi huruf, angka dan tanda hubung (-)',
+    'between_len'              => 'Bagian {field} harus memiliki panjang antara {param1} dan {param2} karakter',
+    'alpha_numeric_dash'       => 'Bagian {field} hanya boleh berisi huruf, angka dan tanda hubung (-)',
     'alpha'                    => 'Bagian {field} hanya boleh berisi huruf',
     'alpha_numeric'            => 'Bagian {field} hanya boleh berisi huruf dan angkat',
     'alpha_numeric_space'      => 'Bagian {field} hanya boleh berisi huruf, angkat dan spasi',
@@ -30,7 +30,9 @@ return array(
     'doesnt_contain_list'      => 'Bagian {field} memiliki nilai yang tidak diperbolehkan',
     'street_address'           => 'Bagian {field} harus berupa alamat lengkap yang benar',
     'date'                     => 'Bagian {field} harus memiliki format tanggal yang benar',
+    // phpcs:ignore
     'min_numeric'              => 'Bagian {field} hanya boleh berisi angka, yang memiliki karakter lebih besar atau sama dengan {param}',
+    // phpcs:ignore
     'max_numeric'              => 'Bagian {field} hanya boleh berisi angka, yang memiliki karakter lebih kecil atau sama dengan  {param}',
     'min_age'                  => 'Bagian {field}hanya boleh berisi \'umur\' yang lebih besar atau sama dengan {param}',
     'starts'                   => 'Bagian {field} harus dimulai oleh {param}',
@@ -41,7 +43,9 @@ return array(
     'phone_number'             => 'Bagian {field} harus berupa Nomor Telepon yang benar',
     'regex'                    => 'Bagian {field} harus memiliki nilai dengan format yang benar',
     'valid_json_string'        => 'Bagian {field} harus memiliki format JSON yang benar',
+    // phpcs:ignore
     'valid_array_size_greater' => 'Bagian {field} harus berupa array dengan ukuran lebih besar atau sama dengan {param}',
+    // phpcs:ignore
     'valid_array_size_lesser'  => 'Bagian {field} harus berupa array dengan ukuran lebih kecil atau sama dengan {param}',
     'valid_array_size_equal'   => 'Bagian {field} harus berupa array dengan ukuran {param}',
-);
+];

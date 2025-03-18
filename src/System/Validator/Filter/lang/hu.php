@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'required'                 => '{field} mező kötelező.',
     'valid_email'              => '{field} mezőnek valós email címnek kell lennie.',
     'max_len'                  => '{field} mező legfeljebb {param} karakter hosszú lehet.',
@@ -32,6 +32,7 @@ return array(
     'date'                     => '{field} valós dátumnak kell lennie.',
     'min_numeric'              => '{field} mezőnek számnak kell lennie, ami nagyobb vagy egyenlő, mint {param}.',
     'max_numeric'              => '{field} mezőnek számnak kell lennie, ami kisebb vagy egyenlő, mint {param}.',
+    // phpcs:ignore
     'min_age'                  => '{field} mezőnek valós életkornak kell lennie, ami nagyobb vagy egyenlő, mint {param} év.',
     'starts'                   => '{field} mezőnek a következő szöveggel kell kezdődnie: {param}.',
     'extension'                => '{field} mező csak a következő kitrejesztéseket tartalmazhatja: {param}.',
@@ -44,4 +45,4 @@ return array(
     'valid_array_size_greater' => '{field} tömbnek nagyobb vagy egyenlő számúnak kell lennie, mint {param}.',
     'valid_array_size_lesser'  => '{field} tömbnek kisebb vagy egyenlő számúnak kell lennie, mint {param}.',
     'valid_array_size_equal'   => '{field} tömbnek {param} számúnak kell lennie.',
-);
+];

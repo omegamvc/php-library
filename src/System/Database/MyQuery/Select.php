@@ -25,17 +25,17 @@ final class Select extends Fetch
      */
     public function __construct($table_name, array $columns_name, MyPDO $PDO, ?array $options = null)
     {
-        $this->_sub_query = $table_name instanceof InnerQuery ? $table_name : new InnerQuery(table: $table_name);
-        $this->_column    = $columns_name;
-        $this->PDO        = $PDO;
+        $this->subQuery = $table_name instanceof InnerQuery ? $table_name : new InnerQuery(table: $table_name);
+        $this->column    = $columns_name;
+        $this->pdo        = $PDO;
 
         // inherit bind from sub query
         if ($table_name instanceof InnerQuery) {
-            $this->_binds = $table_name->getBind();
+            $this->binds = $table_name->getBind();
         }
 
         $column       = implode(', ', $columns_name);
-        $this->_query = $options['query'] ?? "SELECT {$column} FROM { $this->_sub_query}";
+        $this->query = $options['query'] ?? "SELECT {$column} FROM { $this->subQuery}";
     }
 
     public function __toString()
@@ -67,13 +67,13 @@ final class Select extends Fetch
     public function join(AbstractJoin $ref_table): self
     {
         // overide master table
-        $ref_table->table($this->_sub_query->getAlias());
+        $ref_table->table($this->subQuery->getAlias());
 
-        $this->_join[] = $ref_table->stringJoin();
+        $this->join[] = $ref_table->stringJoin();
         $binds         = (fn () => $this->{'sub_query'})->call($ref_table);
 
         if (null !== $binds) {
-            $this->_binds = array_merge($this->_binds, $binds->getBind());
+            $this->binds = array_merge($this->binds, $binds->getBind());
         }
 
         return $this;
@@ -81,9 +81,9 @@ final class Select extends Fetch
 
     private function joinBuilder(): string
     {
-        return 0 === count($this->_join)
+        return 0 === count($this->join)
             ? ''
-            : implode(' ', $this->_join)
+            : implode(' ', $this->join)
         ;
     }
 
@@ -112,7 +112,7 @@ final class Select extends Fetch
      */
     public function limitStart(int $value)
     {
-        $this->_limit_start = $value < 0 ? 0 : $value;
+        $this->limitStart = $value < 0 ? 0 : $value;
 
         return $this;
     }
@@ -141,7 +141,7 @@ final class Select extends Fetch
      */
     public function offset(int $value)
     {
-        $this->_offset = $value < 0 ? 0 : $value;
+        $this->offset = $value < 0 ? 0 : $value;
 
         return $this;
     }
@@ -166,10 +166,10 @@ final class Select extends Fetch
     public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
+        $belong_to ??= null === $this->subQuery ? $this->table : $this->subQuery->getAlias();
         $res = "{$belong_to}.{$column_name}";
 
-        $this->_sort_order[$res] = $order;
+        $this->sortOrder[$res] = $order;
 
         return $this;
     }
@@ -178,8 +178,11 @@ final class Select extends Fetch
      * Set sort column and order
      * with Column if not null.
      */
-    public function orderIfNotNull(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
-    {
+    public function orderIfNotNull(
+        string $column_name,
+        int $order_using = MyQuery::ORDER_ASC,
+        ?string $belong_to = null
+    ): self {
         return $this->order("{$column_name} IS NOT NULL", $order_using, $belong_to);
     }
 
@@ -187,8 +190,11 @@ final class Select extends Fetch
      * Set sort column and order
      * with Column if null.
      */
-    public function orderIfNull(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
-    {
+    public function orderIfNull(
+        string $column_name,
+        int $order_using = MyQuery::ORDER_ASC,
+        ?string $belong_to = null
+    ): self {
         return $this->order("{$column_name} IS NULL", $order_using, $belong_to);
     }
 
@@ -198,7 +204,7 @@ final class Select extends Fetch
      */
     public function groupBy(string ...$groups): self
     {
-        $this->_group_by = $groups;
+        $this->groupBy = $groups;
 
         return $this;
     }
@@ -208,7 +214,7 @@ final class Select extends Fetch
      */
     protected function builder(): string
     {
-        $column = implode(', ', $this->_column);
+        $column = implode(', ', $this->column);
 
         $build = [];
 
@@ -220,7 +226,7 @@ final class Select extends Fetch
 
         $condition = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query = "SELECT {$column} FROM {$this->_sub_query} {$condition}";
+        return $this->query = "SELECT {$column} FROM {$this->subQuery} {$condition}";
     }
 
     /**
@@ -230,36 +236,36 @@ final class Select extends Fetch
     {
         $limit = $this->_limit_end > 0 ? "LIMIT $this->_limit_end" : '';
 
-        if ($this->_limit_start === 0) {
+        if ($this->limitStart === 0) {
             return $limit;
         }
 
-        if ($this->_limit_end === 0 && $this->_offset > 0) {
-            return "LIMIT $this->_limit_start OFFSET $this->_offset";
+        if ($this->_limit_end === 0 && $this->offset > 0) {
+            return "LIMIT $this->limitStart OFFSET $this->offset";
         }
 
-        return "LIMIT $this->_limit_start, $this->_limit_end";
+        return "LIMIT $this->limitStart, $this->_limit_end";
     }
 
     private function getGroupBy(): string
     {
-        if ([] === $this->_group_by) {
+        if ([] === $this->groupBy) {
             return '';
         }
 
-        $group_by = implode(', ', $this->_group_by);
+        $group_by = implode(', ', $this->groupBy);
 
         return "GROUP BY {$group_by}";
     }
 
     private function getOrderBy(): string
     {
-        if ([] === $this->_sort_order) {
+        if ([] === $this->sortOrder) {
             return '';
         }
 
         $orders = [];
-        foreach ($this->_sort_order as $column => $order) {
+        foreach ($this->sortOrder as $column => $order) {
             $orders[] = "{$column} {$order}";
         }
 
@@ -273,9 +279,9 @@ final class Select extends Fetch
      */
     public function sortOrderRef(int $limit_start, int $limit_end, int $offset, $sort_ordder): void
     {
-        $this->_limit_start = $limit_start;
+        $this->limitStart = $limit_start;
         $this->_limit_end   = $limit_end;
-        $this->_offset      = $offset;
-        $this->_sort_order  = $sort_ordder;
+        $this->offset      = $offset;
+        $this->sortOrder  = $sort_ordder;
     }
 }

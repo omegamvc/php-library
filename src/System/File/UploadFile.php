@@ -14,11 +14,11 @@ class UploadFile extends AbstarctUpload
     /**
      * {@inheritDoc}
      */
-    public function setFileName(string $file_name): self
+    public function setFileName(string $fileName): self
     {
         // file name without extension
-        $file_name         = urlencode($file_name);
-        $this->upload_name = $file_name;
+        $fileName         = urlencode($fileName);
+        $this->uploadName = $fileName;
 
         return $this;
     }
@@ -32,7 +32,7 @@ class UploadFile extends AbstarctUpload
             throw new FolderNotExistsException($folder_location);
         }
 
-        $this->upload_location = $folder_location;
+        $this->uploadLocation = $folder_location;
 
         return $this;
     }
@@ -42,7 +42,7 @@ class UploadFile extends AbstarctUpload
      */
     public function setFileTypes(array $extensions): self
     {
-        $this->upload_types = $extensions;
+        $this->uploadTypes = $extensions;
 
         return $this;
     }
@@ -52,7 +52,7 @@ class UploadFile extends AbstarctUpload
      */
     public function setMimeTypes(array $mimes): self
     {
-        $this->upload_mime = $mimes;
+        $this->uploadMime = $mimes;
 
         return $this;
     }
@@ -62,7 +62,7 @@ class UploadFile extends AbstarctUpload
      */
     public function setMaxFileSize(int $byte): self
     {
-        $this->upload_size_max = $byte;
+        $this->uploadSizeMax = $byte;
 
         return $this;
     }
@@ -72,7 +72,7 @@ class UploadFile extends AbstarctUpload
      */
     public function markTest(bool $mark_upload_test): self
     {
-        $this->_test = $mark_upload_test;
+        $this->test = $mark_upload_test;
 
         return $this;
     }
@@ -88,14 +88,14 @@ class UploadFile extends AbstarctUpload
             throw new MultiFileUploadDetectException();
         }
 
-        $this->file_name[]  = $files['name'];
-        $this->file_type[]  = $files['type'];
-        $this->file_tmp[]   = $files['tmp_name'];
-        $this->file_error[] = $files['error'];
-        $this->file_size[]  = $files['size'];
+        $this->fileName[]  = $files['name'];
+        $this->fileType[]  = $files['type'];
+        $this->fileTmp[]   = $files['tmp_name'];
+        $this->fileError[] = $files['error'];
+        $this->fileSize[]  = $files['size'];
         // parse files extention
         $extension              = explode('.', $files['name']);
-        $this->file_extension[] = strtolower(end($extension));
+        $this->fileExtension[] = strtolower(end($extension));
     }
 
     /**
@@ -115,9 +115,9 @@ class UploadFile extends AbstarctUpload
      */
     public function get()
     {
-        $destination =  $this->upload_location . $this->upload_name . '.' . $this->file_extension[0];
+        $destination =  $this->uploadLocation . $this->uploadName . '.' . $this->fileExtension[0];
 
-        if (!$this->_success) {
+        if (!$this->success) {
             throw new FileNotUploadedException();
         }
 

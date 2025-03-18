@@ -17,6 +17,7 @@ class JsonTemplator extends AbstractTemplatorParse
                 $flags = $matches[2] ?? 0;
                 $depth = $matches[3] ?? 512;
 
+                // phpcs:ignore
                 return "<?php echo json_encode({$data}, {$flags} | JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_THROW_ON_ERROR, {$depth}); ?>";
             },
             $template

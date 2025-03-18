@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'required'                 => 'La kampo “{field}” estas deviga',
     'valid_email'              => 'La kampo “{field}” devas enhavi validan retadreson',
     'max_len'                  => 'La kampo “{field}” devas enhavi maksimume {param} signojn',
@@ -42,6 +42,7 @@ return array(
     'regex'                    => 'La kampo “{field}” devas enhavi valoron kun valida formato',
     'valid_json_string'        => 'La kampo “{field}” devas enhavi validan JSON-formatan ĉenon',
     'valid_array_size_greater' => 'La kampoj “{field}” devas esti tabelo kun grandeco egala aŭ pli granda ol {param}',
+    // phpcs:ignore
     'valid_array_size_lesser'  => 'La kampoj “{field}” devas esti tabelo kun grandeco egala aŭ malpli granda ol {param}',
     'valid_array_size_equal'   => 'La kampoj “{field}” devas esti tabelo kun grandeco egala je {param}',
-);
+];

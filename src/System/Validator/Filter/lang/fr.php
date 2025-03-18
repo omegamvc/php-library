@@ -1,12 +1,14 @@
 <?php
 
-return array(
+return [
     'required'             => 'Le champ {field} est obligatoire',
     'valid_email'          => 'Le champ {field} doit &#234;tre un email valide',
     'max_len'              => 'Le champ {field} doit avoir un nombre de caract&#232;re de {param} ou moins',
     'min_len'              => 'Le champ {field} doit avoir un nombre de caract&#232;re de {param} ou plus',
     'between_len'             => 'Le champ {field} doit avoir un nombre de caractères entre {param} et {param2}',
+    // phpcs:ignore
     'alpha_numeric_dash'      => 'Le champ {field} doit seulement contenir des caractères alpha (a-z), numériques (0-9) et tirets',
+    // phpcs:ignore
     'alpha_numeric_space'     => 'Le champ {field} doit seulement contenir des caractères alpha (a-z), numériques (0-9) et espaces',
     'exact_len'            => 'Le champ {field} doit avoir un nombre de caract&#232;re de {param}',
     'alpha'                => 'Le champ {field} doit seulement contenir des caract&#232;res alpha (a-z)',
@@ -30,7 +32,9 @@ return array(
     'doesnt_contain_list'  => 'Le champ {field} contient une valeur qui n&#39;est pas acceptable',
     'street_address'       => 'Le champ {field} doit &#234;tre une adresse postale valide',
     'date'                 => 'Le champ {field} doit &#234;tre une date valide',
+    // phpcs:ignore
     'min_numeric'          => 'Le champ {field} doit &#234;tre une valeur num&#233;rique &#233;gale ou sup&#233;rieur à {param}',
+    // phpcs:ignore
     'max_numeric'          => 'Le champ {field} doit &#234;tre une valeur num&#233;rique &#233;gale ou inf&#233;rieur à {param}',
     'min_age'              => 'Le champ {field} doit &#234;tre un &#226;ge &#233;gal ou sup&#233;rieur à {param}',
     'starts'               => 'Le champ {field} doit commencer par {param}',
@@ -40,8 +44,10 @@ return array(
     'iban'                 => 'Le champ {field} doit contenir un IBAN valide',
     'phone_number'         => 'Le champ {field} doit contenir un num&#233;ro de t&#233;l&#233;phone valide',
     'regex'                => 'Le champ {field} doit contenir une valeur valide',
+    // phpcs:ignore
     'valid_array_size_greater' => 'Le champ {field} doit être un tableau dont la taille est supérieure ou égale à {param}',
+    // phpcs:ignore
     'valid_array_size_lesser' => 'Le champ {field} doit être un tableau dont la taille est inférieure ou égale à {param}',
     'valid_array_size_equal'  => 'Le champ {field} doit être un tableau dont la taille est égale à {param}',
     'valid_json_string'    => 'Le champ {field} doit avoir un format JSON',
-);
+];

@@ -360,8 +360,12 @@ final class Str
      *
      * @return string Template pass with math data
      */
-    public static function template(string $template, array $data, string $open_delimeter = '{', string $close_delimeter = '}')
-    {
+    public static function template(
+        string $template,
+        array $data,
+        string $open_delimeter = '{',
+        string $close_delimeter = '}'
+    ) {
         if ('{' === $open_delimeter && '}' === $close_delimeter) {
             $template = preg_replace(['/\\{\s+/', '/\s+\\}/'], ['{', '}'], $template);
         }

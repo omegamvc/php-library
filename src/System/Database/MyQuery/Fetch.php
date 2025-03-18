@@ -27,15 +27,15 @@ abstract class Fetch extends Query
     {
         $this->builder();
 
-        $this->PDO->query($this->_query);
-        foreach ($this->_binds as $bind) {
+        $this->pdo->query($this->query);
+        foreach ($this->binds as $bind) {
             if (!$bind->hasBind()) {
-                $this->PDO->bind($bind->getBind(), $bind->getValue());
+                $this->pdo->bind($bind->getBind(), $bind->getValue());
             }
         }
-        $result = $this->PDO->single();
+        $result = $this->pdo->single();
 
-        return $result === false ? [] : $this->PDO->single();
+        return $result === false ? [] : $this->pdo->single();
     }
 
     /** @return array<string|int, mixed>|false */
@@ -43,13 +43,13 @@ abstract class Fetch extends Query
     {
         $this->builder();
 
-        $this->PDO->query($this->_query);
-        foreach ($this->_binds as $bind) {
+        $this->pdo->query($this->query);
+        foreach ($this->binds as $bind) {
             if (!$bind->hasBind()) {
-                $this->PDO->bind($bind->getBind(), $bind->getValue());
+                $this->pdo->bind($bind->getBind(), $bind->getValue());
             }
         }
 
-        return $this->PDO->resultset();
+        return $this->pdo->resultset();
     }
 }

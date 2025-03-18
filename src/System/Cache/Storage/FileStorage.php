@@ -290,11 +290,13 @@ class FileStorage extends AbstractStorage
     /**
      * Retrieves cache information for a given key.
      *
-     * Returns the cache data along with the timestamp and the modification time, if available. If the cache key does not exist,
-     * or the data cannot be read, an empty array is returned.
+     * Returns the cache data along with the timestamp and the modification time, if
+     * available. If the cache key does not exist, or the data cannot be read, an empty
+     * array is returned.
      *
      * @param string $key The cache key.
-     * @return array<string, array{value: mixed, timestamp?: int, mtime?: float}> Cache data array with 'value', 'timestamp', and 'mtime'.
+     * @return array<string, array{value: mixed, timestamp?: int, mtime?: float}> Cache data array with 'value',
+     *                                                                            'timestamp', and 'mtime'.
      */
     public function getInfo(string $key): array
     {
@@ -332,10 +334,12 @@ class FileStorage extends AbstractStorage
     /**
      * Calculates the expiration timestamp for the cache item.
      *
-     * This method calculates the expiration timestamp based on the TTL (Time To Live), which can be either an integer (in seconds),
-     * a `DateInterval`, or a `DateTimeInterface`. If no TTL is provided, the default TTL is used.
+     * This method calculates the expiration timestamp based on the TTL (Time To Live), which can be
+     * either an integer (in seconds), a `DateInterval`, or a `DateTimeInterface`. If no TTL is provided,
+     * the default TTL is used.
      *
-     * @param int|DateInterval|DateTimeInterface|null $ttl The TTL for the cache item, either in seconds or as a `DateInterval`.
+     * @param int|DateInterval|DateTimeInterface|null $ttl The TTL for the cache item, either in seconds or
+     *                                                     as a `DateInterval`.
      * @return int The calculated expiration timestamp.
      */
     public function calculateExpirationTimestamp(int|DateInterval|DateTimeInterface|null $ttl): int

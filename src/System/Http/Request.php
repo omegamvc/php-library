@@ -132,7 +132,18 @@ class Request implements \ArrayAccess, \IteratorAggregate
         string $remoteAddress = '::1',
         ?string $rawBody = null,
     ) {
-        $this->initialize($url, $query, $post, $attributes, $cookies, $files, $headers, $method, $remoteAddress, $rawBody);
+        $this->initialize(
+            $url,
+            $query,
+            $post,
+            $attributes,
+            $cookies,
+            $files,
+            $headers,
+            $method,
+            $remoteAddress,
+            $rawBody
+        );
     }
 
     /**
@@ -295,7 +306,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return $this->files[$key];
     }
 
-    public function getCookie(string $key): string
+    public function getCookie(string $key): ?string
     {
         return $this->cookies[$key] ?? null;
     }
@@ -425,7 +436,12 @@ class Request implements \ArrayAccess, \IteratorAggregate
         }
 
         if (!\is_array($content)) {
-            throw new \Exception(sprintf('JSON content was expected to decode to an array, "%s" returned.', get_debug_type($content)));
+            throw new \Exception(
+                sprintf(
+                    'JSON content was expected to decode to an array, "%s" returned.',
+                    get_debug_type($content)
+                )
+            );
         }
 
         return $content;

@@ -79,7 +79,8 @@ class CacheManager implements CacheInterface
      * Adds a custom cache driver to the CacheManager.
      *
      * @param string $driverName The name of the driver.
-     * @param CacheInterface|Closure(): CacheInterface $driver The cache driver or a closure that returns a cache driver.
+     * @param CacheInterface|Closure(): CacheInterface $driver The cache driver or a closure that returns
+     *                                                         a cache driver.
      * @return self
      */
     public function setDriver(string $driverName, $driver): self

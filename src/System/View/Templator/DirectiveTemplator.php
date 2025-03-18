@@ -70,8 +70,14 @@ class DirectiveTemplator extends AbstractTemplatorParse
 
                 return array_key_exists($name, self::$excludeList)
                     ? $matches[0]
-                    : '<?php echo System\View\Templator\DirectiveTemplator::call(\'' . $name . '\', ' . implode(', ', $params) . '); ?>'
-                ;
+                    : '<?php echo System\View\Templator\DirectiveTemplator::call(\''
+                        . $name
+                        . '\', '
+                        . implode(
+                            ', ',
+                            $params
+                        )
+                . '); ?>';
             },
             $template
         );

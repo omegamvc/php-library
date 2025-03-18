@@ -6,18 +6,18 @@ namespace System\Http;
 
 class Response
 {
-    public const HTTP_OK                            = 200;
-    public const HTTP_CREATED                       = 201;
-    public const HTTP_ACCEPTED                      = 202;
-    public const HTTP_NON_AUTHORITATIVE_INFORMATION = 203;
-    public const HTTP_NO_CONTENT                    = 204;
-    public const HTTP_MOVED_PERMANENTLY             = 301;
-    public const HTTP_BAD_REQUEST                   = 400;
-    public const HTTP_UNAUTHORIZED                  = 401;
-    public const HTTP_PAYMENT_REQUIRED              = 402;
-    public const HTTP_FORBIDDEN                     = 403;
-    public const HTTP_NOT_FOUND                     = 404;
-    public const HTTP_METHOD_NOT_ALLOWED            = 405;
+    public const int HTTP_OK                            = 200;
+    public const int HTTP_CREATED                       = 201;
+    public const int HTTP_ACCEPTED                      = 202;
+    public const int HTTP_NON_AUTHORITATIVE_INFORMATION = 203;
+    public const int HTTP_NO_CONTENT                    = 204;
+    public const int HTTP_MOVED_PERMANENTLY             = 301;
+    public const int HTTP_BAD_REQUEST                   = 400;
+    public const int HTTP_UNAUTHORIZED                  = 401;
+    public const int HTTP_PAYMENT_REQUIRED              = 402;
+    public const int HTTP_FORBIDDEN                     = 403;
+    public const int HTTP_NOT_FOUND                     = 404;
+    public const int HTTP_METHOD_NOT_ALLOWED            = 405;
 
     /**
      * status respone text.
@@ -176,9 +176,15 @@ class Response
     {
         $status = ob_get_status(true);
         $level  = \count($status);
-        $flags  = \PHP_OUTPUT_HANDLER_REMOVABLE | ($flush ? \PHP_OUTPUT_HANDLER_FLUSHABLE : \PHP_OUTPUT_HANDLER_CLEANABLE);
+        $flags  = \PHP_OUTPUT_HANDLER_REMOVABLE | ($flush
+                ? \PHP_OUTPUT_HANDLER_FLUSHABLE
+                : \PHP_OUTPUT_HANDLER_CLEANABLE);
 
-        while ($level-- > $targetLevel && ($s = $status[$level]) && (!isset($s['del']) ? !isset($s['flags']) || ($s['flags'] & $flags) === $flags : $s['del'])) {
+        while (
+            $level-- > $targetLevel && ($s = $status[$level]) && (!isset($s['del'])
+                ? !isset($s['flags']) || ($s['flags'] & $flags) === $flags
+                : $s['del'])
+        ) {
             if ($flush) {
                 ob_end_flush();
             } else {

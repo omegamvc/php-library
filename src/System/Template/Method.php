@@ -12,20 +12,23 @@ class Method
     use FormatterTrait;
     use CommentTrait;
 
-    public const PUBLIC_    = 0;
-    public const PRIVATE_   = 1;
-    public const PROTECTED_ = 2;
+    public const int PUBLIC_    = 0;
+    public const int PRIVATE_   = 1;
+    public const int PROTECTED_ = 2;
 
-    private int $visibility  = -1;
-    private bool $is_final   = false;
-    private bool $is_static  = false;
+    private int $visibility = -1;
+    private bool $isFinal   = false;
+    private bool $isStatic  = false;
 
     private string $name;
+
     /** @var string[] */
-    private $params              = [];
-    private ?string $return_type = null;
+    private array $params              = [];
+
+    private ?string $returnType = null;
+
     /** @var string[] */
-    private $body = [];
+    private array $body = [];
 
     public function __construct(string $name)
     {
@@ -44,7 +47,8 @@ class Method
 
     public function planTemplate(): string
     {
-        return $this->customize_template ?? "{{comment}}{{before}}function {{name}}({{params}}){{return type}}{{new line}}{\n{{body}}{{new line}}}";
+        return $this->customize_template
+            ?? "{{comment}}{{before}}function {{name}}({{params}}){{return type}}{{new line}}{\n{{body}}{{new line}}}";
     }
 
     public function generate(): string
@@ -62,10 +66,10 @@ class Method
 
         $pre = [];
         // final
-        $pre[] = $this->is_final ? 'final' : '';
+        $pre[] = $this->isFinal ? 'final' : '';
 
         // static
-        $pre[] = $this->is_static ? 'static' : '';
+        $pre[] = $this->isStatic ? 'static' : '';
 
         // visibility
         $pre[] = match ($this->visibility) {
@@ -87,8 +91,8 @@ class Method
         $params = implode(', ', $this->params);
 
         // return type
-        $return = isset($this->return_type) ? ': ' : '';
-        $return .= $this->return_type;
+        $return = isset($this->returnType) ? ': ' : '';
+        $return .= $this->returnType;
 
         // body
         $bodys = array_map(fn ($x) => $tab_dept(2) . $x, $this->body);
@@ -117,14 +121,14 @@ class Method
 
     public function isFinal(bool $is_final = true): self
     {
-        $this->is_final = $is_final;
+        $this->isFinal = $is_final;
 
         return $this;
     }
 
     public function isStatic(bool $is_static = true): self
     {
-        $this->is_static = $is_static;
+        $this->isStatic = $is_static;
 
         return $this;
     }
@@ -146,9 +150,9 @@ class Method
         return $this;
     }
 
-    public function setReturnType(?string $return_type): self
+    public function setReturnType(?string $returnType): self
     {
-        $this->return_type = $return_type ?? '';
+        $this->returnType = $returnType ?? '';
 
         return $this;
     }

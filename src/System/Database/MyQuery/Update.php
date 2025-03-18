@@ -16,8 +16,8 @@ class Update extends Execute
 
     public function __construct(string $table_name, MyPDO $PDO)
     {
-        $this->_table = $table_name;
-        $this->PDO    = $PDO;
+        $this->table = $table_name;
+        $this->pdo    = $PDO;
     }
 
     public function __toString()
@@ -51,7 +51,7 @@ class Update extends Execute
      */
     public function value(string $bind, $value)
     {
-        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
+        $this->binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
 
         return $this;
     }
@@ -66,13 +66,13 @@ class Update extends Execute
     public function join(AbstractJoin $ref_table): self
     {
         // overide master table
-        $ref_table->table($this->_table);
+        $ref_table->table($this->table);
 
-        $this->_join[] = $ref_table->stringJoin();
+        $this->join[] = $ref_table->stringJoin();
         $binds         = (fn () => $this->{'sub_query'})->call($ref_table);
 
         if (null !== $binds) {
-            $this->_binds = array_merge($this->_binds, $binds->getBind());
+            $this->binds = array_merge($this->binds, $binds->getBind());
         }
 
         return $this;
@@ -80,16 +80,16 @@ class Update extends Execute
 
     private function getJoin(): string
     {
-        return 0 === count($this->_join)
+        return 0 === count($this->join)
             ? ''
-            : implode(' ', $this->_join)
+            : implode(' ', $this->join)
         ;
     }
 
     protected function builder(): string
     {
         $setter = [];
-        foreach ($this->_binds as $bind) {
+        foreach ($this->binds as $bind) {
             if ($bind->hasColumName()) {
                 $setter[] = $bind->getColumnName() . ' = ' . $bind->getBind();
             }
@@ -102,6 +102,6 @@ class Update extends Execute
 
         $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query = "UPDATE {$this->_table} {$query_parts}";
+        return $this->query = "UPDATE {$this->table} {$query_parts}";
     }
 }

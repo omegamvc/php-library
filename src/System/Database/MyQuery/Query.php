@@ -9,80 +9,81 @@ use System\Database\MyPDO;
 abstract class Query
 {
     /** @var MyPDO PDO property */
-    protected $PDO;
+    protected MyPDO $pdo;
 
     /** @var string Main query */
-    protected $_query;
+    protected string $query;
 
     /** @var string Table Name */
-    protected $_table = '';
+    protected string $table = '';
 
-    protected ?InnerQuery $_sub_query = null;
+    protected ?InnerQuery $subQuery = null;
 
     /** @var string[] Columns name */
-    protected $_column = ['*'];
+    protected array $column = ['*'];
 
     /**
      * Binder array(['key', 'val']).
      *
      * @var Bind[] Binder for PDO bind
      */
-    protected $_binds = [];
+    protected array $binds = [];
 
     /** @var int Limit start from */
-    protected $_limit_start = 0;
+    protected int $limitStart = 0;
 
     /** @var int Limit end to */
-    protected $_limit_end = 0;
+    protected int $limitEnd = 0;
 
     /** @var int offest */
-    protected $_offset = 0;
+    protected int $offset = 0;
 
     /** @var array<string, string> Sort result ASC|DESC */
-    protected array $_sort_order  = [];
+    protected array $sortOrder  = [];
 
-    public const ORDER_ASC  = 0;
-    public const ORDER_DESC = 1;
+    public const int ORDER_ASC  = 0;
+
+    public const int ORDER_DESC = 1;
 
     /**
      * Final where statmnet.
      *
      * @var string[]
      */
-    protected $_where = [];
+    protected array $where = [];
 
     /**
      * Grouping.
      *
      * @var string[]
      */
-    protected $_group_by = [];
+    protected array $groupBy = [];
 
     /**
      * Multy filter with strict mode.
      *
      * @var array<int, array<string, array<string, array<string, string>>>>
      */
-    protected $_group_filters = [];
+    protected array $groupFilters = [];
 
     /**
      * Single filter and single strict mode.
      *
      * @var array<string, string>
      */
-    protected $_filters = [];
+    protected array $filters = [];
 
     /**
      * Strict mode.
      *
      * @var bool True if use AND instance of OR
      */
-    protected $_strict_mode = true;
+    protected bool $strictMode = true;
 
     /**
      * @var string[]
      */
-    protected $_join = [];
+    protected array $join = [];
 
     /**
      * reset all property.
@@ -91,16 +92,16 @@ abstract class Query
      */
     public function reset()
     {
-        $this->_table         = '';
-        $this->_sub_query     = null;
-        $this->_column        = ['*'];
-        $this->_binds         = [];
-        $this->_limit_start   = 0;
-        $this->_limit_end     = 0;
-        $this->_where         = [];
-        $this->_group_filters = [];
-        $this->_filters       = [];
-        $this->_strict_mode   = true;
+        $this->table        = '';
+        $this->subQuery     = null;
+        $this->column       = ['*'];
+        $this->binds        = [];
+        $this->limitStart   = 0;
+        $this->limitEnd     = 0;
+        $this->where        = [];
+        $this->groupFilters = [];
+        $this->filters      = [];
+        $this->strictMode   = true;
 
         return $this;
     }
@@ -116,17 +117,17 @@ abstract class Query
     {
         $merging      = $this->mergeFilters();
         $where        = $this->splitGrupsFilters($merging);
-        $glue         = $this->_strict_mode ? ' AND ' : ' OR ';
-        $whereCostume = implode($glue, $this->_where);
+        $glue         = $this->strictMode ? ' AND ' : ' OR ';
+        $whereCostume = implode($glue, $this->where);
 
         if ($where !== '' && $whereCostume !== '') {
             // menggabungkan basic where dengan costume where
-            $whereString = $this->_strict_mode ? "AND $whereCostume" : "OR $whereCostume";
+            $whereString = $this->strictMode ? "AND $whereCostume" : "OR $whereCostume";
 
             return "WHERE $where $whereString";
         } elseif ($where === '' && $whereCostume !== '') {
             // hanya menggunkan costume where
-            $whereString = $this->_strict_mode ? "$whereCostume" : "$whereCostume";
+            $whereString = $this->strictMode ? "$whereCostume" : "$whereCostume";
 
             return "WHERE $whereString";
         } elseif ($where !== '') {
@@ -143,12 +144,12 @@ abstract class Query
      */
     protected function mergeFilters(): array
     {
-        $new_group_filters = $this->_group_filters;
-        if (!empty($this->_filters)) {
+        $new_group_filters = $this->groupFilters;
+        if (!empty($this->filters)) {
             // merge group filter and main filter (condition)
             $new_group_filters[] = [
-                'filters' => $this->_filters,
-                'strict'  => $this->_strict_mode,
+                'filters' => $this->filters,
+                'strict'  => $this->strictMode,
             ];
         }
 
@@ -177,7 +178,7 @@ abstract class Query
     protected function splitFilters(array $filters): string
     {
         $query      = [];
-        $table_name = null === $this->_sub_query ? $this->_table : $this->_sub_query->getAlias();
+        $table_name = null === $this->subQuery ? $this->table : $this->subQuery->getAlias();
         foreach ($filters['filters'] as $fieldName => $fieldValue) {
             $value        = $fieldValue['value'];
             $comparation  = $fieldValue['comparation'];
@@ -235,7 +236,7 @@ abstract class Query
         $value     = [];
         $columns   = [];
 
-        foreach ($this->_binds as $bind) {
+        foreach ($this->binds as $bind) {
             // if (!$bind->hasColumName()) {
             //     continue;
             // }
@@ -252,7 +253,7 @@ abstract class Query
     /** @return Bind[]  */
     public function getBinds()
     {
-        return $this->_binds;
+        return $this->binds;
     }
 
     /**
@@ -265,15 +266,15 @@ abstract class Query
         }
         $conditon = $ref->get();
         foreach ($conditon['binds'] as $bind) {
-            $this->_binds[] = $bind;
+            $this->binds[] = $bind;
         }
         foreach ($conditon['where'] as $where) {
-            $this->_where[] = $where;
+            $this->where[] = $where;
         }
         foreach ($conditon['filters'] as $name => $filter) {
-            $this->_filters[$name] = $filter;
+            $this->filters[$name] = $filter;
         }
-        $this->_strict_mode = $conditon['isStrict'];
+        $this->strictMode = $conditon['isStrict'];
 
         return $this;
     }

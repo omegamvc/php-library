@@ -1,6 +1,6 @@
 <?php
 
-return array(
+return [
     'required'                 => 'The {field} field is required',
     'valid_email'              => 'The {field} field must be a valid email address',
     'max_len'                  => 'The {field} field needs to be {param} characters or less',
@@ -41,7 +41,9 @@ return array(
     'phone_number'             => 'The {field} field needs to be a valid Phone Number',
     'regex'                    => 'The {field} field needs to contain a value with valid format',
     'valid_json_string'        => 'The {field} field needs to contain a valid JSON format string',
+    // phpcs:ignore
     'valid_array_size_greater' => 'The {field} fields needs to be an array with a size, equal to, or higher than {param}',
+    // phpcs:ignore
     'valid_array_size_lesser'  => 'The {field} fields needs to be an array with a size, equal to, or lower than {param}',
     'valid_array_size_equal'   => 'The {field} fields needs to be an array with a size equal to {param}',
-);
+];

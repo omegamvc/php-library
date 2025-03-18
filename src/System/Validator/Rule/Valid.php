@@ -210,9 +210,10 @@ final class Valid
     /**
      * Adding costume validation.
      *
+     * // phpcs:ignore
      * @param callable(string, array<string, string>, array<string, string>, mixed): bool $costume_validation Callable return as boolean, can contain param as ($field, $input, $param, $value)
+     * // phpcs:ignore
      * @param string                                                                      $message            Add costume message for validate
-     *
      * @return self
      */
     public function valid($costume_validation, string $message = 'Valid costume validation')
@@ -223,7 +224,13 @@ final class Valid
             $rule_name      = 'validate_' . $hex;
             $rule_invert    = 'invert_validate_' . $hex;
             $message_invert = 'Not, ' . $message;
-            $invert         = fn ($field, $input, $param, $value) => !call_user_func($costume_validation, $field, $input, $param, $value);
+            $invert         = fn ($field, $input, $param, $value) => !call_user_func(
+                $costume_validation,
+                $field,
+                $input,
+                $param,
+                $value
+            );
 
             Rule::add_validator($rule_name, $costume_validation, $message);
             Rule::add_validator($rule_invert, $invert, $message_invert);
@@ -374,7 +381,11 @@ final class Valid
      */
     public function between_len(int $min_len, int $max_len): self
     {
-        $this->validation_rule[] = __FUNCTION__ . $this->parameters_delimiter . $min_len . $this->parameters_arrays_delimiter . $max_len;
+        $this->validation_rule[] = __FUNCTION__
+            . $this->parameters_delimiter
+            . $min_len
+            . $this->parameters_arrays_delimiter
+            . $max_len;
 
         return $this;
     }

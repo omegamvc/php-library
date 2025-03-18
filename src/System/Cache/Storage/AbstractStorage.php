@@ -134,7 +134,3 @@ abstract class AbstractStorage implements StorageInterface
      */
     abstract public function calculateExpirationTimestamp(int|DateInterval|DateTimeInterface|null $ttl): int;
 }
-
-
-
-

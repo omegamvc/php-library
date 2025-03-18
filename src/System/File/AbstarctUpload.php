@@ -11,74 +11,83 @@ namespace System\File;
 abstract class AbstarctUpload
 {
     /**
-     * Cath files form upload file.
+     * Catch files form upload file.
      *
      * @var array<string, array<int, string>|string>
      */
-    protected $_files;
+    protected array $files;
 
     /**
      *  File upload status.
      *
      * @var bool
      */
-    protected $_success = false;
+    protected bool $success = false;
 
     /**
-     * File has excute to upload.
+     * File has execute to upload.
      *
      * @var bool
      */
-    protected $_isset = false;
+    protected bool $isset = false;
 
     /**
      * Detect test mode.
      *
      * @var bool
      */
-    protected $_test = false;
+    protected bool $test = false;
 
     /**
-     * Detect single or multy upload files.
+     * Detect single or multi upload files.
      *
-     * @var bool True if multy file upload
+     * @var bool True if multi file upload
      */
-    protected $_is_multy = false;
+    protected bool $isMulti = false;
 
     // property file --------------------------------------------
 
     /** @var string[] */
-    protected $file_name;
+    protected array $fileName;
+
     /** @var string[] Original file category */
-    protected $file_type;
+    protected array $fileType;
+
     /** @var string[] Original file temp location */
-    protected $file_tmp;
+    protected array $fileTmp;
+
     /** @var int[] Original file error status code */
-    protected $file_error;
+    protected array $fileError;
+
     /** @var int[] Original file size in byte */
-    protected $file_size;
+    protected array $fileSize;
+
     /** @var string[] Original file extension */
-    protected $file_extension;
+    protected array $fileExtension;
 
     // property upload ------------------------------------------
 
     /** @var string Upload file name (without extention) */
-    protected $upload_name;
+    protected string $uploadName;
+
     /** @var string Upload file to save location */
-    protected $upload_location = '/';
-    /** @var array<int, string> Upload allow file extention */
-    protected $upload_types    = ['jpg', 'jpeg', 'png'];
+    protected string $uploadLocation = '/';
+
+    /** @var array<int, string> Upload allow file extension */
+    protected array $uploadTypes = ['jpg', 'jpeg', 'png'];
+
     /** @var array<int, string> Upload allow file mime type */
-    protected $upload_mime     = ['image/jpg', 'image/jpeg', 'image/png'];
-    /** @var int Upload maksimal file size */
-    protected $upload_size_max = 50000;
+    protected array $uploadMime = ['image/jpg', 'image/jpeg', 'image/png'];
+
+    /** @var int Upload maximum file size */
+    protected int $uploadSizeMax = 50000;
 
     /**
      * Provide error message.
      *
      * @var string
      */
-    protected $_error_message = '';
+    protected string $errorMessage = '';
 
     // setter ------------------------------------------------
 
@@ -86,9 +95,9 @@ abstract class AbstarctUpload
      * Set file name (without extention).
      * File name will convert to allow string url.
      *
-     * @param string $file_name File name (without extention)
+     * @param string $fileName File name (without extention)
      */
-    abstract public function setFileName(string $file_name): self;
+    abstract public function setFileName(string $fileName): self;
 
     /**
      * File to save/upload location (server folder),
@@ -135,7 +144,7 @@ abstract class AbstarctUpload
      */
     public function success(): bool
     {
-        return $this->_success;
+        return $this->success;
     }
 
     /**
@@ -145,7 +154,7 @@ abstract class AbstarctUpload
      */
     public function getError(): string
     {
-        return $this->_error_message;
+        return $this->errorMessage;
     }
 
     /**
@@ -155,7 +164,7 @@ abstract class AbstarctUpload
      */
     public function getFileTypes()
     {
-        return $this->upload_types;
+        return $this->uploadTypes;
     }
 
     /**
@@ -166,9 +175,9 @@ abstract class AbstarctUpload
     public function __construct($files)
     {
         // random files name by default
-        $this->upload_name = uniqid('uploaded_'); // files name without extension
+        $this->uploadName = uniqid('uploaded_'); // files name without extension
 
-        $this->_files = $files;
+        $this->files = $files;
     }
 
     /**
@@ -184,46 +193,46 @@ abstract class AbstarctUpload
     protected function validate(): bool
     {
         // cek file error
-        foreach ($this->file_error as $error) {
+        foreach ($this->fileError as $error) {
             $file_error = $error === 4 ? true : false;
             if ($file_error) {
-                $this->_error_message = 'no file upload';
+                $this->errorMessage = 'no file upload';
 
                 return false;
             }
         }
 
         // cek file type (upload_type must set)
-        foreach ($this->file_extension as $extension) {
-            $extensio_error = in_array($extension, $this->upload_types) ? false : true;
+        foreach ($this->fileExtension as $extension) {
+            $extensio_error = in_array($extension, $this->uploadTypes) ? false : true;
             if ($extensio_error) {
-                $this->_error_message = 'file type not support';
+                $this->errorMessage = 'file type not support';
 
                 return false;
             }
         }
 
         // cek mime type (upload_mime must set)
-        foreach ($this->file_type as $type) {
-            $mime_error = in_array($type, $this->upload_mime) ? false : true;
+        foreach ($this->fileType as $type) {
+            $mime_error = in_array($type, $this->uploadMime) ? false : true;
             if ($mime_error) {
-                $this->_error_message = 'file type not support';
+                $this->errorMessage = 'file type not support';
 
                 return false;
             }
         }
 
         // cek file size
-        foreach ($this->file_size as $size) {
-            $is_size_error = $size > $this->upload_size_max ? true : false;
+        foreach ($this->fileSize as $size) {
+            $is_size_error = $size > $this->uploadSizeMax ? true : false;
             if ($is_size_error) {
-                $this->_error_message = 'file size too large';
+                $this->errorMessage = 'file size too large';
 
                 return false;
             }
         }
 
-        $this->_error_message = 'success';
+        $this->errorMessage = 'success';
 
         return true;
     }
@@ -236,18 +245,18 @@ abstract class AbstarctUpload
     protected function stream()
     {
         // isset property, enable when data has been validate
-        $this->_isset = true;
+        $this->isset = true;
         $destinations = [];
 
         if (!$this->validate()) {
             return $destinations;
         }
 
-        if ($this->_test) {
-            foreach ($this->file_extension as $key => $extension) {
-                $surfix         = $this->_is_multy ? $key : '';
-                $destination    =  $this->upload_location . $this->upload_name . $surfix . '.' . $extension;
-                $this->_success = copy($this->file_tmp[$key], $destination);
+        if ($this->test) {
+            foreach ($this->fileExtension as $key => $extension) {
+                $surfix         = $this->isMulti ? $key : '';
+                $destination    =  $this->uploadLocation . $this->uploadName . $surfix . '.' . $extension;
+                $this->success = copy($this->fileTmp[$key], $destination);
 
                 $destinations[] = $destination;
             }
@@ -255,11 +264,11 @@ abstract class AbstarctUpload
             return $destinations;
         }
 
-        if ($this->_test === false) {
-            foreach ($this->file_extension as $key => $extension) {
-                $surfix         = $this->_is_multy ? $key : '';
-                $destination    =  $this->upload_location . $this->upload_name . $surfix . '.' . $extension;
-                $this->_success = move_uploaded_file($this->file_tmp[$key], $destination);
+        if ($this->test === false) {
+            foreach ($this->fileExtension as $key => $extension) {
+                $surfix         = $this->isMulti ? $key : '';
+                $destination    =  $this->uploadLocation . $this->uploadName . $surfix . '.' . $extension;
+                $this->success = move_uploaded_file($this->fileTmp[$key], $destination);
 
                 $destinations[] = $destination;
             }

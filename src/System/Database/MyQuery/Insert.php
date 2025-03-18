@@ -15,8 +15,8 @@ class Insert extends Execute
 
     public function __construct(string $table_name, MyPDO $PDO)
     {
-        $this->_table = $table_name;
-        $this->PDO    = $PDO;
+        $this->table = $table_name;
+        $this->pdo    = $PDO;
     }
 
     public function __toString()
@@ -47,7 +47,7 @@ class Insert extends Execute
      */
     public function value(string $bind, $value)
     {
-        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
+        $this->binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
 
         return $this;
     }
@@ -61,7 +61,7 @@ class Insert extends Execute
     {
         foreach ($rows as $index => $values) {
             foreach ($values as $bind => $value) {
-                $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
+                $this->binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
             }
         }
 
@@ -96,9 +96,9 @@ class Insert extends Execute
         $builds['keyUpdate'] = $this->getDuplicateKeyUpdate();
         $string_build        = implode(' ', array_filter($builds, fn ($item) => $item !== ''));
 
-        $this->_query = "INSERT INTO {$this->_table} {$string_build}";
+        $this->query = "INSERT INTO {$this->table} {$string_build}";
 
-        return $this->_query;
+        return $this->query;
     }
 
     private function getDuplicateKeyUpdate(): string

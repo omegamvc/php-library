@@ -14,6 +14,7 @@ class RedirectResponse extends Response
 
     public function setTarget(string $url): void
     {
+        // phpcs:ignore
         $this->setContent(sprintf('<html><head><meta charset="UTF-8" /><meta http-equiv="refresh" content="0;url=\'%1$s\'" /><title>Redirecting to %1$s</title></head><body>Redirecting to <a href="%1$s">%1$s</a>.</body></html>', htmlspecialchars($url, \ENT_QUOTES, 'UTF-8')));
         $this->setHeaders([
             'Location' => $url,

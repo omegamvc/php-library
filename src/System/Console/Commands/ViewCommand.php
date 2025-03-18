@@ -71,7 +71,9 @@ class ViewCommand extends Command
         info('build compiler cache')->out(false);
         $count     = 0;
         $progress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files)
+                ? Str::replace($files[$current], view_path(), '')
+                : '',
         ]);
 
         $progress->maks = count($files);
@@ -84,7 +86,9 @@ class ViewCommand extends Command
             }
             $progress->current++;
             $time                = round(microtime(true) - $watch_start, 3) * 1000;
-            $progress->complete = static fn (): string => (string) ok("Success, {$count} file compiled ({$time} ms).");
+            $progress->complete = static fn (): string => (string) ok(
+                "Success, {$count} file compiled ({$time} ms)."
+            );
             $progress->tick();
         }
 
@@ -104,7 +108,9 @@ class ViewCommand extends Command
 
         $count     = 0;
         $progress = new ProgressBar(':progress :percent - :current', [
-            ':current' => fn ($current, $max): string => array_key_exists($current, $files) ? Str::replace($files[$current], view_path(), '') : '',
+            ':current' => fn ($current, $max): string => array_key_exists($current, $files)
+                ? Str::replace($files[$current], view_path(), '')
+                : '',
         ]);
 
         $progress->maks = count($files);
