@@ -32,7 +32,7 @@ use RuntimeException;
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
- * @version    1.0.0
+ * @version    2.0.0
  */
 class ApplicationNotAvailableException extends RuntimeException
 {

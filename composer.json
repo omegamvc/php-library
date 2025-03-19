@@ -15,8 +15,12 @@
     ],
     "require": {
         "php": "^8.3",
+        "ext-http": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
+        "ext-pcntl": "*",
+        "ext-posix": "*",
+        "ext-readline": "*",
         "php-di/php-di": "^7.0.9"
     },
     "require-dev": {
@@ -27,8 +31,8 @@
             "System\\": "src/System/"
         },
         "files": [
+            "src/System/Application/helper.php",
             "src/System/Collection/helper.php",
-            "src/System/Integrate/helper.php",
             "src/System/Console/helper.php",
             "src/System/Text/helper.php",
             "src/System/Time/helper.php",

@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Console\Commands;
@@ -9,10 +20,24 @@ use System\Console\Style\ProgressBar;
 use System\Console\Traits\PrintHelpTrait;
 use System\Container\ServiceProvider\AbstractServiceProvider;
 
+use function count;
 use function System\Console\ok;
 
 /**
- * Command to import files or directories from vendor packages.
+ * Class VendorImportCommand
+ *
+ * This class provides a command for importing packages into the vendor directory.
+ * It supports importing files or directories based on a specified tag or imports all available items by default.
+ * Additionally, it provides a progress bar to track the status of the import process.
+ *
+ * @category   System
+ * @package    Console
+ * @subpackage Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
  *
  * @property bool   $force Whether to force the import, overwriting existing files.
  * @property string $tag   The tag to identify specific commands to run.
@@ -23,11 +48,20 @@ class VendorImportCommand extends Command
 
     /**
      * Progress bar for tracking import status.
+     *
+     * This property holds the progress bar object that is used to display the status
+     * of the import process in the console.
+     *
+     * @var ProgressBar
      */
     private ProgressBar $status;
 
     /**
      * Command registration details.
+     *
+     * This array defines the commands available for managing the application's
+     * maintenance mode. Each command is associated with a pattern and a function
+     * that handles the command.
      *
      * @var array<int, array<string, mixed>>
      */
@@ -43,7 +77,11 @@ class VendorImportCommand extends Command
     ];
 
     /**
-     * Provides help information for the command.
+     * Provides help documentation for the command.
+     *
+     * This method returns an array with information about available commands
+     * and options. It describes the two main commands (`down` and `up`) for
+     * managing maintenance mode.
      *
      * @return array<string, array<string, string|string[]>>
      */
@@ -64,6 +102,11 @@ class VendorImportCommand extends Command
 
     /**
      * Main method to execute the import command.
+     *
+     * This method initiates the import process by calling `importItem` with the available modules.
+     * It sets up the progress bar to track the status of the import process.
+     *
+     * @return int
      */
     public function main(): int
     {
@@ -76,7 +119,11 @@ class VendorImportCommand extends Command
     /**
      * Import specified modules (files or directories).
      *
+     * This method iterates over the provided modules and imports files or directories
+     * based on the specified tag or all modules if the tag is '*'.
+     *
      * @param array<string, array<string, string>> $modules
+     * @return void
      */
     protected function importItem(array $modules): void
     {
@@ -108,8 +155,18 @@ class VendorImportCommand extends Command
         }
     }
 
+
     /**
      * Update the console with the progress bar status.
+     *
+     * This method updates the progress bar and displays the current status of the file/directory being imported.
+     * It is called after each file or directory is processed.
+     *
+     * @param int $current Current step of the import process.
+     * @param bool $success Indicates whether the import operation was successful.
+     * @param string $from The source path of the file or directory being imported.
+     * @param string $to The target path where the file or directory is being imported.
+     * @return void
      */
     protected function status(int $current, bool $success, string $from, string $to): void
     {

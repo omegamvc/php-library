@@ -1,9 +1,24 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Console\Commands;
 
+use DI\DependencyException;
+use DI\NotFoundException;
+use DirectoryIterator;
+use Exception;
 use System\Collection\Collection;
 use System\Console\Command;
 use System\Console\Prompt;
@@ -11,11 +26,13 @@ use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
 use System\Database\MyQuery;
 use System\Database\MySchema\Table\Create;
-use System\Console\Commands\SeedCommand;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO;
 use System\Support\Facades\Schema;
+use Throwable;
 
+use function System\Application\app;
+use function System\Application\migration_path;
 use function System\Console\fail;
 use function System\Console\info;
 use function System\Console\ok;
@@ -23,6 +40,24 @@ use function System\Console\style;
 use function System\Console\warn;
 
 /**
+ * Handles migration commands, including migration, rollback, fresh migration,
+ * and database operations like creation, dropping, and showing.
+ *
+ * This class provides various methods to manage database migrations, including
+ * running migrations, rolling them back, refreshing the database, and managing
+ * the database lifecycle. Additionally, it integrates seeder functionality
+ * during migrations and offers command-line options for better control and
+ * flexibility during database operations.
+ *
+ * @category   System
+ * @package    Console
+ * @subpackage Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ *
  * @property ?int        $take
  * @property ?int        $batch
  * @property bool        $force
@@ -33,14 +68,21 @@ class MigrationCommand extends Command
     use PrintHelpTrait;
 
     /**
-     * Register vendor migration path.
+     * Paths to vendor migrations.
+     *
+     * This static array holds the paths to migration directories provided by
+     * vendor packages.
      *
      * @var string[]
      */
-    public static array $vendor_paths = [];
+    public static array $vendorPaths = [];
 
     /**
-     * Register command.
+     * Command registration details.
+     *
+     * This array defines the commands available for managing the application's
+     * maintenance mode. Each command is associated with a pattern and a function
+     * that handles the command.
      *
      * @var array<int, array<string, mixed>>
      */
@@ -79,9 +121,15 @@ class MigrationCommand extends Command
     ];
 
     /**
+     * Provides help documentation for the command.
+     *
+     * This method returns an array with information about available commands
+     * and options. It describes the two main commands (`down` and `up`) for
+     * managing maintenance mode.
+     *
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
@@ -116,11 +164,31 @@ class MigrationCommand extends Command
         ];
     }
 
+    /**
+     * Get the database name from configuration.
+     *
+     * This method retrieves the database name from the SQL connection configuration.
+     *
+     * @return string The database name.
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     private function DbName(): string
     {
         return app()->get('dsn.sql')['database_name'];
     }
 
+    /**
+     * Prompts for confirmation to run commands in production.
+     *
+     * This method prompts the user to confirm if they want to execute a
+     * migration/database command in a production environment.
+     *
+     * @return bool Returns true if the user confirms, false otherwise.
+     * @throws DependencyException
+     * @throws NotFoundException
+     * @throws Exception
+     */
     private function runInDev(): bool
     {
         if (app()->isDev() || $this->force) {
@@ -140,9 +208,16 @@ class MigrationCommand extends Command
     }
 
     /**
-     * @param string|Style $message
+     * Confirms an action with the user.
+     *
+     * This method asks for user confirmation before proceeding with a given
+     * action, with an optional custom message.
+     *
+     * @param string|Style $message The confirmation message or style.
+     * @return bool Returns true if the user confirms, false otherwise.
+     * @throws Exception
      */
-    private function confirmation($message): bool
+    private function confirmation(string|Style $message): bool
     {
         if ($this->option('yes', false)) {
             return true;
@@ -161,59 +236,63 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Get migration list.
+     * Run migrations in a specific batch.
      *
-     * @param int|false $batch
+     * This method retrieves and executes the migration scripts in the specified
+     * batch, ensuring that migrations are run in order.
      *
-     * @return Collection<string, array<string, string>>
+     * @param int|false $batch The batch number for migrations to be executed.
+     * @return Collection<string, array<string, string>> The migrations to run.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    public function baseMigrate(&$batch = false): Collection
+    public function baseMigrate(int|false &$batch = false): Collection
     {
         $migrationBatch = $this->getMigrationTable();
-        $highs         = $migrationBatch->length() > 0
+        $height         = $migrationBatch->length() > 0
             ? $migrationBatch->max() + 1
             : 0;
-        $batch = false === $batch ? $highs : $batch;
+        $batch = false === $batch ? $height : $batch;
 
-        $paths   = [migration_path(), ...static::$vendor_paths];
+        $paths   = [migration_path(), ...static::$vendorPaths];
         $migrate = new Collection([]);
         foreach ($paths as $dir) {
-            foreach (new \DirectoryIterator($dir) as $file) {
+            foreach (new DirectoryIterator($dir) as $file) {
                 if ($file->isDot() | $file->isDir()) {
                     continue;
                 }
 
-                $migration_name = pathinfo($file->getBasename(), PATHINFO_FILENAME);
-                $hasMigration   = $migrationBatch->has($migration_name);
+                $migrationName = pathinfo($file->getBasename(), PATHINFO_FILENAME);
+                $hasMigration  = $migrationBatch->has($migrationName);
 
-                if (false == $batch && $hasMigration) {
-                    if ($migrationBatch->get($migration_name) <= $higths - 1) {
-                        $migrate->set($migration_name, [
+                if (!$batch && $hasMigration) {
+                    if ($migrationBatch->get($migrationName) <= $height - 1) {
+                        $migrate->set($migrationName, [
                             'file_name' => $dir . $file->getFilename(),
-                            'batch'     => $migrationBatch->get($migration_name),
+                            'batch'     => $migrationBatch->get($migrationName),
                         ]);
                         continue;
                     }
                 }
 
                 if (false === $hasMigration) {
-                    $migrate->set($migration_name, [
+                    $migrate->set($migrationName, [
                         'file_name' => $dir . $file->getFilename(),
-                        'batch'     => $higths,
+                        'batch'     => $height,
                     ]);
                     $this->insertMigrationTable([
-                        'migration' => $migration_name,
-                        'batch'     => $higths,
+                        'migration' => $migrationName,
+                        'batch'     => $height,
                     ]);
                     continue;
                 }
 
-                if ($migrationBatch->get($migration_name) <= $batch) {
-                    $migrate->set($migration_name, [
+                if ($migrationBatch->get($migrationName) <= $batch) {
+                    $migrate->set($migrationName, [
                         'file_name' => $dir . $file->getFilename(),
-                        'batch'     => $migrationBatch->get($migration_name),
+                        'batch'     => $migrationBatch->get($migrationName),
                     ]);
-                    continue;
+                    //continue;
                 }
             }
         }
@@ -221,11 +300,32 @@ class MigrationCommand extends Command
         return $migrate;
     }
 
+    /**
+     * Main method to run migrations.
+     *
+     * This method is called to start running migrations based on the command-line
+     * options and parameters.
+     *
+     * @return int The exit status code (0 for success, non-zero for failure).
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     public function main(): int
     {
         return $this->migration();
     }
 
+    /**
+     * Run migrations with optional dry-run.
+     *
+     * This method runs the migrations, allowing for a "dry-run" mode where
+     * only the SQL queries are output without actually being executed.
+     *
+     * @param bool $silent If set to true, prevents interaction prompts.
+     * @return int The exit status code (0 for success, non-zero for failure).
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     public function migration(bool $silent = false): int
     {
         if (false === $this->runInDev() && false === $silent) {
@@ -260,7 +360,7 @@ class MigrationCommand extends Command
 
             try {
                 $success = $up->every(fn ($item) => $item->execute());
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);
             }
@@ -278,6 +378,11 @@ class MigrationCommand extends Command
         return $this->seed();
     }
 
+
+    /**
+     * @throws NotFoundException
+     * @throws DependencyException
+     */
     public function fresh(bool $silent = false): int
     {
         // drop and recreate database
@@ -314,7 +419,7 @@ class MigrationCommand extends Command
 
             try {
                 $success = $up->every(fn ($item) => $item->execute());
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);
             }
@@ -332,17 +437,37 @@ class MigrationCommand extends Command
         return $this->seed();
     }
 
+    /**
+     * Rollback all migrations.
+     *
+     * This method rolls back all migrations and resets the database to its
+     * previous state.
+     *
+     * @param bool $silent If set to true, prevents interaction prompts.
+     * @return int The exit status code (0 for success, non-zero for failure).
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     public function reset(bool $silent = false): int
     {
         if (false === $this->runInDev() && false === $silent) {
             return 2;
         }
         info('Rolling back all migrations')->out(false);
-        $rollback = $this->rollbacks(false, 0);
 
-        return $rollback;
+        return $this->rollbacks(false, 0);
     }
 
+    /**
+     * Refreshes the database by rolling back and running migrations again.
+     *
+     * This method resets the database and reruns the migrations, typically used
+     * when a fresh migration is needed after changes to schema or data.
+     *
+     * @return int The exit status code (0 for success, non-zero for failure).
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     public function refresh(): int
     {
         if (false === $this->runInDev()) {
@@ -359,6 +484,18 @@ class MigrationCommand extends Command
         return 0;
     }
 
+    /**
+     * Rolls back a specified number of migrations.
+     *
+     * This method rolls back migrations based on the given batch number and the
+     * number of migrations to roll back. If the batch option is not provided or
+     * is invalid, the method will return an error. If the number of migrations to
+     * roll back is less than 0, the method defaults to rolling back all migrations.
+     *
+     * @return int Returns 0 if the rollback is successful, or 1 if there is an error (e.g., missing batch).
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     public function rollback(): int
     {
         if (false === ($batch = $this->option('batch', false))) {
@@ -377,12 +514,20 @@ class MigrationCommand extends Command
         return $this->rollbacks((int) $batch, (int) $take);
     }
 
+
     /**
-     * Rolling backs migration.
+     * Rollback migrations in a specific batch.
      *
-     * @param int|false $batch
+     * This method rolls back migrations in the specified batch. If a batch
+     * number is provided, it only rolls back those migrations.
+     *
+     * @param int|false $batch The batch number to rollback.
+     * @param int $take The number of migrations to rollback.
+     * @return int The exit status code (0 for success, non-zero for failure).
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    public function rollbacks($batch, int $take): int
+    public function rollbacks(int|false $batch, int $take): int
     {
         $print   = new Style();
         $width   = $this->getWidth(40, 60);
@@ -409,7 +554,7 @@ class MigrationCommand extends Command
 
             try {
                 $success = $down->every(fn ($item) => $item->execute());
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 $success = false;
                 fail($th->getMessage())->out(false);
             }
@@ -427,6 +572,19 @@ class MigrationCommand extends Command
         return 0;
     }
 
+    /**
+     * Creates a new database.
+     *
+     * This method attempts to create a new database with the name fetched from
+     * the configuration. If the creation process is successful, it initializes
+     * the migration process.
+     *
+     * @param bool $silent If set to true, suppresses any confirmation prompts.
+     * @return int Returns 0 if the database is created successfully, 1 if the creation fails, or 2 if the user cancels the action.
+     * @throws DependencyException If any dependencies are missing or cannot be resolved.
+     * @throws NotFoundException If the required configuration or resources are not found.
+     * @throws Exception If an error occurs during the database creation process.
+     */
     public function databaseCreate(bool $silent = false): int
     {
         $db_name = $this->DbName();
@@ -453,6 +611,19 @@ class MigrationCommand extends Command
         return 1;
     }
 
+    /**
+     * Drops the existing database.
+     *
+     * This method attempts to drop the database with the name fetched from the
+     * configuration. If the process is successful, it returns 0. If the operation
+     * is canceled or fails, it returns a different status code.
+     *
+     * @param bool $silent If set to true, suppresses any confirmation prompts.
+     * @return int Returns 0 if the database is dropped successfully, 1 if the drop fails, or 2 if the user cancels the action.
+     * @throws DependencyException If any dependencies are missing or cannot be resolved.
+     * @throws NotFoundException If the required configuration or resources are not found.
+     * @throws Exception If an error occurs during the database drop process.
+     */
     public function databaseDrop(bool $silent = false): int
     {
         $db_name = $this->DbName();
@@ -464,7 +635,8 @@ class MigrationCommand extends Command
 
         info("try to drop database `{$db_name}`")->out(false);
 
-        $success = Schema::drop()->database($db_name)->ifExists(true)->execute();
+        //$success = Schema::drop()->database($db_name)->ifExists(true)->execute();
+        $success = Schema::drop()->database($db_name)->ifExists()->execute();
 
         if ($success) {
             ok("success drop database `{$db_name}`")->out(false);
@@ -477,10 +649,22 @@ class MigrationCommand extends Command
         return 1;
     }
 
+    /**
+     * Displays information about the current database's tables.
+     *
+     * This method shows the list of tables in the current database, along with
+     * details such as table size and creation time. If a specific table is specified
+     * through an option, detailed information for that table is shown.
+     *
+     * @return int Returns 0 if the database and its tables are shown successfully, or 2 if the tables are empty or no tables exist.
+     * @throws NotFoundException If the required configuration or resources are not found.
+     * @throws DependencyException If any dependencies are missing or cannot be resolved.
+     */
     public function databaseShow(): int
     {
         if ($this->option('table-name')) {
-            return $this->tableShow($this->option('table-name', null));
+            //return $this->tableShow($this->option('table-name', null));
+            return $this->tableShow($this->option('table-name'));
         }
 
         $db_name = $this->DbName();
@@ -519,6 +703,16 @@ class MigrationCommand extends Command
         return 0;
     }
 
+    /**
+     * Displays information about a specific table.
+     *
+     * This method shows detailed information about the specified table, including
+     * column names, data types, and additional properties like nullability and
+     * primary key status.
+     *
+     * @param string $table The name of the table to display information for.
+     * @return int Returns 0 after showing the table's details.
+     */
     public function tableShow(string $table): int
     {
         $table = (new MyQuery(PDO::instance()))->table($table)->info();
@@ -551,6 +745,14 @@ class MigrationCommand extends Command
         return 0;
     }
 
+    /**
+     * Displays the migration status.
+     *
+     * This method lists the migrations currently applied to the database, showing
+     * the migration names along with their respective batch numbers.
+     *
+     * @return int Returns 0 after successfully showing the migration status.
+     */
     public function status(): int
     {
         $print = new Style();
@@ -573,7 +775,15 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Integrate seeder during run migration.
+     * Runs the seeder during the migration process.
+     *
+     * This method integrates the seeding process during migration, optionally running
+     * a specific seeder based on the provided options. If a dry-run is requested,
+     * it skips the seeding step.
+     *
+     * @return int Returns 0 after successfully running the seeder (if applicable).
+     * @throws DependencyException If any dependencies are missing or cannot be resolved.
+     * @throws NotFoundException If the required configuration or resources are not found.
      */
     private function seed(): int
     {
@@ -597,7 +807,14 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Check for migration table exist or not in this current database.
+     * Checks if the migration table exists in the current database.
+     *
+     * This method verifies whether the migration table is present in the current
+     * database by querying the database's information schema.
+     *
+     * @return bool Returns true if the migration table exists, false otherwise.
+     * @throws DependencyException If any dependencies are missing or cannot be resolved.
+     * @throws NotFoundException If the required configuration or resources are not found.
      */
     private function hasMigrationTable(): bool
     {
@@ -617,7 +834,12 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Create migration table schema.
+     * Creates the migration table schema.
+     *
+     * This method creates the schema for the migration table, which tracks the
+     * applied migrations and their respective batch numbers.
+     *
+     * @return bool Returns true if the migration table is created successfully, false otherwise.
      */
     private function createMigrationTable(): bool
     {
@@ -630,13 +852,16 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Get migration batch file in migration table.
+     * Retrieves the migration table entries.
      *
-     * @return Collection<string, int>
+     * This method fetches the migration table from the database, returning the
+     * migration names along with their respective batch numbers.
+     *
+     * @return Collection<string, int> A collection of migration names and their batch numbers.
      */
     private function getMigrationTable(): Collection
     {
-        /** @var Collection<string, int> */
+        /** @var Collection<string, int> $pair */
         $pair = DB::table('migration')
             ->select()
             ->get()
@@ -646,11 +871,15 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Save insert migration file with batch to migration table.
+     * Inserts a new migration entry into the migration table.
      *
-     * @param array<string, string|int> $migration
+     * This method adds a new record to the migration table with the specified
+     * migration name and batch number.
+     *
+     * @param array<string, string|int> $migration The migration name and batch number to insert.
+     * @return bool Returns true if the migration entry is inserted successfully, false otherwise.
      */
-    private function insertMigrationTable($migration): bool
+    private function insertMigrationTable(array $migration): bool
     {
         return DB::table('migration')
             ->insert()
@@ -659,6 +888,17 @@ class MigrationCommand extends Command
         ;
     }
 
+    /**
+     * Initializes the migration process by creating the migration table.
+     *
+     * This method checks if the migration table exists and, if not, attempts to
+     * create it. It ensures that the migration table is in place before any
+     * migrations can be run.
+     *
+     * @return int Returns 0 if the migration table exists or is created successfully, or 1 if an error occurs.
+     * @throws DependencyException If any dependencies are missing or cannot be resolved.
+     * @throws NotFoundException If the required configuration or resources are not found.
+     */
     public function initializeMigration(): int
     {
         $has_migration_table = $this->hasMigrationTable();
@@ -681,18 +921,29 @@ class MigrationCommand extends Command
     }
 
     /**
-     * Add migration from vendor path.
+     * Adds a vendor migration path.
+     *
+     * This static method allows for the addition of a migration path from a vendor,
+     * enabling the system to recognize and include vendor-specific migrations.
+     *
+     * @param string $path The path to the vendor's migration directory.
+     * @return void
      */
     public static function addVendorMigrationPath(string $path): void
     {
-        static::$vendor_paths[] = $path;
+        static::$vendorPaths[] = $path;
     }
 
     /**
-     * Flush migration vendor paths.
+     * Flushes the vendor migration paths.
+     *
+     * This static method clears all previously added vendor migration paths, effectively
+     * resetting the system's awareness of those paths.
+     *
+     * @return void
      */
     public static function flushVendorMigrationPaths(): void
     {
-        static::$vendor_paths = [];
+        static::$vendorPaths = [];
     }
 }

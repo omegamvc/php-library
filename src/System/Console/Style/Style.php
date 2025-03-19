@@ -1,19 +1,56 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Console\Style;
 
-use System\Console\Interfaces\OutputStream;
-use System\Console\Interfaces\RuleInterface;
+use System\Console\Output\OutputInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
 use System\Text\Str;
 
+use function max;
+use function method_exists;
+use function preg_replace;
+use function str_repeat;
+use function strlen;
+use function strtolower;
 use function System\Text\text;
 
+use const PHP_EOL;
+
 /**
+ * The `Style` class provides a way to apply terminal text styling,
+ * including colors, decorations, and raw terminal codes.
+ *
+ * This class allows chaining methods to modify text appearance,
+ * such as setting foreground and background colors, applying bold or underline styles,
+ * and handling raw ANSI escape codes. The formatted text can be printed to the terminal
+ * or retrieved as a string.
+ *
+ * The class also supports method invocation to reset styles and apply new ones dynamically.
+ *
+ * @category   System
+ * @package    Console
+ * @subpackage Style
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ *
  * @method self textRed()
  * @method self textYellow()
  * @method self textBlue()
@@ -48,126 +85,94 @@ class Style
 {
     use CommandTrait;
 
-    /**
-     * Array of command rule.
-     *
-     * @var array<int, int>
-     */
-    private $rules = [];
+    /** @var array<int, int> Holds the ANSI escape codes for the current style rules.
+    * @noinspection PhpPrivateFieldCanBeLocalVariableInspection
+    */
+    private array $rules = [];
+
+    /** @var array<int, array<int, string|int>> Stores raw terminal styling rules, including colors and decorations. */
+    private array $rawRules = [];
+
+    /** @var array<int, int> Defines the reset rules to clear applied styles. */
+    private array $resetRules = [Decorate::RESET];
+
+    /** @var array<int, int> Defines the foreground text color rule. */
+    private array $textColorRule = [Decorate::TEXT_DEFAULT];
+
+    /** @var array<int, int> Defines the background color rule. */
+    private array $bgColorRule = [Decorate::BG_DEFAULT];
+
+    /** @var array<int, int> Stores text decoration rules (e.g., bold, underline). */
+    private array $decorateRules = [];
+
+    /** @var string The text content to be styled. */
+    private string $text;
+
+    /** @var int The length of the text. */
+    private int $length;
+
+    /** @var string A reference string to prepend to the styled text. */
+    private string $ref = '';
+
+    /** @var OutputInterface|null Output interface for writing styled text to a stream. */
+    private ?OutputInterface $output = null;
 
     /**
-     * Array of command rule.
-     *
-     * @var array<int, array<int, string|int>>
-     */
-    private $raw_rules = [];
-
-    /**
-     * Array of command rule.
-     *
-     * @var array<int, int>
-     */
-    private $reset_rules = [Decorate::RESET];
-
-    /**
-     * Rule of text color.
-     *
-     * @var array<int, int>
-     */
-    private $text_color_rule = [Decorate::TEXT_DEFAULT];
-
-    /**
-     * Rule of background color.
-     *
-     * @var array<int, int>
-     */
-    private $bg_color_rule = [Decorate::BG_DEFAULT];
-
-    /**
-     * Rule of text decorate.
-     *
-     * @var array<int, int>
-     */
-    private $decorate_rules = [];
-
-    /**
-     * String to style.
-     *
-     * @var string
-     */
-    private $text;
-
-    /**
-     * Lenght of text.
-     *
-     * @var int
-     */
-    private $length = 0;
-
-    /**
-     * Reference from preview text (like prefix).
-     *
-     * @var string
-     */
-    private $ref = '';
-
-    private ?OutputStream $output_stream = null;
-
-    /**
-     * @param string|int $text set text to decorate
-     */
-    public function __construct($text = '')
+    * Initializes a new instance of the Style class.
+    *
+    * @param string|int $text The text to be styled.
+    * @return void
+    */
+    public function __construct(string|int $text = '')
     {
         $this->text   = $text;
-        $this->length = \strlen((string) $text);
+        $this->length = strlen((string) $text);
     }
 
     /**
-     * Invoke new Rule class.
-     *
-     * @param string|int $text set text to decorate
-     *
-     * @return self
-     */
-    public function __invoke($text)
+    * Reinitialized the instance with a new text value.
+    *
+    * @param string|int $text The new text to style.
+    * @return self
+    */
+    public function __invoke(string|int $text): self
     {
         $this->text   = $text;
-        $this->length = \strlen((string) $text);
+        $this->length = strlen((string) $text);
 
         return $this->flush();
     }
 
     /**
-     * Get string of terminal formatted style.
-     *
-     * @return string
-     */
-    public function __toString()
+    * Converts the styled text to a string with ANSI formatting.
+    *
+    * @return string Return the styled text with ANSI formatting
+    */
+    public function __toString(): string
     {
         return $this->toString($this->text, $this->ref);
     }
 
     /**
-     * Call exist method from trait.
-     *
-     * @param string            $name
-     * @param array<int, mixed> $arguments
-     *
-     * @return self
-     */
-    public function __call($name, $arguments)
+    * Dynamically handles method calls for styling shortcuts.
+    *
+    * @param string $name The method name.
+    * @param array<int, mixed> $arguments The arguments passed to the method.
+    * @return self
+    */
+    public function __call(string $name, array $arguments): self
     {
         if (method_exists($this, $name)) {
             $constant = strtolower(preg_replace('/(?<!^)[A-Z]/', '_$0', $name));
 
             if (Str::startsWith($name, 'text')) {
                 $constant              = 'TEXT' . text($constant)->upper()->slice(4);
-                $this->text_color_rule = [Decorate::getConst($constant)];
+                $this->textColorRule = [Decorate::getConst($constant)];
             }
 
             if (Str::startsWith($name, 'bg')) {
                 $constant            =  'BG' . text($constant)->upper()->slice(2);
-                $this->bg_color_rule = [Decorate::getConst($constant)];
+                $this->bgColorRule = [Decorate::getConst($constant)];
             }
 
             return $this;
@@ -188,14 +193,13 @@ class Style
     }
 
     /**
-     * Render text, reference with current rule.
-     *
-     * @param string $text Text tobe render with rule (this)
-     * @param string $ref  Text reference to be add begain text
-     *
-     * @return string
-     */
-    public function toString($text, $ref = '')
+    * Applies the current styling rules and returns the formatted string.
+    *
+    * @param string $text The text to style.
+    * @param string $ref An optional prefix to prepend to the text.
+    * @return string
+    */
+    public function toString(string $text, string $ref = ''): string
     {
         // make sure not push empty text
         if ($text == '' && $ref == '') {
@@ -206,93 +210,90 @@ class Style
         $this->rules = [];
 
         // font color
-        foreach ($this->text_color_rule as $text_color) {
-            $this->rules[] = $text_color;
+        foreach ($this->textColorRule as $textColor) {
+            $this->rules[] = $textColor;
         }
 
         // bg color
-        foreach ($this->bg_color_rule as $bg_color) {
-            $this->rules[] = $bg_color;
+        foreach ($this->bgColorRule as $bgColor) {
+            $this->rules[] = $bgColor;
         }
 
         // decorate
-        foreach ($this->decorate_rules as $decorate) {
+        foreach ($this->decorateRules as $decorate) {
             $this->rules[] = $decorate;
         }
 
         // raw
-        foreach ($this->raw_rules as $raws) {
+        foreach ($this->rawRules as $raws) {
             foreach ($raws as $raw) {
                 $this->rules[] = $raw;
             }
         }
 
-        return $ref . $this->rules($this->rules, $text, true, $this->reset_rules);
+        return $ref . $this->rules($this->rules, $text, true, $this->resetRules);
     }
 
     /**
-     * Flush class.
-     *
-     * @return self
-     */
-    public function flush()
+    * Resets all styling attributes to their default values.
+    *
+    * @return self
+    */
+    public function flush(): self
     {
-        $this->text_color_rule = [Decorate::TEXT_DEFAULT];
-        $this->bg_color_rule   = [Decorate::BG_DEFAULT];
-        $this->decorate_rules  = [];
-        $this->reset_rules     = [Decorate::RESET];
-        $this->raw_rules       = [];
-        $this->ref             = '';
+        $this->textColorRule  = [Decorate::TEXT_DEFAULT];
+        $this->bgColorRule    = [Decorate::BG_DEFAULT];
+        $this->decorateRules  = [];
+        $this->resetRules     = [Decorate::RESET];
+        $this->rawRules       = [];
+        $this->ref            = '';
 
         return $this;
     }
 
     /**
-     * Set reference (add before main text).
-     *
-     * @param string $text_reference
-     *
-     * @return self
-     */
-    private function ref($text_reference)
+    * Sets a reference string to be prepended to the styled text.
+    *
+    * @param string $textReference The reference string.
+    * @return self
+    */
+    private function ref(string $textReference): self
     {
-        $this->ref = $text_reference;
+        $this->ref = $textReference;
 
         return $this;
     }
 
     /**
-     * Chain code (continue with other text).
-     *
-     * @param string|int $text text
-     *
-     * @return self
-     */
-    public function push($text)
+    * Appends new text while preserving the current style.
+    *
+    * @param string|int $text The text to append.
+    * @return self
+    */
+    public function push(string|int $text): self
     {
         $ref        = $this->toString($this->text, $this->ref);
         $this->text = $text;
-        $this->length += \strlen((string) $text);
+        $this->length += strlen((string) $text);
 
         return $this->flush()->ref($ref);
     }
 
     /**
-     * Push Style.
-     *
-     * @param Style $style Style to push
-     *
-     * @return self
-     */
-    public function tap($style)
+    * Merges another Style instance into this one.
+    *
+    * @param Style $style The Style instance to merge.
+    * @return self
+    */
+    public function tap(Style $style): self
     {
-        $this->ref             = $this->toString($this->text, $this->ref) . $style->toString($style->ref);
-        $this->text            = $style->text;
-        $this->text_color_rule = $style->text_color_rule;
-        $this->bg_color_rule   = $style->bg_color_rule;
-        $this->decorate_rules  = $style->decorate_rules;
-        $this->reset_rules     = $style->reset_rules;
-        $this->raw_rules       = $style->raw_rules;
+        $this->ref           = $this->toString($this->text, $this->ref) . $style->toString($style->ref);
+        $this->text          = $style->text;
+        $this->textColorRule = $style->textColorRule;
+        $this->bgColorRule   = $style->bgColorRule;
+        $this->decorateRules = $style->decorateRules;
+        $this->resetRules    = $style->resetRules;
+        $this->rawRules      = $style->rawRules;
 
         $this->length += $style->length;
 
@@ -300,54 +301,50 @@ class Style
     }
 
     /**
-     * Get text lenght witout rule counted.
-     *
-     * @return int
-     */
-    public function length()
+    * Gets the length of the styled text.
+    *
+    * @return int
+    */
+    public function length(): int
     {
         return $this->length;
     }
 
-    // method ------------------------------------------------
-
     /**
-     * Print terminal style.
-     *
-     * @param bool $new_line True if print with new line in end line
-     *
-     * @return void
-     */
-    public function out($new_line = true)
+    * Outputs the styled text to the terminal.
+    *
+    * @param bool $newLine Whether to append a newline.
+    * @return void
+    */
+    public function out(bool $newLine = true): void
     {
-        $out = $this . ($new_line ? PHP_EOL : null);
+        $out = $this . ($newLine ? PHP_EOL : null);
 
         echo $out;
     }
 
     /**
-     * Print terminal style if condition true.
-     *
-     * @param bool $condition If true will echo out
-     * @param bool $new_line  True if print with new line in end line
-     *
-     * @return void
-     */
-    public function outIf($condition, $new_line = true)
+    * Outputs the styled text if the given condition is true.
+    *
+    * @param bool $condition If true, the text is printed.
+    * @param bool $newLine Whether to append a newline.
+    * @return void
+    */
+    public function outIf(bool $condition, bool $newLine = true): void
     {
         if ($condition) {
-            $out = $this . ($new_line ? PHP_EOL : null);
+            $out = $this . ($newLine ? PHP_EOL : null);
 
             echo $out;
         }
     }
 
     /**
-     * Print to terminal and continue.
-     *
-     * @return self
-     */
-    public function yield()
+    * Outputs the styled text and resets the instance.
+    *
+    * @return self
+    */
+    public function yield(): self
     {
         echo $this;
         $this->text   = '';
@@ -358,171 +355,178 @@ class Style
     }
 
     /**
-     * Write stream out.
-     *
-     * @param bool $new_line True if print with new line in end line
-     *
-     * @return void
-     */
-    public function write($new_line = true)
+    * Writes the styled text to the output stream.
+    *
+    * @param bool $newLine Whether to append a newline.
+    * @return void
+    */
+    public function write(bool $newLine = true): void
     {
-        $out = $this . ($new_line ? PHP_EOL : null);
+        $out = $this . ($newLine ? PHP_EOL : null);
 
-        if ($this->output_stream) {
-            $this->output_stream->write($out);
-        }
+        $this->output?->write($out);
     }
 
     /**
-     * Clear curent line (original text is keep).
-     */
+    * Clears the current terminal line.
+    *
+    * @param int $line The line number to clear.
+    * @return void
+    */
     public function clear(int $line = -1): void
     {
         $this->clearLine($line);
     }
 
     /**
-     * Replace current line (original text is keep).
-     */
+    * Replaces the current terminal line with new text.
+    *
+    * @param string $text The new text.
+    * @param int $line The line number to replace.
+    * @return void
+    */
     public function replace(string $text, int $line = -1): void
     {
         $this->replaceLine($text, $line);
     }
 
-    public function setOutputStream(OutputStream $resourceOutputStream): self
-    {
-        $this->output_stream = $resourceOutputStream;
-
-        return $this;
-    }
-
-    // style ------------------------------------------
-
     /**
-     * Reset all attributes (set reset decorate to be 0).
-     *
-     * @return self
-     */
-    public function resetDecorate()
+    * Sets the output stream for styled text.
+    *
+    * @param OutputInterface $output The output stream.
+    * @return self
+    */
+    public function setOutput(OutputInterface $output): self
     {
-        $this->reset_rules = [Decorate::RESET];
+        $this->output = $output;
 
         return $this;
     }
 
     /**
-     * Text decorate bold.
-     *
-     * @return self
-     */
-    public function bold()
+    * Resets text decorations without affecting colors.
+    *
+    * @return self
+    */
+    public function resetDecorate(): self
     {
-        $this->decorate_rules[] = Decorate::BOLD;
-        $this->reset_rules[]    = Decorate::RESET_BOLD;
+        $this->resetRules = [Decorate::RESET];
 
         return $this;
     }
 
     /**
-     * Text decorate underline.
-     *
-     * @return self
-     */
-    public function underline()
+    * Applies bold styling to the text.
+    *
+    * @return self
+    */
+    public function bold(): self
     {
-        $this->decorate_rules[] = Decorate::UNDERLINE;
-        $this->reset_rules[]    = Decorate::RESET_UNDERLINE;
+        $this->decorateRules[] = Decorate::BOLD;
+        $this->resetRules[]    = Decorate::RESET_BOLD;
 
         return $this;
     }
 
     /**
-     * Text decorate blink.
-     *
-     * @return self
-     */
-    public function blink()
+    * Applies underline styling to the text.
+    *
+    * @return self
+    */
+    public function underline(): self
     {
-        $this->decorate_rules[] = Decorate::BLINK;
-        $this->reset_rules[]    = Decorate::RESET_BLINK;
+        $this->decorateRules[] = Decorate::UNDERLINE;
+        $this->resetRules[]    = Decorate::RESET_UNDERLINE;
 
         return $this;
     }
 
     /**
-     * Text decorate reverse/invert.
-     *
-     * @return self
-     */
-    public function reverse()
+    * Applies blinking effect to the text.
+    *
+    * @return self
+    */
+    public function blink(): self
     {
-        $this->decorate_rules[] = Decorate::REVERSE;
-        $this->decorate_rules[] = Decorate::RESET_REVERSE;
+        $this->decorateRules[] = Decorate::BLINK;
+        $this->resetRules[]    = Decorate::RESET_BLINK;
 
         return $this;
     }
 
     /**
-     * Text decorate hidden.
-     *
-     * @return self
-     */
-    public function hidden()
+    * Applies reversed/inverted colors to the text.
+    *
+    * @return self
+    */
+    public function reverse(): self
     {
-        $this->decorate_rules[] = Decorate::HIDDEN;
-        $this->reset_rules[]    = Decorate::RESET_HIDDEN;
+        $this->decorateRules[] = Decorate::REVERSE;
+        $this->decorateRules[] = Decorate::RESET_REVERSE;
 
         return $this;
     }
 
     /**
-     * Add raw terminal code.
-     *
-     * @param RuleInterface|string $raw Raw terminal code
-     *
-     * @return self
-     */
-    public function raw($raw)
+    * Hides the text.
+    *
+    * @return self
+    */
+    public function hidden(): self
+    {
+        $this->decorateRules[] = Decorate::HIDDEN;
+        $this->resetRules[]    = Decorate::RESET_HIDDEN;
+
+        return $this;
+    }
+
+    /**
+    * Adds a raw ANSI escape code.
+    *
+    * @param RuleInterface|string $raw The raw terminal code.
+    * @return self
+    */
+    public function raw(RuleInterface|string $raw): self
     {
         if ($raw instanceof ForegroundColor) {
-            $this->text_color_rule = $raw->get();
+            $this->textColorRule = $raw->get();
 
             return $this;
         }
 
         if ($raw instanceof BackgroundColor) {
-            $this->bg_color_rule = $raw->get();
+            $this->bgColorRule = $raw->get();
 
             return $this;
         }
 
-        $this->raw_rules[] = [$raw];
+        $this->rawRules[] = [$raw];
 
         return $this;
     }
 
     /**
-     * @param int[] $reset rules reset
-     *
-     * @return self
-     */
-    public function rawReset($reset)
+    * Sets the reset rules for clearing applied styles.
+    *
+    * @param int[] $reset The reset rules to apply.
+    * @return self
+    */
+    public function rawReset(array $reset): self
     {
-        $this->reset_rules = $reset;
+        $this->resetRules = $reset;
 
         return $this;
     }
 
     /**
-     * Set text color.
-     *
-     * @param ForegroundColor|string $color
-     *
-     * @return self
-     */
-    public function textColor($color)
+    * Sets the text color.
+    *
+    * @param ForegroundColor|string $color The foreground color.
+    * @return self
+    */
+    public function textColor(ForegroundColor|string $color): self
     {
-        $this->text_color_rule = $color instanceof ForegroundColor
+        $this->textColorRule = $color instanceof ForegroundColor
             ? $color->get()
             : Colors::hexText($color)->get()
         ;
@@ -531,15 +535,14 @@ class Style
     }
 
     /**
-     * Set Background color.
-     *
-     * @param BackgroundColor|string $color
-     *
-     * @return self
-     */
-    public function bgColor($color)
+    * Sets the background color.
+    *
+    * @param BackgroundColor|string $color The background color.
+    * @return self
+    */
+    public function bgColor(BackgroundColor|string $color): self
     {
-        $this->bg_color_rule = $color instanceof BackgroundColor
+        $this->bgColorRule = $color instanceof BackgroundColor
             ? $color->get()
             : Colors::hexBg($color)->get();
 
@@ -547,16 +550,15 @@ class Style
     }
 
     /**
-     * Push/insert repeat character.
-     *
-     * @param string $content
-     * @param int    $repeat
-     *
-     * @return self
-     */
-    public function repeat($content, $repeat = 1)
+    * Appends a repeated string to the current text.
+    *
+    * @param string $content The string to repeat.
+    * @param int $repeat The number of times to repeat the string.
+    * @return self
+    */
+    public function repeat(string $content, int $repeat = 1): self
     {
-        $repeat = $repeat < 0 ? 0 : $repeat;
+        $repeat = max($repeat, 0);
 
         return $this->push(
             str_repeat($content, $repeat)
@@ -564,40 +566,37 @@ class Style
     }
 
     /**
-     * Push/insert new lines.
-     *
-     * @deprecated
-     *
-     * @param int $repeat
-     *
-     * @return self
-     */
-    public function new_lines($repeat = 1)
+    * Appends a specified number of newline characters.
+    *
+    * @deprecated Use {@see newLines()} instead.
+    *
+    * @param int $repeat The number of new lines to insert.
+    * @return self
+    */
+    public function new_lines(int $repeat = 1): self
     {
         return $this->repeat("\n", $repeat);
     }
 
     /**
-     * Push/insert new lines.
-     *
-     * @param int $repeat
-     *
-     * @return self
-     */
-    public function newLines($repeat = 1)
+    * Appends a specified number of newline characters.
+    *
+    * @param int $repeat The number of new lines to insert.
+    * @return self
+    */
+    public function newLines(int $repeat = 1): self
     {
         return $this->repeat("\n", $repeat);
     }
 
     /**
-     * Push/insert tabs.
-     *
-     * @param int $repeat
-     *
-     * @return self
-     */
-    public function tabs($repeat = 1)
+    * Appends a specified number of tab characters.
+    *
+    * @param int $count The number of tabs to insert.
+    * @return self
+    */
+    public function tabs(int $count = 1): self
     {
-        return $this->repeat("\t", $repeat);
+        return $this->repeat("\t", $count);
     }
 }

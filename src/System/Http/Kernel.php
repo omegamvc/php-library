@@ -6,10 +6,10 @@ namespace System\Http;
 
 use System\Application\Application;
 use System\Bootstrap\BootProviders;
-use System\Bootstrap\ConfigProviders;
-use System\Bootstrap\HandlerExceptions;
-use System\Bootstrap\RegisterFacades;
-use System\Bootstrap\RegisterProviders;
+use System\Config\ConfigProviders;
+use System\Exceptions\ExceptionProviders;
+use System\Support\Facades\FacadeProviders;
+use System\Container\ServiceProvider\RegisterProviders;
 use System\Exceptions\Handler;
 use System\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
@@ -32,8 +32,8 @@ class Kernel
     /** @var array<int, class-string> Apllication bootstrap register. */
     protected array $bootstrappers = [
         ConfigProviders::class,
-        HandlerExceptions::class,
-        RegisterFacades::class,
+        ExceptionProviders::class,
+        FacadeProviders::class,
         RegisterProviders::class,
         BootProviders::class,
     ];

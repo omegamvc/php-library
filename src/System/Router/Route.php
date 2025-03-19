@@ -12,7 +12,7 @@ use ArrayAccess;
 class Route implements \ArrayAccess
 {
     /** @var array<string, mixed> */
-    private $route;
+    private array $route;
     private string $prefix_name;
 
     /**

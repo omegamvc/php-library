@@ -7,18 +7,18 @@ namespace System\Router;
 class Router
 {
     /** @var Route[] */
-    private static $routes           = [];
+    private static array $routes = [];
     /** @var ?callable(string): mixed */
     private static mixed $pathNotFound;
     /** @var ?callable(string, string): mixed */
-    private static mixxed $methodNotAllowed;
+    private static mixed $methodNotAllowed;
     /** @var array<string, string|string[]> */
-    public static $group             = [
+    public static array $group = [
         'prefix'     => '',
         'middleware' => [],
     ];
     /** @var Route|null */
-    private static ?Route $current;
+    private static ?Route $current = null;
 
     /**
      * Alias router param to readable regex url.
@@ -133,7 +133,7 @@ class Router
      *
      * @return Route|null
      */
-    public static function current()
+    public static function current(): ?Route
     {
         return self::$current;
     }

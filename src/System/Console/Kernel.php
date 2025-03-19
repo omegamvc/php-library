@@ -1,49 +1,90 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Console;
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use System\Console\Style\Style;
 use System\Application\Application;
 use System\Bootstrap\BootProviders;
-use System\Bootstrap\ConfigProviders;
-use System\Bootstrap\RegisterFacades;
-use System\Bootstrap\RegisterProviders;
-use System\Console\CommandMap;
+use System\Config\ConfigProviders;
+use System\Support\Facades\FacadeProviders;
+use System\Container\ServiceProvider\RegisterProviders;
 
+use function array_fill;
+use function array_merge;
+use function arsort;
+use function explode;
+use function floor;
+use function is_int;
+use function max;
+use function min;
+use function strlen;
+use function strtolower;
+
+/**
+ * Kernel class.
+ *
+ * Kernel class handles the execution of commands and processes input arguments.
+ * It manages the application bootstrap, command matching, and similarity checking for commands.
+ * The class is responsible for executing commands, handling errors, and returning appropriate exit codes.
+ *
+ * @category  System
+ * @package   Console
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
+ */
 class Kernel
 {
     /**
-     * Application Container.
+     * @var int The exit status code of the console.
      */
-    protected Application $app;
+    protected int $exitCode;
 
-    /** @var int console exit status */
-    protected int $exit_code;
-
-    /** @var array<int, class-string> Application bootstrap register. */
+    /**
+     * @var array<int, class-string> A list of bootstrap providers for the application.
+     */
     protected array $bootstrappers = [
         ConfigProviders::class,
-        RegisterFacades::class,
+        FacadeProviders::class,
         RegisterProviders::class,
         BootProviders::class,
     ];
 
     /**
-     * Set instance.
+     * Kernel constructor that sets the application instance.
+     *
+     * @param Application $app The application instance.
+     * @return void
      */
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
+    public function __construct(
+        protected Application $app
+    ) {
     }
 
     /**
-     * Handle input (arguments) kernel.
+     * Handles input arguments and processes commands.
      *
-     * @param string|array<int, string> $arguments
-     *
-     * @return int Exit code
+     * @param string|array<int, string> $arguments The input arguments (command-line arguments).
+     * @return int The exit code.
+     * @throws DependencyException If a required dependency is not found.
+     * @throws NotFoundException If a command is not found.
      */
     public function handle(string|array $arguments): int
     {
@@ -62,7 +103,7 @@ class Kernel
 
                 $call = $this->app->call($cmd->call());
 
-                return $this->exit_code = (is_int($call) ? $call : 0);
+                return $this->exitCode = (is_int($call) ? $call : 0);
             }
         }
 
@@ -86,16 +127,20 @@ class Kernel
                 ->out()
             ;
 
-            return $this->exit_code = 1;
+            return $this->exitCode = 1;
         }
 
         $similar->out();
 
-        return $this->exit_code = 1;
+        return $this->exitCode = 1;
     }
 
     /**
-     * Register bootstrap application.
+     * Registers the application's bootstrap providers.
+     *
+     * @return void
+     * @throws DependencyException If a required dependency is not found.
+     * @throws NotFoundException If a required bootstrap provider is not found.
      */
     public function bootstrap(): void
     {
@@ -103,13 +148,14 @@ class Kernel
     }
 
     /**
-     * Call command using know signature.
-     * The signature doesn't require php as prefix.
-     * For better parse use `handle` method instead.
+     * Calls a command using its known signature.
+     * The signature does not require the PHP prefix; use `handle` for better parsing.
      *
-     * @param array<string, string|bool|int|null> $parameter
-     *
-     * @since v0.33
+     * @param string                              $signature The command signature.
+     * @param array<string, string|bool|int|null> $parameter Additional parameters for the command.
+     * @return int The exit code.
+     * @throws DependencyException If a required dependency is not found.
+     * @throws NotFoundException If the command is not found.
      */
     public function call(string $signature, array $parameter = []): int
     {
@@ -133,11 +179,12 @@ class Kernel
     }
 
     /**
-     * Return similar from given array, compare with key.
+     * Returns similar commands based on a given string and threshold for similarity.
      *
-     * @param string[] $commands
-     *
-     * @return array<string, float> Sorted from similar
+     * @param string   $find      The search term to find similar commands.
+     * @param string[] $commands  The list of available commands.
+     * @param float    $threshold The similarity threshold (default: 0.8).
+     * @return array<string, float> Sorted list of similar commands with similarity scores.
      */
     private function getSimilarity(string $find, array $commands, float $threshold = 0.8): array
     {
@@ -159,9 +206,11 @@ class Kernel
     }
 
     /**
-     * Calculate the similarity between two strings.
+     * Calculates the similarity score between two strings using the Jaro-Winkler distance.
      *
-     * @return float Similarity score (between 0 and 1)
+     * @param string $find    The first string.
+     * @param string $command The second string.
+     * @return float The similarity score between 0 and 1.
      */
     private function jaroWinkler(string $find, string $command): float
     {
@@ -181,9 +230,11 @@ class Kernel
     }
 
     /**
-     * Calculate the Jaro similarity between two strings.
+     * Calculates the Jaro similarity score between two strings.
      *
-     * @return float the Jaro similarity score (between 0 and 1)
+     * @param string $find    The first string.
+     * @param string $command The second string.
+     * @return float The Jaro similarity score between 0 and 1.
      */
     private function jaro(string $find, string $command): float
     {
@@ -243,19 +294,19 @@ class Kernel
     }
 
     /**
-     * Get kernel exit status code.
+     * Returns the exit status code of the kernel.
      *
-     * @return int Exit status code
+     * @return int The exit status code.
      */
-    public function exit_code(): int
+    public function exitCode(): int
     {
-        return $this->exit_code;
+        return $this->exitCode;
     }
 
     /**
-     * Command route.
+     * Loads and returns the commands configuration.
      *
-     * @return CommandMap[]
+     * @return CommandMap[] An array of command maps loaded from the configuration.
      */
     protected function commands(): array
     {

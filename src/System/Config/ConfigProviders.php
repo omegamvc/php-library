@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of Omega - Bootstrap Package
+ * Part of Omega - Config Package
  * php version 8.3
  *
  * @link      https://omegamvc.github.io
@@ -13,12 +13,11 @@
 
 declare(strict_types=1);
 
-namespace System\Bootstrap;
+namespace System\Config;
 
 use DI\DependencyException;
 use DI\NotFoundException;
 use System\Application\Application;
-use System\Config\ConfigRepository;
 
 use function array_merge;
 use function date_default_timezone_set;
@@ -30,7 +29,7 @@ use function glob;
  * and sets the default timezone.
  *
  * @category  System
- * @package   Bootstrap
+ * @package   Config
  * @link      https://omegamvc.github.io
  * @author    Adriano Giovannini <agisoftt@gmail.com>
  * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)

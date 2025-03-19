@@ -5,10 +5,18 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
+use DI\DependencyException;
+use DI\NotFoundException;
 use System\Http\Response;
+
+use function System\Application\view;
 
 class __controller__Controller extends Controller
 {
+    /**
+     * @throws DependencyException
+     * @throws NotFoundException
+     */
     public function index(): Response
     {
         return view('__controller__', [

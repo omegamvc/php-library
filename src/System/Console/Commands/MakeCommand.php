@@ -1,22 +1,69 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Console\Commands;
 
+use DI\DependencyException;
+use DI\NotFoundException;
+use Exception;
 use System\Console\Command;
 use System\Console\Traits\CommandTrait;
 use System\Support\Facades\DB;
 use System\Template\Generate;
 use System\Template\Property;
+use Throwable;
 
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function mkdir;
+use function now;
+use function preg_replace;
+use function str_replace;
+use function strtolower;
+use function System\Application\commands_path;
+use function System\Application\config_path;
+use function System\Application\controllers_path;
+use function System\Application\migration_path;
+use function System\Application\model_path;
+use function System\Application\services_path;
+use function System\Application\view_path;
 use function System\Console\fail;
 use function System\Console\info;
 use function System\Console\ok;
 use function System\Console\text;
 use function System\Console\warn;
+use function ucfirst;
 
 /**
+ * The make command is a powerful tool for quickly scaffolding various components of your
+ * application. It simplifies the process of creating essential files like controllers, views,
+ * services, models, migrations, and commands based on predefined templates. This command reduces
+ * repetitive tasks by automatically generating the necessary files with a consistent structure,
+ * saving time during the development process. It allows for customizable templates and provides clear
+ * feedback on the success or failure of the file creation process.
+ *
+ * @category   System
+ * @package    Console
+ * @subpackage Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ *
  * @property bool $update
  * @property bool $force
  */
@@ -25,36 +72,46 @@ class MakeCommand extends Command
     use CommandTrait;
 
     /**
-     * Register command.
+     * Command registration details.
+     *
+     * This array defines the commands available for managing the application's
+     * maintenance mode. Each command is associated with a pattern and a function
+     * that handles the command.
      *
      * @var array<int, array<string, mixed>>
      */
     public static array $command = [
         [
             'pattern' => 'make:controller',
-            'fn'      => [MakeCommand::class, 'make_controller'],
+            'fn'      => [MakeCommand::class, 'makeController'],
         ], [
             'pattern' => 'make:view',
-            'fn'      => [MakeCommand::class, 'make_view'],
+            'fn'      => [MakeCommand::class, 'makeView'],
         ], [
             'pattern' => 'make:services',
-            'fn'      => [MakeCommand::class, 'make_services'],
+            'fn'      => [MakeCommand::class, 'makeServices'],
         ], [
             'pattern' => 'make:model',
-            'fn'      => [MakeCommand::class, 'make_model'],
+            'fn'      => [MakeCommand::class, 'makeModel'],
         ], [
             'pattern' => 'make:command',
-            'fn'      => [MakeCommand::class, 'make_command'],
+            'fn'      => [MakeCommand::class, 'makeCommand'],
         ], [
             'pattern' => 'make:migration',
-            'fn'      => [MakeCommand::class, 'make_migration'],
+            'fn'      => [MakeCommand::class, 'makeMigration'],
         ],
     ];
 
     /**
+     * Provides help documentation for the command.
+     *
+     * This method returns an array with information about available commands
+     * and options. It describes the two main commands (`down` and `up`) for
+     * managing maintenance mode.
+     *
      * @return array<string, array<string, string|string[]>>
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
@@ -81,11 +138,22 @@ class MakeCommand extends Command
         ];
     }
 
-    public function make_controller(): int
+    /**
+     * Creates a controller file.
+     *
+     * This method generates a controller file based on a template and saves it to
+     * the appropriate directory. The controller's name is provided as an option
+     * to the command.
+     *
+     * @return int Exit status code (0 for success, 1 for failure).
+     * @throws DependencyException If there is an issue with dependencies.
+     * @throws NotFoundException If a required resource is not found.
+     */
+    public function makeController(): int
     {
         info('Making controller file...')->out(false);
 
-        $success = $this->makeTemplate($this->OPTION[0], [
+        $success = $this->makeTemplate($this->option[0], [
             'template_location' => __DIR__ . '/stubs/controller',
             'save_location'     => controllers_path(),
             'pattern'           => '__controller__',
@@ -103,11 +171,21 @@ class MakeCommand extends Command
         return 1;
     }
 
-    public function make_view(): int
+    /**
+     * Creates a view file.
+     *
+     * This method generates a view file based on a template and saves it to the
+     * appropriate directory. The view's name is provided as an option to the command.
+     *
+     * @return int Exit status code (0 for success, 1 for failure).
+     * @throws DependencyException If there is an issue with dependencies.
+     * @throws NotFoundException If a required resource is not found.
+     */
+    public function makeView(): int
     {
         info('Making view file...')->out(false);
 
-        $success = $this->makeTemplate($this->OPTION[0], [
+        $success = $this->makeTemplate($this->option[0], [
             'template_location' => __DIR__ . '/stubs/view',
             'save_location'     => view_path(),
             'pattern'           => '__view__',
@@ -125,11 +203,22 @@ class MakeCommand extends Command
         return 1;
     }
 
-    public function make_services(): int
+    /**
+     * Creates a service file.
+     *
+     * This method generates a service file based on a template and saves it to
+     * the appropriate directory. The service's name is provided as an option
+     * to the command.
+     *
+     * @return int Exit status code (0 for success, 1 for failure).
+     * @throws DependencyException If there is an issue with dependencies.
+     * @throws NotFoundException If a required resource is not found.
+     */
+    public function makeServices(): int
     {
         info('Making service file...')->out(false);
 
-        $success = $this->makeTemplate($this->OPTION[0], [
+        $success = $this->makeTemplate($this->option[0], [
             'template_location' => __DIR__ . '/stubs/service',
             'save_location'     => services_path(),
             'pattern'           => '__service__',
@@ -147,20 +236,32 @@ class MakeCommand extends Command
         return 1;
     }
 
-    public function make_model(): int
+    /**
+     * Creates a model file.
+     *
+     * This method generates a model file based on a template, incorporating the
+     * table name and column information from the database. The model's name is
+     * provided as an option to the command. If the model file already exists and
+     * the force option is not enabled, the method will fail.
+     *
+     * @return int Exit status code (0 for success, 1 for failure).
+     * @throws DependencyException If there is an issue with dependencies.
+     * @throws NotFoundException If a required resource is not found.
+     */
+    public function makeModel(): int
     {
         info('Making model file...')->out(false);
-        $name           = ucfirst($this->OPTION[0]);
-        $model_location = model_path() . $name . '.php';
+        $name          = ucfirst($this->option[0]);
+        $modelLocation = model_path() . $name . '.php';
 
-        if (file_exists($model_location) && false === $this->option('force', false)) {
+        if (file_exists($modelLocation) && false === $this->option('force', false)) {
             warn('File already exist')->out(false);
             fail('Failed Create model file')->out();
 
             return 1;
         }
 
-        info('Creating Model class in ' . $model_location)->out(false);
+        info('Creating Model class in ' . $modelLocation)->out(false);
 
         $class = new Generate($name);
         $class->customizeTemplate(
@@ -174,30 +275,30 @@ class MakeCommand extends Command
         $class->extend('Model');
 
         $primaryKey = 'id';
-        $table_name  = $this->OPTION[0];
+        $tableName  = $this->option[0];
         if ($this->option('table-name', false)) {
-            $table_name = $this->option('table-name');
-            info("Getting Information from table {$table_name}.")->out(false);
+            $tableName = $this->option('table-name');
+            info("Getting Information from table {$tableName}.")->out(false);
             try {
-                foreach (DB::table($table_name)->info() as $column) {
+                foreach (DB::table($tableName)->info() as $column) {
                     $class->addComment('@property mixed $' . $column['COLUMN_NAME']);
                     if ('PRI' === $column['COLUMN_KEY']) {
                         $primaryKey = $column['COLUMN_NAME'];
                     }
                 }
-            } catch (\Throwable $th) {
+            } catch (Throwable $th) {
                 warn($th->getMessage())->out(false);
             }
         }
 
         $class->addProperty(
-            'table_name'
+            'tableName'
         )->visibility(
             Property::PROTECTED_
         )->dataType(
             'string'
         )->expecting(
-            " = '{$table_name}'"
+            " = '{$tableName}'"
         );
 
         $class->addProperty(
@@ -210,7 +311,7 @@ class MakeCommand extends Command
             "= '{$primaryKey}'"
         );
 
-        if (false === file_put_contents($model_location, $class->generate())) {
+        if (false === file_put_contents($modelLocation, $class->generate())) {
             fail('Failed Create model file')->out();
 
             return 1;
@@ -222,39 +323,54 @@ class MakeCommand extends Command
     }
 
     /**
-     * Replace template to new class/resource.
+     * Replaces the template with the new class/resource.
      *
-     * @param string                $argument    Name of Class/file
-     * @param array<string, string> $make_option Configuration to replace template
-     * @param string                $folder      Create folder for save location
+     * This method handles the process of replacing placeholders in a template
+     * with the provided class or file name and saves the result to the specified
+     * location.
      *
-     * @return bool True if template success copy
+     * @param string                $argument    Name of the class or file.
+     * @param array<string, string> $makeOption Configuration options for the template replacement.
+     * @param string                $folder      Folder name for saving the file.
+     * @return bool True if the template was successfully copied and modified.
      */
-    private function makeTemplate(string $argument, array $make_option, string $folder = ''): bool
+    private function makeTemplate(string $argument, array $makeOption, string $folder = ''): bool
     {
         $folder = ucfirst($folder);
-        if (file_exists($file_name = $make_option['save_location'] . $folder . $argument . $make_option['suffix'])) {
+        if (file_exists($fileName = $makeOption['save_location'] . $folder . $argument . $makeOption['suffix'])) {
             warn('File already exist')->out(false);
 
             return false;
         }
 
-        if ('' !== $folder && !is_dir($make_option['save_location'] . $folder)) {
-            mkdir($make_option['save_location'] . $folder);
+        if ('' !== $folder && !is_dir($makeOption['save_location'] . $folder)) {
+            mkdir($makeOption['save_location'] . $folder);
         }
 
-        $get_template = file_get_contents($make_option['template_location']);
-        $get_template = str_replace($make_option['pattern'], ucfirst($argument), $get_template);
-        $get_template = preg_replace('/^.+\n/', '', $get_template);
-        $isCopied     = file_put_contents($file_name, $get_template);
+        $getTemplate = file_get_contents($makeOption['template_location']);
+        $getTemplate = str_replace($makeOption['pattern'], ucfirst($argument), $getTemplate);
+        $getTemplate = preg_replace('/^.+\n/', '', $getTemplate);
+        $isCopied    = file_put_contents($fileName, $getTemplate);
 
-        return $isCopied === false ? false : true;
+        return !($isCopied === false);
+        //return $isCopied === false ? false : true;
     }
 
-    public function make_command(): int
+    /**
+     * Creates a command file.
+     *
+     * This method generates a command file based on a template and saves it to
+     * the appropriate directory. The command's name is provided as an option
+     * to the command.
+     *
+     * @return int Exit status code (0 for success, 1 for failure).
+     * @throws DependencyException If there is an issue with dependencies.
+     * @throws NotFoundException If a required resource is not found.
+     */
+    public function makeCommand(): int
     {
         info('Making command file...')->out(false);
-        $name    = $this->OPTION[0];
+        $name    = $this->option[0];
         $success = $this->makeTemplate($name, [
             'template_location' => __DIR__ . '/stubs/command',
             'save_location'     => commands_path(),
@@ -264,14 +380,14 @@ class MakeCommand extends Command
         ]);
 
         if ($success) {
-            $geContent = file_get_contents(config_path() . 'command.php');
-            $geContent = str_replace(
+            $getContent = file_get_contents(config_path() . 'command.php');
+            $getContent = str_replace(
                 '// more command here',
                 "// {$name} \n\t" . 'App\\Commands\\' . $name . 'Command::$' . "command\n\t// more command here",
-                $geContent
+                $getContent
             );
 
-            file_put_contents(config_path() . 'command.php', $geContent);
+            file_put_contents(config_path() . 'command.php', $getContent);
 
             ok('Finish created command file')->out();
 
@@ -283,11 +399,23 @@ class MakeCommand extends Command
         return 1;
     }
 
-    public function make_migration(): int
+    /**
+     * Creates a migration file.
+     *
+     * This method generates a migration file based on a template. The table name
+     * is provided as an option, and the migration is created accordingly. If the
+     * table name is not provided, it will prompt the user to enter it.
+     *
+     * @return int Exit status code (0 for success, 1 for failure).
+     * @throws DependencyException If there is an issue with dependencies.
+     * @throws NotFoundException If a required resource is not found.
+     * @throws Exception If there is an error during the migration file creation.
+     */
+    public function makeMigration(): int
     {
         info('Making migration')->out(false);
 
-        $name = $this->OPTION[0] ?? false;
+        $name = $this->option[0] ?? false;
         if (false === $name) {
             warn('Table name cant be empty.')->out(false);
             do {
@@ -295,16 +423,16 @@ class MakeCommand extends Command
             } while ($name === '' || $name === false);
         }
 
-        $name         = strtolower($name);
-        $path_to_file = migration_path();
-        $bath         = now()->format('Y_m_d_His');
-        $file_name    = "{$path_to_file}{$bath}_{$name}.php";
+        $name       = strtolower($name);
+        $pathToFile = migration_path();
+        $bath       = now()->format('Y_m_d_His');
+        $fileName   = "{$pathToFile}{$bath}_{$name}.php";
 
         $use      = $this->update ? 'migration_update' : 'migration';
         $template = file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'stubs' . DIRECTORY_SEPARATOR . $use);
         $template = str_replace('__table__', $name, $template);
 
-        if (false === file_exists($path_to_file) || false === file_put_contents($file_name, $template)) {
+        if (false === file_exists($pathToFile) || false === file_put_contents($fileName, $template)) {
             fail('Can\'t create migration file.')->out();
 
             return 1;
