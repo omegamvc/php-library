@@ -399,4 +399,3 @@ trait CommandTrait
         return $this->rule(Decorate::HIDDEN, $text, true, Decorate::RESET_HIDDEN);
     }
 }
-

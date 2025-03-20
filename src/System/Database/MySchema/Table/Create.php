@@ -10,42 +10,42 @@ use System\Database\MySchema\Table\Attributes\DataType;
 
 class Create extends Query
 {
-    public const string INNODB    = 'INNODB';
-    public const string MYISAM    = 'MYISAM';
-    public const string MEMORY    = 'MEMORY';
-    public const string MERGE     = 'MERGE';
-    public const string EXAMPLE   = 'EXAMPLE';
-    public const string ARCHIVE   = 'ARCHIVE';
-    public const string CSV       = 'CSV';
-    public const string BLACKHOLE = 'BLACKHOLE';
-    public const string FEDERATED = 'FEDERATED';
+    public const INNODB    = 'INNODB';
+    public const MYISAM    = 'MYISAM';
+    public const MEMORY    = 'MEMORY';
+    public const MERGE     = 'MERGE';
+    public const EXAMPLE   = 'EXAMPLE';
+    public const ARCHIVE   = 'ARCHIVE';
+    public const CSV       = 'CSV';
+    public const BLACKHOLE = 'BLACKHOLE';
+    public const FEDERATED = 'FEDERATED';
 
     /** @var Column[]|DataType[] */
-    private array $columns;
+    private $columns;
 
     /** @var string[] */
-    private array $primaryKeys;
+    private $primaryKeys;
 
     /** @var string[] */
-    private array $uniques;
+    private $uniques;
 
     /** @var string */
-    private string $storeEngine;
+    private $store_engine;
 
-    private string $characterSet;
+    private string $character_set;
 
     /** @var string */
-    private string $tableName;
+    private $table_name;
 
     public function __construct(string $database_name, string $table_name, MyPDO $pdo)
     {
-        $this->tableName    = $database_name . '.' . $table_name;
+        $this->table_name    = $database_name . '.' . $table_name;
         $this->pdo           = $pdo;
         $this->columns       = [];
         $this->primaryKeys   = [];
         $this->uniques       = [];
-        $this->storeEngine  = '';
-        $this->characterSet = '';
+        $this->store_engine  = '';
+        $this->character_set = '';
     }
 
     public function __invoke(string $column_name): DataType
@@ -85,14 +85,14 @@ class Create extends Query
 
     public function engine(string $engine): self
     {
-        $this->storeEngine = $engine;
+        $this->store_engine = $engine;
 
         return $this;
     }
 
     public function character(string $character_set): self
     {
-        $this->characterSet = $character_set;
+        $this->character_set = $character_set;
 
         return $this;
     }
@@ -102,16 +102,7 @@ class Create extends Query
         /** @var string[] */
         $columns = array_merge($this->getColumns(), $this->getPrimarykey(), $this->getUnique());
         $columns = $this->join($columns, ', ');
-        $query   = $this->join(
-            [
-                $this->tableName,
-                '(',
-                $columns,
-                ')'
-                . $this->getStoreEngine()
-                . $this->getCharacterSet()
-            ]
-        );
+        $query   = $this->join([$this->table_name, '(', $columns, ')' . $this->getStoreEngine() . $this->getCharacterSet()]);
 
         return 'CREATE TABLE ' . $query;
     }
@@ -135,7 +126,7 @@ class Create extends Query
             return [''];
         }
 
-        $primaryKeys = array_map(fn ($primaryKey) => $primaryKey, $this->primaryKeys);
+        $primaryKeys = array_map(fn ($primaryKey) => "`{$primaryKey}`", $this->primaryKeys);
         $primaryKeys = implode(', ', $primaryKeys);
 
         return ["PRIMARY KEY ({$primaryKeys})"];
@@ -148,18 +139,19 @@ class Create extends Query
             return [''];
         }
 
-        $uniques = implode(', ', $this->uniques);
+        $uniques = array_map(fn ($uniques) => "`{$uniques}`", $this->uniques);
+        $uniques = implode(', ', $uniques);
 
         return ["UNIQUE ({$uniques})"];
     }
 
     private function getStoreEngine(): string
     {
-        return $this->storeEngine === '' ? '' : ' ENGINE=' . $this->storeEngine;
+        return $this->store_engine === '' ? '' : ' ENGINE=' . $this->store_engine;
     }
 
     private function getCharacterSet(): string
     {
-        return $this->characterSet === '' ? '' : " CHARACTER SET {$this->characterSet}";
+        return $this->character_set === '' ? '' : " CHARACTER SET {$this->character_set}";
     }
 }

@@ -1,236 +1,66 @@
 <?php
 
+/**
+ * Part of Omega - Cron Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace System\Cron;
 
 use Closure;
+use Throwable;
 
-class ScheduleTime
+use function call_user_func;
+use function date;
+use function microtime;
+use function range;
+use function round;
+
+/**
+ * Manages scheduled execution times for cron jobs.
+ *
+ * This class provides functionality to define, manage, and evaluate scheduled
+ * execution times for cron jobs. It allows setting up various scheduling
+ * patterns, handling retry logic, and determining whether a task should run at
+ * a given moment.
+ *
+ * @category  System
+ * @package   Cron
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
+ */
+class ScheduleTime extends AbstractScheduleTime
 {
     /**
-     * Closure to call if due the time.
+     * Initializes the schedule time instance.
      *
-     * @var \Closure
+     * @param Closure $callback The callback function to execute when the scheduled time is due.
+     * @param array   $params   Parameters to pass to the callback function.
+     * @param int     $time     The current timestamp.
+     * @return void
      */
-    private $call_back;
-
-    /**
-     * Parameter of closure.
-     *
-     * @var mixed[]
-     */
-    private $params = [];
-
-    /**
-     * Current time.
-     */
-    private int $time;
-
-    /**
-     * Event name.
-     */
-    private string $event_name = 'animus';
-
-    /**
-     * Times to check (cron time).
-     *
-     * @var array<int, array<string, int|string>|int>
-     */
-    private $time_exect;
-
-    /**
-     * Cron time name.
-     */
-    private string $time_name = '';
-
-    /**
-     * Check is animus cron job.
-     */
-    private bool $animusly  = false;
-
-    /**
-     * Determinate cron execute run error.
-     */
-    private bool $is_fail = false;
-
-    /**
-     * Determinate retry maxsimum execute.
-     */
-    private int $retry_atempts = 0;
-
-    /**
-     * Reatry if condition is true.
-     */
-    private bool $retry_condition = false;
-
-    /**
-     * Skip task (due) in some condition.
-     */
-    private bool $skip = false;
-
-    private ?InterpolateInterface $logger = null;
-
-    /**
-     * Contructor.
-     *
-     * @param mixed[] $params
-     */
-    public function __construct(\Closure $call_back, array $params, int $timestamp)
+    public function __construct(Closure $callback, array $params, int $time)
     {
-        $this->call_back  = $call_back;
-        $this->params     = $params;
-        $this->time       = $timestamp;
-        $this->time_exect = [
-            [
-                'D' => date('D', $this->time),
-                'd' => date('d', $this->time),
-                'h' => date('H', $this->time),
-                'm' => date('i', $this->time),
-            ],
-        ];
-    }
-
-    public function eventName(string $val): self
-    {
-        $this->event_name = $val;
-
-        return $this;
-    }
-
-    public function animusly(bool $run_as_animusly = true): self
-    {
-        $this->animusly = $run_as_animusly;
-
-        return $this;
-    }
-
-    public function isAnimusly(): bool
-    {
-        return $this->animusly;
-    }
-
-    public function getEventname(): string
-    {
-        return $this->event_name;
-    }
-
-    public function getTimeName(): string
-    {
-        return $this->time_name;
+        parent::__construct($callback, $params, $time);
     }
 
     /**
-     * Get cron time.
-     *
-     * @return  array<int, array<string, int|string>|int> */
-    public function getTimeExect()
-    {
-        return $this->time_exect;
-    }
-
-    public function isFail(): bool
-    {
-        return $this->is_fail;
-    }
-
-    public function retryAtempts(): int
-    {
-        return $this->retry_atempts;
-    }
-
-    public function retry(int $atempt): self
-    {
-        $this->retry_atempts = $atempt;
-
-        return $this;
-    }
-
-    public function retryIf(bool $condition): self
-    {
-        $this->retry_condition = $condition;
-
-        return $this;
-    }
-
-    public function isRetry(): bool
-    {
-        return $this->retry_condition;
-    }
-
-    /**
-     * Skip schedule in due time.
-     *
-     * @param bool|\Closure(): bool $skip_when True if skip the due schedule
+     * {@inheritdoc}
      */
-    public function skip($skip_when): self
-    {
-        if ($skip_when instanceof \Closure) {
-            $skip_when = $skip_when();
-        }
-
-        $this->skip = $skip_when;
-
-        return $this;
-    }
-
-    // TODO: get next due time
-
-    public function exect(): void
-    {
-        if ($this->isDue() && false === $this->skip) {
-            // stopwatch
-            $watch_start = microtime(true);
-
-            try {
-                $out_put             = call_user_func($this->call_back, $this->params) ?? [];
-                $this->retry_atempts = 0;
-                $this->is_fail       = false;
-            } catch (\Throwable $th) {
-                $this->retry_atempts--;
-                $this->is_fail = true;
-                $out_put       = [
-                    'error' => $th->getMessage(),
-                ];
-            }
-
-            // stopwatch
-            $watch_end = round(microtime(true) - $watch_start, 3) * 1000;
-
-            // send command log
-            if (!$this->animusly) {
-                if (null !== $this->logger) {
-                    $this->logger->interpolate(
-                        $this->event_name,
-                        [
-                            'excute_time'   => $watch_end,
-                            'cron_time'     => $this->time,
-                            'event_name'    => $this->event_name,
-                            'atempts'       => $this->retry_atempts,
-                            'error_message' => $out_put,
-                        ]
-                    );
-                }
-            }
-        }
-    }
-
-    /**
-     * @param array<string, mixed> $contex
-     */
-    protected function interpolate(string $message, array $contex): void
-    {
-        // do stuff
-    }
-
-    public function setLogger(InterpolateInterface $logger): void
-    {
-        $this->logger = $logger;
-    }
-
     public function isDue(): bool
     {
-        $events = $this->time_exect;
+        $events = $this->timeExpect;
 
         $dayLetter  = date('D', $this->time);
         $day        = date('d', $this->time);
@@ -253,10 +83,87 @@ class ScheduleTime
         return false;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function retryIf(bool $condition): self
+    {
+        $this->retryCondition = $condition;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function skip(bool|Closure $skipWhen): self
+    {
+        if ($skipWhen instanceof Closure) {
+            $skipWhen = $skipWhen();
+        }
+
+        $this->skip = $skipWhen;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     *
+     * @throws Throwable
+     */
+    public function expect(): void
+    {
+        if ($this->isDue() && false === $this->skip) {
+            // stopwatch
+            $watchStart = microtime(true);
+
+            try {
+                $out_put             = call_user_func($this->callback, $this->params) ?? [];
+                $this->retryAttempts = 0;
+                $this->isFail       = false;
+            } catch (Throwable $th) {
+                $this->retryAttempts--;
+                $this->isFail = true;
+                $out_put       = [
+                    'error' => $th->getMessage(),
+                ];
+            }
+
+            // stopwatch
+            $watchEnd = round(microtime(true) - $watchStart, 3) * 1000;
+
+            // send command log
+            if (!$this->anonymous) {
+                $this->logger?->interpolate(
+                    $this->eventName,
+                    [
+                        'execute_time'  => $watchEnd,
+                        'cron_time'     => $this->time,
+                        'event_name'    => $this->eventName,
+                        'attempts'      => $this->retryAttempts,
+                        'error_message' => $out_put,
+                    ]
+                );
+            }
+        }
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function interpolate(string $message, array $context): void
+    {
+        // do stuff
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function justInTime(): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'D' => date('D', $this->time),
                 'd' => date('d', $this->time),
@@ -268,9 +175,12 @@ class ScheduleTime
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function everyTenMinute(): self
     {
-        $this->time_name = __FUNCTION__;
+        $this->timeName  = __FUNCTION__;
         $minute          = [];
         foreach (range(0, 59) as $time) {
             if ($time % 10 == 0) {
@@ -282,15 +192,18 @@ class ScheduleTime
             }
         }
 
-        $this->time_exect = $minute;
+        $this->timeExpect = $minute;
 
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function everyThirtyMinutes(): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'd' => date('d', $this->time),
                 'h' => date('H', $this->time),
@@ -306,9 +219,12 @@ class ScheduleTime
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function everyTwoHour(): self
     {
-        $this->time_name = __FUNCTION__;
+        $this->timeName = __FUNCTION__;
 
         $thisDay = date('d', $this->time);
         $hourly  = []; // from 00.00 to 23.00 (12 time)
@@ -322,15 +238,18 @@ class ScheduleTime
             }
         }
 
-        $this->time_exect = $hourly;
+        $this->timeExpect = $hourly;
 
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function everyTwelveHour(): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'd' => date('d', $this->time),
                 'h' => 0,
@@ -346,10 +265,14 @@ class ScheduleTime
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hourly(): self
     {
-        $this->time_name = __FUNCTION__;
+        $this->timeName  = __FUNCTION__;
         $hourly          = []; // from 00.00 to 23.00 (24 time)
+
         foreach (range(0, 23) as $time) {
             $hourly[] = [
                 'd' => date('d', $this->time),
@@ -358,15 +281,18 @@ class ScheduleTime
             ];
         }
 
-        $this->time_exect = $hourly;
+        $this->timeExpect = $hourly;
 
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function hourlyAt(int $hour24): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'd' => date('d', $this->time),
                 'h' => $hour24,
@@ -377,10 +303,13 @@ class ScheduleTime
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function daily(): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             // from day 1 to 31 (31 time)
             ['d' => (int) date('d'), 'h' => 0, 'm' => 0],
         ];
@@ -388,10 +317,13 @@ class ScheduleTime
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function dailyAt(int $day): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'd' => $day,
                 'h' => 0,
@@ -402,10 +334,13 @@ class ScheduleTime
         return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function weekly(): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'D' => 'Sun',
                 'd' => date('d', $this->time),
@@ -417,10 +352,13 @@ class ScheduleTime
         return $this;
     }
 
-    public function mountly(): self
+    /**
+     * {@inheritdoc}
+     */
+    public function monthly(): self
     {
-        $this->time_name  = __FUNCTION__;
-        $this->time_exect = [
+        $this->timeName   = __FUNCTION__;
+        $this->timeExpect = [
             [
                 'd' => 1,
                 'h' => 0,

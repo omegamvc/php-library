@@ -24,7 +24,7 @@ use System\Console\Command;
 use System\Console\Prompt;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
-use System\Database\MyQuery;
+use System\Database\Query\Query;
 use System\Database\MySchema\Table\Create;
 use System\Support\Facades\DB;
 use System\Support\Facades\PDO;
@@ -175,7 +175,7 @@ class MigrationCommand extends Command
      */
     private function DbName(): string
     {
-        return app()->get('dsn.sql')['database_name'];
+        return app()->get('dsn.sql')['databaseName'];
     }
 
     /**
@@ -580,7 +580,8 @@ class MigrationCommand extends Command
      * the migration process.
      *
      * @param bool $silent If set to true, suppresses any confirmation prompts.
-     * @return int Returns 0 if the database is created successfully, 1 if the creation fails, or 2 if the user cancels the action.
+     * @return int Returns 0 if the database is created successfully, 1 if the
+     *             creation fails, or 2 if the user cancels the action.
      * @throws DependencyException If any dependencies are missing or cannot be resolved.
      * @throws NotFoundException If the required configuration or resources are not found.
      * @throws Exception If an error occurs during the database creation process.
@@ -619,7 +620,8 @@ class MigrationCommand extends Command
      * is canceled or fails, it returns a different status code.
      *
      * @param bool $silent If set to true, suppresses any confirmation prompts.
-     * @return int Returns 0 if the database is dropped successfully, 1 if the drop fails, or 2 if the user cancels the action.
+     * @return int Returns 0 if the database is dropped successfully, 1 if the
+     *             drop fails, or 2 if the user cancels the action.
      * @throws DependencyException If any dependencies are missing or cannot be resolved.
      * @throws NotFoundException If the required configuration or resources are not found.
      * @throws Exception If an error occurs during the database drop process.
@@ -656,7 +658,8 @@ class MigrationCommand extends Command
      * details such as table size and creation time. If a specific table is specified
      * through an option, detailed information for that table is shown.
      *
-     * @return int Returns 0 if the database and its tables are shown successfully, or 2 if the tables are empty or no tables exist.
+     * @return int Returns 0 if the database and its tables are shown successfully, or 2
+     *             if the tables are empty or no tables exist.
      * @throws NotFoundException If the required configuration or resources are not found.
      * @throws DependencyException If any dependencies are missing or cannot be resolved.
      */
@@ -715,7 +718,7 @@ class MigrationCommand extends Command
      */
     public function tableShow(string $table): int
     {
-        $table = (new MyQuery(PDO::instance()))->table($table)->info();
+        $table = (new Query(PDO::instance()))->table($table)->info();
         $print = new Style("\n");
         $width = $this->getWidth(40, 60);
 

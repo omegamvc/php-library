@@ -37,7 +37,7 @@ class ModelCollection extends Collection
     {
         $primeryKeys = [];
         foreach ($this->collection as $model) {
-            $primeryKeys[] = $model->getPrimaryKey();
+            $primeryKeys[] = $model->getPrimeryKey();
         }
 
         return $primeryKeys;

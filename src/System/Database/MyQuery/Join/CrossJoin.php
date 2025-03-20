@@ -11,6 +11,6 @@ class CrossJoin extends AbstractJoin
      */
     protected function joinBuilder(): string
     {
-        return "CROSS JOIN {$this->getAlias()}";
+        return "CROSS JOIN $this->_tableName";
     }
 }

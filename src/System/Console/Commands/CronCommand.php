@@ -132,11 +132,11 @@ class CronCommand extends Command
 
         foreach ($this->getSchedule()->getPools() as $cron) {
             $time   = $cron->getTimeName();
-            $name   = $cron->getEventname();
+            $name   = $cron->getEventName();
             $info[] = [
                 'time'   => $time,
                 'name'   => $name,
-                'animus' => $cron->isAnimusly(),
+                'animus' => $cron->isAnonymous(),
             ];
             $max = max(strlen($time), $max);
         }
@@ -234,10 +234,10 @@ class CronCommand extends Command
         $schedule->call(fn () => [
             'code' => 200,
         ])
-        ->retry(2)
+        ->setAttempts(2)
         ->justInTime()
-        ->animusly()
-        ->eventName('cli-schedule');
+        ->setAnonymousCronJob()
+        ->setEventName('cli-schedule');
 
         // others schedule
     }

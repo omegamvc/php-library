@@ -20,21 +20,21 @@ class Model implements \ArrayAccess, \IteratorAggregate
 {
     protected MyPDO $pdo;
 
-    protected string $tableName;
+    protected string $table_name;
 
-    protected string $primaryKey = 'id';
+    protected string $primery_key = 'id';
 
     /** @var array<array<array-key, mixed>> */
-    protected array $columns;
+    protected $columns;
 
     /** @var string[] Hide from shoing column */
-    protected array $stash = [];
+    protected $stash = [];
 
     /** @var string[] Set Column cant be modify */
-    protected array $resistant = [];
+    protected $resistant = [];
 
     /** @var array<array<array-key, mixed>> Orginat data from database */
-    protected array $fresh;
+    protected $fresh;
 
     protected ?Where $where = null;
 
@@ -42,16 +42,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * Binder array(['key', 'val']).
      *
      * @var Bind[] Binder for PDO bind */
-    protected array $binds = [];
+    protected $binds = [];
 
     // costume select -------------
 
-    protected int $limitStart   = 0;
-    protected int $limitEnd     = 0;
-    protected int $offset       = 0;
-
-    /** @var array<string, string> */
-    protected array $sortOrder  = [];
+    protected int $limit_start    = 0;
+    protected int $limit_end      = 0;
+    protected int $offset         = 0;
+    protected string $sort_order  = '';
 
     // magic ----------------------
 
@@ -67,8 +65,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->pdo        = $pdo;
         $this->columns    = $this->fresh = $column;
         // auto table
-        $this->tableName ??= strtolower(__CLASS__);
-        $this->where = new Where($this->tableName);
+        $this->table_name ??= strtolower(__CLASS__);
+        $this->where = new Where($this->table_name);
     }
 
     /**
@@ -95,11 +93,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
         array $stash,
         array $resistant,
     ): self {
-        $this->tableName  = $table;
+        $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;
         $this->pdo         = $pdo;
         $this->where       = $where;
-        $this->primaryKey = $primery_key;
+        $this->primery_key = $primery_key;
         $this->stash       = $stash;
         $this->resistant   = $resistant;
 
@@ -182,7 +180,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public function getter(string $key, $default = null)
     {
         if (array_key_exists($key, $this->stash)) {
-            throw new \Exception("Cant read this column `{$key}`.");
+            throw new \Exception("Cant read this colum `{$key}`");
         }
 
         return $this->first()[$key] ?? $default;
@@ -197,14 +195,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @throws \Exception No records founds
      */
-    public function getPrimaryKey()
+    public function getPrimeryKey()
     {
         $first = $this->first();
-        if (false === array_key_exists($this->primaryKey, $first)) {
+        if (false === array_key_exists($this->primery_key, $first)) {
             throw new \Exception('this ' . __CLASS__ . 'model doest contain correct record, plase check your query.');
         }
 
-        return $first[$this->primaryKey];
+        return $first[$this->primery_key];
     }
 
     /**
@@ -212,7 +210,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function indentifer(): Where
     {
-        return $this->where = new Where($this->tableName);
+        return $this->where = new Where($this->table_name);
     }
 
     /**
@@ -242,17 +240,17 @@ class Model implements \ArrayAccess, \IteratorAggregate
         /** @var ModelCollection<array-key, static> */
         $collection = new ModelCollection([], $this);
         foreach ($this->columns as $column) {
-            $where = new Where($this->tableName);
-            if (array_key_exists($this->primaryKey, $column)) {
-                $where->equal($this->primaryKey, $column[$this->primaryKey]);
+            $where = new Where($this->table_name);
+            if (array_key_exists($this->primery_key, $column)) {
+                $where->equal($this->primery_key, $column[$this->primery_key]);
             }
 
             $collection->push((new static($this->pdo, []))->setUp(
-                $this->tableName,
+                $this->table_name,
                 [$column],
                 $this->pdo,
                 $where,
-                $this->primaryKey,
+                $this->primery_key,
                 $this->stash,
                 $this->resistant
             ));
@@ -266,7 +264,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function insert(): bool
     {
-        $insert = MyQuery::from($this->tableName, $this->pdo);
+        $insert = MyQuery::from($this->table_name, $this->pdo);
         foreach ($this->columns as $column) {
             $success = $insert->insert()
                 ->values($column)
@@ -285,9 +283,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function read(): bool
     {
-        $query = new Select($this->tableName, ['*'], $this->pdo);
+        $query = new Select($this->table_name, ['*'], $this->pdo);
 
-        $query->sortOrderRef($this->limitStart, $this->limitEnd, $this->offset, $this->sortOrder);
+        $query->sortOrderRef($this->limit_start, $this->limit_end, $this->offset, $this->sort_order);
 
         $all = $this->fetch($query);
 
@@ -309,7 +307,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             return false;
         }
 
-        $update = MyQuery::from($this->tableName, $this->pdo)
+        $update = MyQuery::from($this->table_name, $this->pdo)
             ->update()
             ->values(
                 $this->changes()
@@ -323,7 +321,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function delete(): bool
     {
-        $delete = MyQuery::from($this->tableName, $this->pdo)
+        $delete = MyQuery::from($this->table_name, $this->pdo)
             ->delete();
 
         return $this->changing($this->execute($delete));
@@ -334,7 +332,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function isExist(): bool
     {
-        $query = new Select($this->tableName, [$this->primaryKey], $this->pdo);
+        $query = new Select($this->table_name, [$this->primery_key], $this->pdo);
 
         $query->whereRef($this->where);
 
@@ -357,12 +355,12 @@ class Model implements \ArrayAccess, \IteratorAggregate
             $join_ref   = $ref ?? $model->primery_key;
         } else {
             $table_name = $model;
-            $join_ref   = $ref ?? $this->primaryKey;
-            $model      = new static($this->pdo, []);
+            $join_ref   = $ref ?? $this->primery_key;
+            $model      = new Model($this->pdo, []);
         }
-        $result   = MyQuery::from($this->tableName, $this->pdo)
+        $result   = MyQuery::from($this->table_name, $this->pdo)
             ->select([$table_name . '.*'])
-            ->join(InnerJoin::ref($table_name, $this->primaryKey, $join_ref))
+            ->join(InnerJoin::ref($table_name, $this->primery_key, $join_ref))
             ->whereRef($this->where)
             ->single();
         $model->columns = $model->fresh = [$result];
@@ -386,12 +384,12 @@ class Model implements \ArrayAccess, \IteratorAggregate
             $join_ref   = $ref ?? $model->primery_key;
         } else {
             $table_name = $model;
-            $join_ref   = $ref ?? $this->primaryKey;
-            $model      = new static($this->pdo, []);
+            $join_ref   = $ref ?? $this->primery_key;
+            $model      = new Model($this->pdo, []);
         }
-        $result = MyQuery::from($this->tableName, $this->pdo)
+        $result = MyQuery::from($this->table_name, $this->pdo)
              ->select([$table_name . '.*'])
-             ->join(InnerJoin::ref($table_name, $this->primaryKey, $join_ref))
+             ->join(InnerJoin::ref($table_name, $this->primery_key, $join_ref))
              ->whereRef($this->where)
              ->get();
         $model->columns = $model->fresh = $result->toArray();
@@ -413,11 +411,9 @@ class Model implements \ArrayAccess, \IteratorAggregate
         }
 
         foreach (array_keys($this->columns) as $key) {
-            if (
-                !array_key_exists($column, $this->columns[$key])
-                || !array_key_exists($column, $this->fresh[$key])
-            ) {
-                throw new \Exception("Column {$column} is not in table `{$this->tableName}`.");
+            if (!array_key_exists($column, $this->columns[$key])
+            || !array_key_exists($column, $this->fresh[$key])) {
+                throw new \Exception("Column `{$column}` is not in table `{$this->table_name}`");
             }
 
             if (false === ($this->columns[$key][$column] === $this->fresh[$key][$column])) {
@@ -451,10 +447,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
         }
 
         foreach ($column as $key => $value) {
-            if (
-                array_key_exists($key, $this->fresh[$current])
-                && $this->fresh[$current][$key] !== $value
-            ) {
+            if (array_key_exists($key, $this->fresh[$current])
+            && $this->fresh[$current][$key] !== $value) {
                 $change[$key] = $value;
             }
         }
@@ -499,7 +493,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function limitStart(int $value)
     {
-        $this->limitStart = $value < 0 ? 0 : $value;
+        $this->limit_start = $value < 0 ? 0 : $value;
 
         return $this;
     }
@@ -514,7 +508,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function limitEnd(int $value)
     {
-        $this->limitEnd = $value < 0 ? 0 : $value;
+        $this->limit_end = $value < 0 ? 0 : $value;
 
         return $this;
     }
@@ -549,14 +543,14 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Set sort column and order
      * column name must register.
+     *
+     * @return static
      */
-    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
+    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null)
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= $this->tableName;
-        $res = "{$belong_to}.{$column_name}";
-
-        $this->sortOrder[$res] = $order;
+        $belong_to ??= $this->table_name;
+        $this->sort_order = "ORDER BY `$belong_to`.`$column_name` $order";
 
         return $this;
     }
@@ -577,7 +571,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * @return mixed|null
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset): mixed
+    public function offsetGet($offset)
     {
         return $this->getter($offset, null);
     }
@@ -609,8 +603,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public static function find($id, MyPDO $pdo): static
     {
         $model          = new static($pdo, []);
-        $model->where   = (new Where($model->tableName))
-            ->equal($model->primaryKey, $id);
+        $model->where   = (new Where($model->table_name))
+            ->equal($model->primery_key, $id);
 
         $model->read();
 
@@ -628,8 +622,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
     public static function findOrCreate($id, array $column, MyPDO $pdo): static
     {
         $model          = new static($pdo, [$column]);
-        $model->where   = (new Where($model->tableName))
-            ->equal($model->primaryKey, $id);
+        $model->where   = (new Where($model->table_name))
+            ->equal($model->primery_key, $id);
 
         if ($model->isExist()) {
             $model->read();
@@ -657,7 +651,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             $map[] = [$bind, $value];
         }
 
-        $model->where = (new Where($model->tableName))
+        $model->where = (new Where($model->table_name))
             ->where($where_condition, $map);
         $model->read();
 
@@ -683,7 +677,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Fetch all records.
      *
-     * @return ModelCollection<array-key, static>
+     * @return ModelCollection<static<array-key, mixed>>
      */
     public static function all(MyPDO $pdo): ModelCollection
     {
@@ -704,11 +698,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         $columns = [];
         foreach ($this->columns as $key => $column) {
-            $columns[$key] = array_filter(
-                $column,
-                fn ($k) => false === in_array($k, $this->stash),
-                ARRAY_FILTER_USE_KEY
-            );
+            $columns[$key] = array_filter($column, fn ($k) => false === in_array($k, $this->stash), ARRAY_FILTER_USE_KEY);
         }
 
         return $columns;

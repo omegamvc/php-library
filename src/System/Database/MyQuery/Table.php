@@ -18,37 +18,24 @@ class Table
     /**
      * Table name.
      *
-     * @var string|InnerQuery
+     * @var string
      */
     protected $table_name;
 
-    /**
-     * @param string|InnerQuery $table_name Table name
-     */
-    public function __construct($table_name, MyPDO $PDO)
+    public function __construct(string $table_name, MyPDO $PDO)
     {
         $this->table_name = $table_name;
         $this->PDO        = $PDO;
     }
 
     /**
-     * Perform insert query.
+     * Perform select query.
      *
      * @return Insert
      */
     public function insert()
     {
         return new Insert($this->table_name, $this->PDO);
-    }
-
-    /**
-     * Perform replace query.
-     *
-     * @return Replace
-     */
-    public function replace()
-    {
-        return new Replace($this->table_name, $this->PDO);
     }
 
     /**
@@ -92,13 +79,13 @@ class Table
     {
         $this->PDO->query(
             'SELECT
-                COLUMN_NAME,
-                COLUMN_TYPE,
-                CHARACTER_SET_NAME,
-                COLLATION_NAME,
-                IS_NULLABLE,
-                ORDINAL_POSITION,
-                COLUMN_KEY
+                `COLUMN_NAME`,
+                `COLUMN_TYPE`,
+                `CHARACTER_SET_NAME`,
+                `COLLATION_NAME`,
+                `IS_NULLABLE`,
+                `ORDINAL_POSITION`,
+                `COLUMN_KEY`
             FROM
                 INFORMATION_SCHEMA.COLUMNS
             WHERE

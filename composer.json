@@ -19,6 +19,7 @@
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-pcntl": "*",
+        "ext-pdo": "*",
         "ext-posix": "*",
         "ext-readline": "*",
         "php-di/php-di": "^7.0.9"

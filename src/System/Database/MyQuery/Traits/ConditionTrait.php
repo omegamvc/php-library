@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace System\Database\MyQuery\Traits;
 
 use System\Database\MyQuery\Bind;
+use System\Database\MyQuery\Select;
 
 /**
  * Trait to provide conditon under class extend with Query::class.
@@ -51,14 +52,14 @@ trait ConditionTrait
      */
     public function where(string $where_condition, array $binder = [])
     {
-        $this->where[] = $where_condition;
+        $this->_where[] = $where_condition;
 
         foreach ($binder as $bind) {
             if ($bind instanceof Bind) {
-                $this->binds[] = $bind;
+                $this->_binds[] = $bind;
                 continue;
             }
-            $this->binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
+            $this->_binds[] = Bind::set($bind[0], $bind[1])->prefixBind('');
         }
 
         return $this;
@@ -75,15 +76,16 @@ trait ConditionTrait
      */
     public function between(string $column_name, $value_1, $value_2)
     {
-        $table_name = null === $this->subQuery ? $this->table : $this->subQuery->getAlias();
-
         $this->where(
-            "({$table_name}.{$column_name} BETWEEN :b_start AND :b_end)",
-            []
+            "(`$this->_table`.`$column_name` BETWEEN :b_start AND :b_end)",
+            [
+                // [':b_start', $value_1],
+                // [':b_end', $value_2],
+            ]
         );
 
-        $this->binds[] = Bind::set('b_start', $value_1);
-        $this->binds[] = Bind::set('b_end', $value_2);
+        $this->_binds[] = Bind::set('b_start', $value_1);
+        $this->_binds[] = Bind::set('b_end', $value_2);
 
         return $this;
     }
@@ -105,12 +107,47 @@ trait ConditionTrait
             $binder[] = [":in_$key", $bind];
         }
         $bindString = implode(', ', $binds);
-        $table_name = null === $this->subQuery ? "{$this->table}" : $this->subQuery->getAlias();
 
         $this->where(
-            "({$table_name}.{$column_name} IN ({$bindString}))",
+            "(`$this->_table`.`$column_name` IN ($bindString))",
             $binder
         );
+
+        return $this;
+    }
+
+    /**
+     * Insert 'where exists' condition (query bulider).
+     *
+     * @param Select $select Select class
+     *
+     * @return self
+     */
+    public function whereExist(Select $select)
+    {
+        $binds          = (fn () => $this->{'_binds'})->call($select);
+        $this->_where[] = 'EXISTS (' . $select->__toString() . ')';
+        foreach ($binds as $binds) {
+            $this->_binds[] = $binds;
+        }
+
+        return $this;
+    }
+
+    /**
+     * Insert 'where not exists' condition (query bulider).
+     *
+     * @param Select $select Select class
+     *
+     * @return self
+     */
+    public function whereNotExist(Select $select)
+    {
+        $binds          = (fn () => $this->{'_binds'})->call($select);
+        $this->_where[] = 'NOT EXISTS (' . $select->__toString() . ')';
+        foreach ($binds as $binds) {
+            $this->_binds[] = $binds;
+        }
 
         return $this;
     }
@@ -127,12 +164,10 @@ trait ConditionTrait
      */
     public function compare(string $bind, string $comparation, $value, bool $bindValue = false)
     {
-        $escape_bind           = str_replace('.', '__', $bind);
-        $this->binds[]        = Bind::set($escape_bind, $value);
-        $this->filters[$bind] = [
+        $this->_binds[]        = Bind::set($bind, $value);
+        $this->_filters[$bind] = [
             'value'       => $value,
             'comparation' => $comparation,
-            'bind'        => $escape_bind,
             $bindValue,
         ];
 
@@ -147,7 +182,7 @@ trait ConditionTrait
      */
     public function strictMode(bool $strict): self
     {
-        $this->strictMode = $strict;
+        $this->_strict_mode = $strict;
 
         return $this;
     }

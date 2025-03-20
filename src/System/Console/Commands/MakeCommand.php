@@ -271,7 +271,7 @@ class MakeCommand extends Command
         $class->tabIndent(' ');
         $class->setEndWithNewLine();
         $class->namespace('App\\Models');
-        $class->uses(['System\Database\MyModel\Model']);
+        $class->uses(['System\Database\Model\Model']);
         $class->extend('Model');
 
         $primaryKey = 'id';

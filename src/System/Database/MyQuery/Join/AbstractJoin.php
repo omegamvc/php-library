@@ -4,47 +4,39 @@ declare(strict_types=1);
 
 namespace System\Database\MyQuery\Join;
 
-use System\Database\MyQuery\InnerQuery;
-
 abstract class AbstractJoin
 {
     /**
      * @var string
      */
-    protected string $mainTable = '';
+    protected $_mainTable     = '';
 
     /**
      * @var string
      */
-    protected string $tableName = '';
+    protected $_tableName     = '';
 
     /**
      * @var string
      */
-    protected string $columnName = '';
+    protected $_colomnName    = '';
 
     /**
      * @var string[]
      */
-    protected array $compareColumn = [];
+    protected $_compereColumn = [];
 
     /**
      * @var string
      */
-    protected string $stringJoin = '';
-
-    protected ?InnerQuery $subQuery = null;
-
-    final public function __construct()
-    {
-    }
+    protected $_stringJoin    = '';
 
     /**
      * @return self
      */
     public function __invoke(string $main_table)
     {
-        $this->mainTable = $main_table;
+        $this->_mainTable = $main_table;
 
         return $this;
     }
@@ -57,21 +49,16 @@ abstract class AbstractJoin
     /**
      * Instance of class.
      *
-     * @param string|InnerQuery $ref_table Name of the table want to join or sub query
-     * @param string            $id        Main id of the table
-     * @param string|null       $ref_id    Id of the table want to join, null means same as main id
+     * @param string      $ref_table Name of the table want to join
+     * @param string      $id        Main id of the table
+     * @param string|null $ref_id    Id of the table want to join, null mean same with main id
+     *
+     * @return AbstractJoin
      */
-    public static function ref($ref_table, string $id, ?string $ref_id = null): AbstractJoin
+    public static function ref(string $ref_table, string $id, ?string $ref_id = null)
     {
-        $instance = new static();
-
-        if ($ref_table instanceof InnerQuery) {
-            return $instance
-                ->clausa($ref_table)
-                ->compare($id, $ref_id);
-        }
-
-        return $instance
+        /* @phpstan-ignore-next-line */
+        return (new static())
             ->tableRef($ref_table)
             ->compare($id, $ref_id);
     }
@@ -87,15 +74,7 @@ abstract class AbstractJoin
      */
     public function table(string $main_table)
     {
-        $this->mainTable = $main_table;
-
-        return $this;
-    }
-
-    public function clausa(InnerQuery $select): self
-    {
-        $this->subQuery  = $select;
-        $this->tableName = $select->getAlias();
+        $this->_mainTable = $main_table;
 
         return $this;
     }
@@ -109,7 +88,7 @@ abstract class AbstractJoin
      */
     public function tableRef(string $ref_table)
     {
-        $this->tableName = $ref_table;
+        $this->_tableName = $ref_table;
 
         return $this;
     }
@@ -124,8 +103,8 @@ abstract class AbstractJoin
      */
     public function tableRelation(string $main_table, string $ref_table)
     {
-        $this->mainTable = $main_table;
-        $this->tableName = $ref_table;
+        $this->_mainTable = $main_table;
+        $this->_tableName = $ref_table;
 
         return $this;
     }
@@ -142,7 +121,7 @@ abstract class AbstractJoin
     {
         $compire_column ??= $main_column;
 
-        $this->compareColumn[] = [
+        $this->_compereColumn[] = [
             $main_column, $compire_column,
         ];
 
@@ -169,7 +148,7 @@ abstract class AbstractJoin
      */
     protected function joinBuilder(): string
     {
-        return $this->stringJoin;
+        return $this->_stringJoin;
     }
 
     /**
@@ -179,18 +158,13 @@ abstract class AbstractJoin
     protected function splitJoin(): string
     {
         $on = [];
-        foreach ($this->compareColumn as $column) {
+        foreach ($this->_compereColumn as $column) {
             $masterColumn  = $column[0];
             $compireColumn = $column[1];
 
-            $on[] = "$this->mainTable.$masterColumn = $this->tableName.$compireColumn";
+            $on[] = "$this->_mainTable.$masterColumn = $this->_tableName.$compireColumn";
         }
 
         return implode(' AND ', $on);
-    }
-
-    protected function getAlias(): string
-    {
-        return null === $this->subQuery ? $this->tableName : (string) $this->subQuery;
     }
 }

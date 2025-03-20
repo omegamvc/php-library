@@ -5,49 +5,44 @@ declare(strict_types=1);
 namespace System\Database\MyQuery;
 
 use System\Database\MyQuery\Traits\ConditionTrait;
-use System\Database\MyQuery\Traits\SubQueryTrait;
 
 class Where
 {
     use ConditionTrait;
-    use SubQueryTrait;
 
     /** @var string Table Name */
-    private string $table;
-
-    /** This property use for helper phpstan (auto skip) */
-    private ?InnerQuery $subQuery = null;
+    private $_table;
 
     /**
      * Binder array(['key', 'val']).
      *
      * @var Bind[] Binder for PDO bind */
-    private array $binds = [];
+    private $_binds = [];
 
     /**
-     * Final where statement.
+     * Final where statmnet.
      *
      * @var string[]
      */
-    private array $where = [];
+    private $_where = [];
 
     /**
      * Single filter and single strict mode.
      *
      * @var array<string, string>
      */
-    private array $filters = [];
+    private $_filters = [];
 
     /**
      * Strict mode.
      *
      * @var bool True if use AND instance of OR
      */
-    private bool $strictMode = true;
+    private $_strict_mode = true;
 
     public function __construct(string $table_name)
     {
-        $this->table = $table_name;
+        $this->_table = $table_name;
     }
 
     /**
@@ -62,10 +57,10 @@ class Where
     public function get(): array
     {
         return [
-            'binds'     => $this->binds,
-            'where'     => $this->where,
-            'filters'   => $this->filters,
-            'isStrict'  => $this->strictMode,
+            'binds'     => $this->_binds,
+            'where'     => $this->_where,
+            'filters'   => $this->_filters,
+            'isStrict'  => $this->_strict_mode,
         ];
     }
 
@@ -74,14 +69,14 @@ class Where
      */
     public function flush(): void
     {
-        $this->binds       = [];
-        $this->where       = [];
-        $this->filters     = [];
-        $this->strictMode = true;
+        $this->_binds       = [];
+        $this->_where       = [];
+        $this->_filters     = [];
+        $this->_strict_mode = true;
     }
 
     public function isEmpty(): bool
     {
-        return [] === $this->binds && [] === $this->where && [] === $this->filters && true === $this->strictMode;
+        return [] === $this->_binds && [] === $this->_where && [] === $this->_filters && true === $this->_strict_mode;
     }
 }

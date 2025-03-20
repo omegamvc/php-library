@@ -60,7 +60,8 @@ class Prompt
     private string|Style $title;
 
     /**
-     * @var array<string, callable> A list of options where the key is the input string and the value is a callable to execute for that option.
+     * @var array<string, callable> A list of options where the key is the input string and the value
+     *                              is a callable to execute for that option.
      */
     private array $options;
 
