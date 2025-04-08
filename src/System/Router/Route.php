@@ -7,9 +7,9 @@ namespace System\Router;
 use ArrayAccess;
 
 /**
- * @implements \ArrayAccess<string, mixed>
+ * @implements ArrayAccess<string, mixed>
  */
-class Route implements \ArrayAccess
+class Route implements ArrayAccess
 {
     /** @var array<string, mixed> */
     private $route;

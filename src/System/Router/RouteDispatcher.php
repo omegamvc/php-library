@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace System\Router;
 
-use System\Http\Request;
+use System\Http\Request\Request;
 
 final class RouteDispatcher
 {
     // dispatch
-    /** @var Request */
+    /** @var \System\Http\Request\Request */
     private $request;
     /** @var Route[] */
     private $routes = [];
@@ -34,7 +34,7 @@ final class RouteDispatcher
     private $current;
 
     /**
-     * @param Request $request Incoming request
+     * @param \System\Http\Request\Request $request Incoming request
      * @param Route[] $routes  Array of route
      */
     public function __construct(Request $request, $routes)

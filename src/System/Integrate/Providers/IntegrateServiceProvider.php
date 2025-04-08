@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace System\Integrate\Providers;
 
-use System\File\UploadFile;
-use System\Http\Request;
+use System\Http\Upload\UploadFile;
+use System\Http\Request\Request;
 use System\Integrate\ServiceProvider;
 use Validator\Validator;
 

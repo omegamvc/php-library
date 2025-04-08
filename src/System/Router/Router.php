@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace System\Router;
 
+use System\Controller\ResourceController;
+use System\Controller\ResourceControllerCollection;
+
 class Router
 {
     /** @var Route[] */

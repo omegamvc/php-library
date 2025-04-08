@@ -35,10 +35,10 @@ class CollectionTest extends TestCase
         $this->assertEquals($test->buah_8, 'nanas', 'replece exis item colection using __get');
         $this->assertEquals($test->get('buah_7'), 'durian', 'replece exis item colection using get()');
 
-        // cek array key
+        // check array key
         $this->assertTrue($test->has('buah_1'), 'collection have item with key');
 
-        // cek contain
+        // check contain
         $this->assertTrue($test->contain('mangga'), 'collection have item');
 
         // remove item
@@ -58,14 +58,14 @@ class CollectionTest extends TestCase
         });
         $this->assertEquals(4, $countIf, 'count item in collection with some condition');
 
-        // first and last item cek
+        // first and last item check
         $this->assertEquals('mangga', $test->first('bukan buah'), 'get first item in collection');
         $this->assertEquals('peer', $test->last('bukan buah'), 'get last item in collection');
 
-        // test clear and empty cek
+        // test clear and empty check
         $this->assertFalse($test->isEmpty());
         $test->clear();
-        $this->assertTrue($test->isEmpty(), 'cek collection empty');
+        $this->assertTrue($test->isEmpty(), 'check collection empty');
         // same with origin
         $test->replace($original);
         $this->assertEquals($test->all(), $original, 'replace axis collection with new data');

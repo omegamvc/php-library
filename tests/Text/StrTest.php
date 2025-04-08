@@ -52,7 +52,7 @@ final class StrTest extends TestCase
 
         $matches = Str::match($text, '/rust/');
 
-        $this->assertNull($matches, 'cek match return null if pattern not found');
+        $this->assertNull($matches, 'check match return null if pattern not found');
     }
 
     /** @test */

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace System\Application;
 
-
 use System\Support\Path;
 use System\Support\Singleton\SingletonTrait;
 

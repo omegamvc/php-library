@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\View;
 
-use System\Http\Response;
+use System\Http\Response\Response;
 use System\View\Exceptions\ViewFileNotFound;
 
 class View
@@ -37,7 +37,7 @@ class View
         // send render content to client
         return (new Response())
             ->setContent($html)
-            ->setResponeCode(Response::HTTP_OK)
+            ->setResponseCode(Response::HTTP_OK)
             ->removeHeader([
                 'Expires',
                 'Pragma',

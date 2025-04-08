@@ -10,85 +10,85 @@ final class RegexStrTest extends TestCase
 {
     public function testRegexEmail()
     {
-        $res = Str::isMatch('sony@mail.com', Regex::EMAIL, 'cek email');
+        $res = Str::isMatch('sony@mail.com', Regex::EMAIL, 'check email');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('sony.com', Regex::EMAIL, 'cek email');
+        $res = Str::isMatch('sony.com', Regex::EMAIL, 'check email');
         $this->assertFalse($res);
     }
 
     public function testRegexUsername()
     {
-        $res = Str::isMatch('sony', Regex::USER, 'cek user');
+        $res = Str::isMatch('sony', Regex::USER, 'check user');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('1sony', Regex::USER, 'cek user');
+        $res = Str::isMatch('1sony', Regex::USER, 'check user');
         $this->assertFalse($res);
 
-        $res = Str::isMatch('son', Regex::USER, 'cek user less that 3');
+        $res = Str::isMatch('son', Regex::USER, 'check user less that 3');
         $this->assertFalse($res);
 
-        $res = Str::isMatch('test_regex_username', Regex::USER, 'cek user more that 16');
+        $res = Str::isMatch('test_regex_username', Regex::USER, 'check user more that 16');
         $this->assertFalse($res);
     }
 
     public function testRegexPlainText()
     {
-        $res = Str::isMatch('php generators explained', Regex::PLAIN_TEXT, 'cek plain text');
+        $res = Str::isMatch('php generators explained', Regex::PLAIN_TEXT, 'check plain text');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('php generators explained!', Regex::PLAIN_TEXT, 'cek plain text');
+        $res = Str::isMatch('php generators explained!', Regex::PLAIN_TEXT, 'check plain text');
         $this->assertFalse($res);
     }
 
     public function testRegexSlug()
     {
-        $res = Str::isMatch('php-generators-explained', Regex::SLUG, 'cek plain text');
+        $res = Str::isMatch('php-generators-explained', Regex::SLUG, 'check plain text');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('php generators explained', Regex::SLUG, 'cek plain text');
+        $res = Str::isMatch('php generators explained', Regex::SLUG, 'check plain text');
         $this->isFalse($res);
 
-        $res = Str::isMatch('php/generators/explained', Regex::SLUG, 'cek plain text');
+        $res = Str::isMatch('php/generators/explained', Regex::SLUG, 'check plain text');
         $this->isFalse($res);
     }
 
     public function testRegexHtmlTag()
     {
-        $res = Str::isMatch('<script>alert(1)</alert>', Regex::HTML_TAG, 'cek html tag');
+        $res = Str::isMatch('<script>alert(1)</alert>', Regex::HTML_TAG, 'check html tag');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('&lt;script&gt;alert(1)&lt;/alert&gt;', Regex::HTML_TAG, 'cek html tag');
+        $res = Str::isMatch('&lt;script&gt;alert(1)&lt;/alert&gt;', Regex::HTML_TAG, 'check html tag');
         $this->assertFalse($res);
     }
 
     public function testRegexJsInline()
     {
-        $res = Str::isMatch('<img src="foo.jpg" onload=function_xyz />', Regex::JS_INLINE, 'cek html tag');
+        $res = Str::isMatch('<img src="foo.jpg" onload=function_xyz />', Regex::JS_INLINE, 'check html tag');
         $this->assertTrue($res);
     }
 
     public function testRegexPassword()
     {
-        $res = Str::isMatch('Password123@', Regex::PASSWORD_COMPLEX, 'cek password');
+        $res = Str::isMatch('Password123@', Regex::PASSWORD_COMPLEX, 'check password');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('Password123', Regex::PASSWORD_COMPLEX, 'cek password');
+        $res = Str::isMatch('Password123', Regex::PASSWORD_COMPLEX, 'check password');
         $this->assertFalse($res);
     }
 
     public function testRegexPasswordModerate()
     {
-        $res = Str::isMatch('Password123', Regex::PASSWORD_MODERATE, 'cek password');
+        $res = Str::isMatch('Password123', Regex::PASSWORD_MODERATE, 'check password');
         $this->assertTrue($res);
 
-        $res = Str::isMatch('password123', Regex::PASSWORD_MODERATE, 'cek password');
+        $res = Str::isMatch('password123', Regex::PASSWORD_MODERATE, 'check password');
         $this->assertFalse($res);
 
-        $res = Str::isMatch('Passwordddd', Regex::PASSWORD_MODERATE, 'cek password');
+        $res = Str::isMatch('Passwordddd', Regex::PASSWORD_MODERATE, 'check password');
         $this->assertFalse($res);
 
-        $res = Str::isMatch('Pwd123', Regex::PASSWORD_MODERATE, 'cek password');
+        $res = Str::isMatch('Pwd123', Regex::PASSWORD_MODERATE, 'check password');
         $this->assertFalse($res);
     }
 

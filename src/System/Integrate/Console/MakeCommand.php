@@ -6,7 +6,7 @@ namespace System\Integrate\Console;
 
 use System\Console\Command;
 use System\Console\Traits\CommandTrait;
-use System\Support\Facades\DB;
+use System\Support\Facades\Query;
 use System\Template\Generate;
 use System\Template\Property;
 
@@ -177,7 +177,7 @@ class MakeCommand extends Command
             $table_name = $this->option('table-name');
             info("Getting Information from table {$table_name}.")->out(false);
             try {
-                foreach (DB::table($table_name)->info() as $column) {
+                foreach (Query::table($table_name)->info() as $column) {
                     $class->addComment('@property mixed $' . $column['COLUMN_NAME']);
                     if ('PRI' === $column['COLUMN_KEY']) {
                         $primery_key = $column['COLUMN_NAME'];

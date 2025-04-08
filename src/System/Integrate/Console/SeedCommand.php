@@ -144,7 +144,7 @@ class SeedCommand extends Command
         $make->tabIndent(' ');
         $make->tabSize(4);
         $make->namespace('Database\Seeders');
-        $make->use('System\Database\Seeder\Seeder');
+        $make->use('System\Database\Seeder\AbstractSeeder');
         $make->extend('Seeder');
         $make->setEndWithNewLine();
         $make->addMethod('run')

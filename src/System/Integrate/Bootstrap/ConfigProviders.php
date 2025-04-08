@@ -11,23 +11,24 @@ class ConfigProviders
 {
     public function bootstrap(Application $app): void
     {
-        $configPath  = $app->getConfigPath();
-        $cachePath   = $app->getApplicationCachePath();
-        $timestamp   = date('Y-m-d_H-i-s');
-        $cacheFile   = "{$cachePath}{$timestamp}_config.php";
-        $config      = [];
+        $config_path = $app->getConfigPath();
+        $config      =  [];
+        $has_cache   = false;
+        if (file_exists($file = $app->getApplicationCachePath() . 'config.php')) {
+            $config    = array_merge($config, require $file);
+            $has_cache = true;
+        }
 
-        // Load all configuration files from the config directory
-        foreach (glob("{$configPath}*.php") as $path) {
-            foreach (include $path as $key => $value) {
-                $config[$key] = $value;
+        if (false === $has_cache) {
+            foreach (glob("{$config_path}*.php") as $path) {
+                foreach (include $path as $key => $value) {
+                    $config[$key] = $value;
+                }
             }
         }
 
-        // Save configuration to cache
-        file_put_contents($cacheFile, '<?php return ' . var_export($config, true) . ';');
-
-        // Load configuration into the application
         $app->loadConfig(new ConfigRepository($config));
+
+        date_default_timezone_set($config['time_zone'] ?? 'UTC');
     }
 }

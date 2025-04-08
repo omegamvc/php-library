@@ -7,7 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\Style;
 use System\Application\Application;
-use System\Integrate\PackageManifest;
+use System\Support\PackageManifest;
 use Throwable;
 
 use function array_keys;

@@ -23,10 +23,10 @@ class CollectionImmutableTest extends TestCase
         $this->assertEquals($test->buah_1, 'mangga', 'add new item colection using __set');
         $this->assertEquals($test->get('buah_1'), 'mangga', 'add new item collection using set()');
 
-        // cek array key
+        // check array key
         $this->assertTrue($test->has('buah_1'), 'collection have item with key');
 
-        // cek contain
+        // check contain
         $this->assertTrue($test->contain('mangga'), 'collection have item');
 
         // count
@@ -39,7 +39,7 @@ class CollectionImmutableTest extends TestCase
         });
         $this->assertEquals(4, $countIf, 'count item in collection with some condition');
 
-        // first and last item cek
+        // first and last item check
         $this->assertEquals('mangga', $test->first('bukan buah'), 'get first item in collection');
         $this->assertEquals('peer', $test->last('bukan buah'), 'get last item in collection');
 

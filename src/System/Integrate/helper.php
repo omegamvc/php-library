@@ -6,8 +6,8 @@ use System\Application\Application;
 use System\Collection\CollectionImmutable;
 use System\Container\Exception\DependencyResolutionException;
 use System\Container\Exception\ServiceNotFoundException;
-use System\Http\RedirectResponse;
-use System\Http\Response;
+use System\Http\Response\RedirectResponse;
+use System\Http\Response\Response;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
 use System\Integrate\Vite;
 use System\Router\Router;
@@ -141,7 +141,7 @@ if (!function_exists('view_paths')) {
 
 if (!function_exists('app_env')) {
     /**
-     * Cek application environment mode.
+     * Check application environment mode.
      *
      * @return string Application environment mode
      */
@@ -153,7 +153,7 @@ if (!function_exists('app_env')) {
 
 if (!function_exists('is_production')) {
     /**
-     * Cek application production mode.
+     * Check application production mode.
      *
      * @return bool True if in production mode
      */
@@ -165,7 +165,7 @@ if (!function_exists('is_production')) {
 
 if (!function_exists('is_dev')) {
     /**
-     * Cek application development mode.
+     * Check application development mode.
      *
      * @return bool True if in dev mode
      */
@@ -211,7 +211,7 @@ if (!function_exists('view')) {
      * @param string               $viewPath
      * @param array<string, mixed> $data
      * @param array<string, mixed> $option
-     * @return Response
+     * @return \System\Http\Response\Response
      * @throws DependencyResolutionException
      * @throws ServiceNotFoundException
      */
@@ -222,7 +222,7 @@ if (!function_exists('view')) {
         $headers = $option['header'] ?? [];
 
         return $view($viewPath, $data)
-            ->setResponeCode($status_code)
+            ->setResponseCode($status_code)
             ->setHeaders($headers);
     }
 }

@@ -6,9 +6,9 @@ namespace System\Integrate\Exceptions;
 
 use System\Container\Container;
 use System\Http\Exceptions;
-use System\Http\Request;
-use System\Http\Response;
-use System\Integrate\Http\Exception\HttpException;
+use System\Http\Request\Request;
+use System\Http\Response\Response;
+use System\Http\Exceptions\HttpException;
 use System\View\Templator;
 use System\View\TemplatorFinder;
 
@@ -29,7 +29,7 @@ class Handler
      * @var array<int, class-string<\Throwable>>
      */
     protected array $dont_report_internal = [
-        Exceptions\HttpResponse::class,
+        Exceptions\HttpResponseException::class,
         HttpException::class,
     ];
 
@@ -49,7 +49,7 @@ class Handler
             return $this->handleJsonResponse($th);
         }
 
-        if ($th instanceof Exceptions\HttpResponse) {
+        if ($th instanceof Exceptions\HttpResponseException) {
             return $th->getResponse();
         }
 
@@ -90,20 +90,20 @@ class Handler
 
     protected function handleJsonResponse(\Throwable $th): Response
     {
-        $respone = new Response([
+        $response = new Response([
             'code'     => 500,
             'messages' => [
                 'message'   => 'Internal Server Error',
             ]], 500);
 
         if ($th instanceof HttpException) {
-            $respone->setResponeCode($th->getStatusCode());
-            $respone->headers->add($th->getHeaders());
+            $response->setResponseCode($th->getStatusCode());
+            $response->headers->add($th->getHeaders());
         }
 
         if ($this->isDebug()) {
-            return $respone->json([
-                'code'     => $respone->getStatusCode(),
+            return $response->json([
+                'code'     => $response->getStatusCode(),
                 'messages' => [
                     'message'   => $th->getMessage(),
                     'exception' => $th::class,
@@ -113,7 +113,7 @@ class Handler
             ]);
         }
 
-        return $respone->json();
+        return $response->json();c
     }
 
     protected function handleResponse(\Throwable $th): Response
@@ -133,7 +133,7 @@ class Handler
         $this->app->set('view.instance', fn () => $templator);
 
         $response = view((string) $code);
-        $response->setResponeCode($code);
+        $response->setResponseCode($code);
         $response->headers->add($e->getHeaders());
 
         return $response;

@@ -9,10 +9,9 @@ use System\Console\Command;
 use System\Console\Prompt;
 use System\Console\Style\Style;
 use System\Console\Traits\PrintHelpTrait;
-use System\Database\MyQuery;
-use System\Database\MySchema\Table\Create;
-use System\Support\Facades\DB;
-use System\Support\Facades\PDO;
+use System\Database\Schema\Table\Create;
+use System\Support\Facades\Query;
+use System\Support\Facades\Database;
 use System\Support\Facades\Schema;
 
 use function System\Console\fail;
@@ -486,14 +485,14 @@ class MigrationCommand extends Command
         $width   = $this->getWidth(40, 60);
         info('showing database')->out(false);
 
-        $tables = PDO::instance()
+        $tables = Database::instance()
             ->query('SHOW DATABASES')
             ->query('
                 SELECT table_name, create_time, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `size`
                 FROM information_schema.tables
                 WHERE table_schema = :db_name')
             ->bind(':db_name', $db_name)
-            ->resultset();
+            ->resultSet();
 
         if (0 === count($tables)) {
             warn('table is empty try to run migration')->out();
@@ -520,7 +519,7 @@ class MigrationCommand extends Command
 
     public function tableShow(string $table): int
     {
-        $table = (new MyQuery(PDO::instance()))->table($table)->info();
+        $table = (new Query(Database::instance()))->table($table)->info();
         $print = new Style("\n");
         $width = $this->getWidth(40, 60);
 
@@ -600,7 +599,7 @@ class MigrationCommand extends Command
      */
     private function hasMigrationTable(): bool
     {
-        $result = PDO::instance()->query(
+        $result = Database::instance()->query(
             "SELECT COUNT(table_name) as total
             FROM information_schema.tables
             WHERE table_schema = :dbname
@@ -636,7 +635,7 @@ class MigrationCommand extends Command
     private function getMigrationTable(): Collection
     {
         /** @var Collection<string, int> */
-        $pair = DB::table('migration')
+        $pair = Query::table('migration')
             ->select()
             ->get()
             ->assocBy(static fn ($item) => [$item['migration'] => (int) $item['batch']]);
@@ -651,7 +650,7 @@ class MigrationCommand extends Command
      */
     private function insertMigrationTable($migration): bool
     {
-        return DB::table('migration')
+        return Query::table('migration')
             ->insert()
             ->values($migration)
             ->execute()

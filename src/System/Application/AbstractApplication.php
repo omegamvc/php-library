@@ -4,16 +4,21 @@ declare(strict_types=1);
 
 namespace System\Application;
 
+use App\Providers\AppServiceProvider;
+use App\Providers\CacheServiceProvider;
+use App\Providers\DatabaseServiceProvider;
+use App\Providers\RouteServiceProvider;
+use App\Providers\ViewServiceProvider;
 use System\Container\Container;
 use System\Container\Exception\DependencyResolutionException;
 use System\Container\Exception\ServiceNotFoundException;
-use System\Http\Request;
+use System\Http\Request\Request;
 use System\Integrate\ConfigRepository;
-use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\PackageManifest;
+use System\Http\Exceptions\HttpException;
 use System\Integrate\Providers\IntegrateServiceProvider;
 use System\Integrate\ServiceProvider;
 use System\Integrate\Vite;
+use System\Support\PackageManifest;
 use System\Support\Path;
 use System\View\Templator;
 
@@ -60,7 +65,13 @@ abstract class AbstractApplication extends Container implements ApplicationInter
     protected string $vendorPath = '';
 
     /** @var ServiceProvider[] Holds an array of all service provider. */
-    private array $providers = [];
+    private array $providers = [
+        AppServiceProvider::class,
+        RouteServiceProvider::class,
+        DatabaseServiceProvider::class,
+        ViewServiceProvider::class,
+        CacheServiceProvider::class,
+    ];
 
     /** @var ServiceProvider[] Holds an array of booted service provider. */
     private array $bootedProviders = [];
@@ -157,8 +168,6 @@ abstract class AbstractApplication extends Container implements ApplicationInter
         $this->set('config.pusher_secret', $configs['PUSHER_APP_SECRET']);
         $this->set('config.pusher_cluster', $configs['PUSHER_APP_CLUSTER']);
         $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
-        // load provider
-        $this->providers = $configs['PROVIDERS'];
     }
 
     /**
@@ -489,7 +498,7 @@ abstract class AbstractApplication extends Container implements ApplicationInter
      *
      * @param array<string, string> $headers
      *
-     * @throws HttpException
+     * @throws \System\Http\Exception\\System\Http\Exceptions\HttpException
      */
     public function abort(int $code, string $message = '', array $headers = []): void
     {
