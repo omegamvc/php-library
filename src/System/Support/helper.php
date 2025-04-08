@@ -9,7 +9,7 @@ use System\Container\Exception\ServiceNotFoundException;
 use System\Http\Response\RedirectResponse;
 use System\Http\Response\Response;
 use System\Integrate\Exceptions\ApplicationNotAvailable;
-use System\Integrate\Vite;
+use System\Support\Vite;
 use System\Router\Router;
 use System\Support\Env;
 

@@ -7,7 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Console\Style\ProgressBar;
 use System\Console\Traits\PrintHelpTrait;
-use System\Integrate\ServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 
 use function System\Console\ok;
 
@@ -68,7 +68,7 @@ class VendorImportCommand extends Command
     public function main(): int
     {
         $this->status = new ProgressBar();
-        $this->importItem(ServiceProvider::getModules());
+        $this->importItem(AbstractServiceProvider::getModules());
 
         return 0;
     }
@@ -91,13 +91,13 @@ class VendorImportCommand extends Command
                 foreach ($module as $from => $to) {
                     $added++;
                     if (is_dir($from)) {
-                        $status = ServiceProvider::importDir($from, $to, $this->force);
+                        $status = AbstractServiceProvider::importDir($from, $to, $this->force);
                         $this->status($current, $status, $from, $to);
 
                         continue 2;
                     }
 
-                    $status = ServiceProvider::importFile($from, $to, $this->force);
+                    $status = AbstractServiceProvider::importFile($from, $to, $this->force);
                     $this->status($current, $status, $from, $to);
                 }
             }

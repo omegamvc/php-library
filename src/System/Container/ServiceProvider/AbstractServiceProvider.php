@@ -2,35 +2,39 @@
 
 declare(strict_types=1);
 
-namespace System\Integrate;
+namespace System\Container\ServiceProvider;
 
 use System\Application\Application;
 
-abstract class ServiceProvider
+use function array_key_exists;
+use function array_merge;
+use function closedir;
+use function copy;
+use function file_exists;
+use function is_dir;
+use function mkdir;
+use function opendir;
+use function pathinfo;
+use function readdir;
+
+use const PATHINFO_DIRNAME;
+
+abstract class AbstractServiceProvider
 {
-    /** @var Application */
-    protected $app;
-
     /** @var array<int|string, class-string> Class register */
-    protected $register = [
-        // register
-    ];
+    protected array $register = [ /** Register the provider */ ];
 
-    /**
-     * Shared modules to import from vendor package.
-     *
-     * @var array<string, array<string, string>>
-     */
+    /** @var array<string, array<string, string>> Shared modules to import from vendor package. */
     protected static array $modules = [];
 
     /**
      * Create a new service provider instance.
      *
+     * @param Application $app
      * @return void
      */
-    public function __construct(Application $app)
+    public function __construct(protected Application $app)
     {
-        $this->app = $app;
     }
 
     /**
@@ -38,7 +42,7 @@ abstract class ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         // boot
     }
@@ -48,13 +52,18 @@ abstract class ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         // register application container
     }
 
     /**
      * Import a specific file to the application.
+     *
+     * @param string $from
+     * @param string $to
+     * @param bool $overwrite
+     * @return bool
      */
     public static function importFile(string $from, string $to, bool $overwrite = false): bool
     {
@@ -73,6 +82,11 @@ abstract class ServiceProvider
 
     /**
      * Import a directory to the application.
+     *
+     * @param string $from
+     * @param string $to
+     * @param bool $overwrite
+     * @return bool
      */
     public static function importDir(string $from, string $to, bool $overwrite = false): bool
     {
@@ -117,6 +131,8 @@ abstract class ServiceProvider
      * Register a package to the module.
      *
      * @param array<string, string> $path
+     * @param string                $tag
+     * @return void
      */
     public static function export(array $path, string $tag = ''): void
     {

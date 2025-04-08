@@ -113,7 +113,7 @@ class Handler
             ]);
         }
 
-        return $response->json();c
+        return $response->json();
     }
 
     protected function handleResponse(\Throwable $th): Response

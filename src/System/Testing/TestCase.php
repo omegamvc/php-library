@@ -9,7 +9,7 @@ use System\Http\Request\Request;
 use System\Http\Response\Response;
 use System\Application\Application;
 use System\Http\Kernel;
-use System\Integrate\ServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
 use System\Testing\TestJsonResponse;
 use System\Testing\TestResponse;
 use System\Support\Facades\Facade;
@@ -24,7 +24,7 @@ class TestCase extends BaseTestCase
     {
         $this->app->flush();
         Facade::flushInstance();
-        ServiceProvider::flushModule();
+        AbstractServiceProvider::flushModule();
         unset($this->app);
         unset($this->kernel);
     }

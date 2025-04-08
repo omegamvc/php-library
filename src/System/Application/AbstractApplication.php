@@ -15,9 +15,9 @@ use System\Container\Exception\ServiceNotFoundException;
 use System\Http\Request\Request;
 use System\Integrate\ConfigRepository;
 use System\Http\Exceptions\HttpException;
-use System\Integrate\Providers\IntegrateServiceProvider;
-use System\Integrate\ServiceProvider;
-use System\Integrate\Vite;
+use System\Container\ServiceProvider\AdditionalServiceProvider;
+use System\Container\ServiceProvider\AbstractServiceProvider;
+use System\Support\Vite;
 use System\Support\PackageManifest;
 use System\Support\Path;
 use System\View\Templator;
@@ -64,7 +64,7 @@ abstract class AbstractApplication extends Container implements ApplicationInter
     /** @var string Holds the vendor path. */
     protected string $vendorPath = '';
 
-    /** @var ServiceProvider[] Holds an array of all service provider. */
+    /** @var \System\Container\ServiceProvider\AbstractServiceProvider[] Holds an array of all service provider. */
     private array $providers = [
         AppServiceProvider::class,
         RouteServiceProvider::class,
@@ -73,10 +73,10 @@ abstract class AbstractApplication extends Container implements ApplicationInter
         CacheServiceProvider::class,
     ];
 
-    /** @var ServiceProvider[] Holds an array of booted service provider. */
+    /** @var \System\Container\ServiceProvider\AbstractServiceProvider[] Holds an array of booted service provider. */
     private array $bootedProviders = [];
 
-    /** @var ServiceProvider[] Holds an array of loaded service provider. */
+    /** @var AbstractServiceProvider[] Holds an array of loaded service provider. */
     private array $loadedProviders = [];
 
     /** @var bool Detect if the application has been booted. */
@@ -109,7 +109,7 @@ abstract class AbstractApplication extends Container implements ApplicationInter
 
         $this->setBasePath($this->basePath);
         $this->setBaseBinding();
-        $this->register(IntegrateServiceProvider::class);
+        $this->register(AdditionalServiceProvider::class);
         $this->registerAlias();
     }
 
@@ -410,9 +410,9 @@ abstract class AbstractApplication extends Container implements ApplicationInter
      * Register service provider.
      *
      * @param string $provider Class-name service provider
-     * @return ServiceProvider
+     * @return \System\Container\ServiceProvider\AbstractServiceProvider
      */
-    public function register(string $provider): ServiceProvider
+    public function register(string $provider): AbstractServiceProvider
     {
         $providerClassName = $provider;
         $provider          = new $provider($this);
@@ -525,7 +525,7 @@ abstract class AbstractApplication extends Container implements ApplicationInter
     /**
      * Merge application provider and vendor package provider.
      *
-     * @return ServiceProvider[]
+     * @return AbstractServiceProvider[]
      * @throws DependencyResolutionException
      * @throws ServiceNotFoundException
      */

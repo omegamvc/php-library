@@ -150,7 +150,7 @@ final class ViteTest extends TestCase
 
         $this->assertEquals(
             'http://[::1]:5173/',
-            $asset->getHmrUrl()
+            $asset->getHotUrl()
         );
     }
 
