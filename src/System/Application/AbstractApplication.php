@@ -13,7 +13,7 @@ use System\Container\Container;
 use System\Container\Exception\DependencyResolutionException;
 use System\Container\Exception\ServiceNotFoundException;
 use System\Http\Request\Request;
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 use System\Http\Exceptions\HttpException;
 use System\Container\ServiceProvider\AdditionalServiceProvider;
 use System\Container\ServiceProvider\AbstractServiceProvider;
@@ -152,7 +152,7 @@ abstract class AbstractApplication extends Container implements ApplicationInter
     /**
      * Load and set Configuration to application.
      *
-     * @param ConfigRepository $configs
+     * @param \System\Config\ConfigRepository $configs
      * @return void
      */
     public function loadConfig(ConfigRepository $configs): void

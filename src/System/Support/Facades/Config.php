@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Support\Facades;
 
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 
 /**
  * @method static bool                 has(string $key)

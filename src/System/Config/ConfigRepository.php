@@ -1,269 +1,74 @@
 <?php
 
+declare(strict_types=1);
+
 namespace System\Config;
 
 use ArrayAccess;
-use Closure;
-use System\Collection\Arr;
-use System\Config\Exception\BadValueException;
-use System\Macroable\MacroableTrait;
+use function array_key_exists;
 
-use function gettype;
-use function is_array;
-use function is_bool;
-use function is_float;
-use function is_int;
-use function is_numeric;
-use function is_string;
-use function sprintf;
-
-class ConfigRepository implements ArrayAccess, ConfigRepositoryInterface
+/**
+ * @implements ArrayAccess<string, mixed>
+ */
+class ConfigRepository implements ArrayAccess
 {
-    use MacroableTrait;
-
     /**
-     * Create a new configuration repository.
+     * Create new config using array.
      *
-     * @param  array  $items
-     * @return void
+     * @param array<string, mixed> $config
      */
-    public function __construct(protected array $items = [])
+    public function __construct(protected array $config = [])
     {
     }
 
     /**
-     * Determine if the given configuration value exists.
-     *
-     * @param  string  $key
-     * @return bool
+     * Checks if the given key or index exists in the config.
      */
     public function has(string $key): bool
     {
-        return Arr::has($this->items, $key);
+        return array_key_exists($key, $this->config);
     }
 
     /**
-     * Get the specified configuration value.
-     *
-     * @param  array|string  $key
-     * @param  mixed  $default
-     * @return mixed
+     * Get config.
      */
-    public function get(array|string $key, mixed $default = null): mixed
+    public function get(string $key, mixed $default = null): mixed
     {
-        if (is_array($key)) {
-            return $this->getMany($key);
-        }
-
-        return Arr::get($this->items, $key, $default);
+        return $this->config[$key] ?? $default;
     }
 
     /**
-     * Get many configuration values.
-     *
-     * @param  array<string|int,mixed>  $keys
-     * @return array<string,mixed>
+     * Set new or create config.
      */
-    public function getMany(array $keys): array
+    public function set(string $key, mixed $value): void
     {
-        $config = [];
-
-        foreach ($keys as $key => $default) {
-            if (is_numeric($key)) {
-                [$key, $default] = [$default, null];
-            }
-
-            $config[$key] = Arr::get($this->items, $key, $default);
-        }
-
-        return $config;
+        $this->config[$key] = $value;
     }
 
     /**
-     * Get the specified string configuration value.
-     *
-     * @param  string  $key
-     * @param  (Closure():(string|null))|string|null  $default
-     * @return string
-     * @throws BadValueException
+     * Push value in an array items.
      */
-    public function string(string $key, mixed $default = null): string
+    public function push(string $key, mixed $value): void
     {
-        $value = $this->get($key, $default);
-
-        if (!is_string($value)) {
-            throw new BadValueException(
-                sprintf(
-                    'Configuration value for key [%s] must be a string, %s given.',
-                    $key,
-                    gettype($value)
-                )
-            );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get the specified integer configuration value.
-     *
-     * @param  string  $key
-     * @param  (Closure():(int|null))|int|null  $default
-     * @return int
-     * @throws BadValueException
-     */
-    public function integer(string $key, mixed $default = null): int
-    {
-        $value = $this->get($key, $default);
-
-        if (!is_int($value)) {
-            throw new BadValueException(
-                sprintf(
-                    'Configuration value for key [%s] must be an integer, %s given.',
-                    $key,
-                    gettype($value)
-                )
-            );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get the specified float configuration value.
-     *
-     * @param  string  $key
-     * @param  (Closure():(float|null))|float|null  $default
-     * @return float
-     * @throws BadValueException
-     */
-    public function float(string $key, mixed $default = null): float
-    {
-        $value = $this->get($key, $default);
-
-        if (!is_float($value)) {
-            throw new BadValueException(
-                sprintf('Configuration value for key [%s] must be a float, %s given.',
-                    $key,
-                    gettype($value)
-                )
-            );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get the specified boolean configuration value.
-     *
-     * @param  string  $key
-     * @param  (Closure():(bool|null))|bool|null  $default
-     * @return bool
-     * @throws BadValueException
-     */
-    public function boolean(string $key, mixed $default = null): bool
-    {
-        $value = $this->get($key, $default);
-
-        if (!is_bool($value)) {
-            throw new BadValueException(
-                sprintf('Configuration value for key [%s] must be a boolean, %s given.',
-                    $key,
-                    gettype($value)
-                )
-            );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Get the specified array configuration value.
-     *
-     * @param  string  $key
-     * @param  (Closure():(array<array-key, mixed>|null))|array<array-key, mixed>|null  $default
-     * @return array<array-key, mixed>
-     * @throws BadValueException
-     */
-    public function array(string $key, mixed $default = null): array
-    {
-        $value = $this->get($key, $default);
-
-        if (!is_array($value)) {
-            throw new BadValueException(
-                sprintf('Configuration value for key [%s] must be an array, %s given.',
-                    $key,
-                    gettype($value)
-                )
-            );
-        }
-
-        return $value;
-    }
-
-    /**
-     * Set a given configuration value.
-     *
-     * @param  array|string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    public function set(array|string $key, mixed $value = null): void
-    {
-        $keys = is_array($key) ? $key : [$key => $value];
-
-        foreach ($keys as $key => $value) {
-            Arr::set($this->items, $key, $value);
-        }
-    }
-
-    /**
-     * Prepend a value onto an array configuration value.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    public function prepend(string $key, mixed $value = null): void
-    {
-        $array = $this->get($key, []);
-
-        array_unshift($array, $value);
-
-        $this->set($key, $array);
-    }
-
-    /**
-     * Push a value onto an array configuration value.
-     *
-     * @param  string  $key
-     * @param  mixed  $value
-     * @return void
-     */
-    public function push(string $key, mixed $value = null): void
-    {
-        $array = $this->get($key, []);
-
+        $array   = $this->get($key, []);
         $array[] = $value;
-
         $this->set($key, $array);
     }
 
     /**
-     * Get all of the configuration items for the application.
+     * Convert back to array.
      *
-     * @return array
+     * @return array<string, mixed>
      */
-    public function getAll(): array
+    public function toArray(): array
     {
-        return $this->items;
+        return $this->config;
     }
 
+    // array access
+
     /**
-     * Determine if the given configuration option exists.
-     *
-     * @param  string  $offset
-     * @return bool
+     * Checks if the given key or index exists in the config.
      */
     public function offsetExists(mixed $offset): bool
     {
@@ -271,10 +76,7 @@ class ConfigRepository implements ArrayAccess, ConfigRepositoryInterface
     }
 
     /**
-     * Get a configuration option.
-     *
-     * @param  string  $offset
-     * @return mixed
+     * Get config.
      */
     public function offsetGet(mixed $offset): mixed
     {
@@ -282,11 +84,7 @@ class ConfigRepository implements ArrayAccess, ConfigRepositoryInterface
     }
 
     /**
-     * Set a configuration option.
-     *
-     * @param  string  $offset
-     * @param  mixed  $value
-     * @return void
+     * Set new or create config.
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
@@ -294,13 +92,10 @@ class ConfigRepository implements ArrayAccess, ConfigRepositoryInterface
     }
 
     /**
-     * Unset a configuration option.
-     *
-     * @param  string  $offset
-     * @return void
+     * Unset or set to null.
      */
     public function offsetUnset(mixed $offset): void
     {
-        $this->set($offset);
+        $this->set($offset, null);
     }
 }

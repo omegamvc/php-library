@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Console;
 
 use System\Application\Application;
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 use System\Integrate\ValueObjects\CommandMap;
 
 final class Util

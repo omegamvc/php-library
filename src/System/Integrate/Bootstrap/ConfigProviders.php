@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Bootstrap;
 
 use System\Application\Application;
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 
 class ConfigProviders
 {

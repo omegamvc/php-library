@@ -7,7 +7,7 @@ namespace System\Integrate\Console;
 use System\Console\Command;
 use System\Application\Application;
 use System\Integrate\Bootstrap\ConfigProviders;
-use System\Integrate\ConfigRepository;
+use System\Config\ConfigRepository;
 
 use function System\Console\fail;
 use function System\Console\ok;
