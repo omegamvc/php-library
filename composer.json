@@ -18,8 +18,7 @@
         "ext-http": "*",
         "ext-mbstring": "*",
         "ext-pdo": "*",
-        "php-di/php-di": "^7.0",
-        "sonypradana/validator": "^0.8"
+        "php-di/php-di": "^7.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.6",
@@ -37,7 +36,8 @@
             "src/System/Console/helper.php",
             "src/System/Support/helper.php",
             "src/System/Text/helper.php",
-            "src/System/Time/helper.php"
+            "src/System/Time/helper.php",
+            "src/System/Validator/helper.php"
         ]
     },
     "autoload-dev": {

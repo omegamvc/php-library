@@ -11,7 +11,7 @@ use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
 use System\Http\Upload\UploadFile;
 use Traversable;
-use Validator\Validator;
+use System\Validator\Validator;
 
 /**
  * @method Validator  validate(?Closure $rule = null, ?Closure $filter = null)

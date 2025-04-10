@@ -8,7 +8,7 @@ use Closure;
 use System\Http\Upload\UploadFile;
 use System\Http\Request\Request;
 use System\Container\ServiceProvider\AbstractServiceProvider;
-use Validator\Validator;
+use System\Validator\Validator;
 
 class AdditionalServiceProvider extends AbstractServiceProvider
 {

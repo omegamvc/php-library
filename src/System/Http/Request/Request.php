@@ -16,7 +16,7 @@ use System\Http\Upload\UploadFile;
 use System\Macroable\MacroableTrait;
 use System\Text\Str;
 use Traversable;
-use Validator\Validator;
+use System\Validator\Validator;
 
 use function array_merge;
 use function func_num_args;

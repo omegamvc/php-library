@@ -6,8 +6,8 @@ namespace System\Console\Traits;
 
 use System\Console\Style\Alert;
 use System\Console\Style\Style;
-use Validator\Rule\ValidPool;
-use Validator\Validator;
+use System\Validator\Rule\ValidPool;
+use System\Validator\Validator;
 
 trait ValidateCommandTrait
 {
@@ -28,12 +28,12 @@ trait ValidateCommandTrait
 
     protected function isValid(): bool
     {
-        return $this->validate->is_valid();
+        return $this->validate->isValid();
     }
 
     protected function getValidateMessage(Style $style): Style
     {
-        foreach ($this->validate->get_error() as $input => $message) {
+        foreach ($this->validate->getError() as $input => $message) {
             $style->tap(
                 Alert::render()->warn($message)
             );
