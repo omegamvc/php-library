@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace System\Validator;
 
 use Exception;
+
+use System\Collection\Collection;
 use System\Validator\Messages\Message;
 use System\Validator\Messages\MessagePool;
 use System\Validator\Rule\Rule;
@@ -12,6 +14,7 @@ use System\Validator\Rule\Filter;
 use System\Validator\Rule\FilterPool;
 use System\Validator\Rule\Valid;
 use System\Validator\Rule\ValidPool;
+
 use function call_user_func;
 use function call_user_func_array;
 
@@ -279,7 +282,7 @@ class Validator
      * @return bool|array<int, string> Return true if validation valid
      * @throws Exception
      */
-    public function validOrError(?Exception $exception = null): array|bool
+    public function validOrError(): array|bool
     {
         return $this->Rule->validate($this->fields, $this->validPool->getPool());
     }
