@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace System\Console\Style;
 
-use System\Console\Interfaces\OutputStream;
-use System\Console\Interfaces\RuleInterface;
+use System\Console\Output\OutputInterface;
+use System\Console\Style\RuleInterface;
 use System\Console\Style\Color\BackgroundColor;
 use System\Console\Style\Color\ForegroundColor;
 use System\Console\Traits\CommandTrait;
@@ -98,7 +98,7 @@ class Style
     private $text;
 
     /**
-     * Lenght of text.
+     * length of text.
      *
      * @var int
      */
@@ -111,7 +111,7 @@ class Style
      */
     private $ref = '';
 
-    private ?OutputStream $output_stream = null;
+    private ?OutputInterface $output_stream = null;
 
     /**
      * @param string|int $text set text to decorate
@@ -300,7 +300,7 @@ class Style
     }
 
     /**
-     * Get text lenght witout rule counted.
+     * Get text length witout rule counted.
      *
      * @return int
      */
@@ -389,7 +389,7 @@ class Style
         $this->replaceLine($text, $line);
     }
 
-    public function setOutputStream(OutputStream $resourceOutputStream): self
+    public function setOutputStream(OutputInterface $resourceOutputStream): self
     {
         $this->output_stream = $resourceOutputStream;
 

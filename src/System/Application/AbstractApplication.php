@@ -498,7 +498,7 @@ abstract class AbstractApplication extends Container implements ApplicationInter
      *
      * @param array<string, string> $headers
      *
-     * @throws \System\Http\Exception\\System\Http\Exceptions\HttpException
+     * @throws \System\Http\Exception\\System\Http\Exception\HttpException
      */
     public function abort(int $code, string $message = '', array $headers = []): void
     {

@@ -94,13 +94,13 @@ class ProgressBar
 
     private function progress(int $current, int $maks): string
     {
-        $lenght = 20;
-        $tick   = (int) ceil($current * ($lenght / $maks)) - 1;
+        $length = 20;
+        $tick   = (int) ceil($current * ($length / $maks)) - 1;
         $head   = $current === $maks ? '=' : '>';
         $bar    = str_repeat('=', $tick) . $head;
         $left   = '-';
 
-        return '[' . str_pad($bar, $lenght, $left) . ']';
+        return '[' . str_pad($bar, $length, $left) . ']';
     }
 
     /**

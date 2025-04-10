@@ -263,9 +263,9 @@ class Collection extends AbstractCollectionImmutable
     /**
      * @return $this
      */
-    public function chunk(int $lenght, bool $preserve_keys = true): self
+    public function chunk(int $length, bool $preserve_keys = true): self
     {
-        $this->collection = array_chunk($this->collection, $lenght, $preserve_keys);
+        $this->collection = array_chunk($this->collection, $length, $preserve_keys);
 
         return $this;
     }
@@ -275,9 +275,9 @@ class Collection extends AbstractCollectionImmutable
      */
     public function split(int $count, bool $preserve_keys = true): self
     {
-        $lenght = (int) ceil($this->lenght() / $count);
+        $length = (int) ceil($this->length() / $count);
 
-        return $this->chunk($lenght);
+        return $this->chunk($length);
     }
 
     /**

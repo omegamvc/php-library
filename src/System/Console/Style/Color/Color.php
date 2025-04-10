@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace System\Console\Style\Color;
 
-use System\Console\Interfaces\RuleInterface;
+use System\Console\Style\RuleInterface;
 
 abstract class Color implements RuleInterface
 {

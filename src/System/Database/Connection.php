@@ -61,7 +61,7 @@ class Connection
      *
      * @return self
      */
-    public function instance(): static
+    public function instance(): self
     {
         return $this;
     }

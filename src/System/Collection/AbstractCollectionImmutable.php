@@ -350,7 +350,7 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return empty($this->collection);
     }
 
-    public function lenght(): int
+    public function length(): int
     {
         return count($this->collection);
     }

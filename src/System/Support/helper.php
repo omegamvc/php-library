@@ -8,7 +8,7 @@ use System\Container\Exception\DependencyResolutionException;
 use System\Container\Exception\ServiceNotFoundException;
 use System\Http\Response\RedirectResponse;
 use System\Http\Response\Response;
-use System\Integrate\Exceptions\ApplicationNotAvailable;
+use System\Application\Exception\ApplicationNotAvailableException;
 use System\Support\Vite;
 use System\Router\Router;
 use System\Support\Env;
@@ -183,7 +183,7 @@ if (!function_exists('app')) {
     {
         $app = Application::getInstance();
         if (null === $app) {
-            throw new ApplicationNotAvailable();
+            throw new ApplicationNotAvailableException();
         }
 
         return $app;
