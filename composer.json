@@ -1,0 +1,90 @@
+{
+    "name": "omegamvc/php-library",
+    "description": "library to build php mvc",
+    "keywords": [
+        "framework",
+        "php-mvc",
+        "php-library"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Angger Pradana",
+            "email": "sonypradana@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "ext-mbstring": "*",
+        "php-di/php-di": "^7.0",
+        "sonypradana/validator": "^0.8"
+    },
+    "autoload": {
+        "psr-4": {
+            "System\\": "src/System/",
+            "System\\Support\\": "src/System/Macroable"
+        },
+        "files": [
+            "src/System/Collection/helper.php",
+            "src/System/Integrate/helper.php",
+            "src/System/Console/helper.php",
+            "src/System/Text/helper.php",
+            "src/System/Time/helper.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "System\\Test\\Database\\": "tests/DataBase"
+        },
+        "files": [
+            "tests/Integrate/Commands/CommandTest.php"
+        ]
+    },
+    "replace": {
+        "sonypradana/cache": "self.version",
+        "sonypradana/collection": "self.version",
+        "sonypradana/console": "self.version",
+        "sonypradana/container": "self.version",
+        "sonypradana/cron": "self.version",
+        "sonypradana/database": "self.version",
+        "sonypradana/file": "self.version",
+        "sonypradana/http": "self.version",
+        "sonypradana/router": "self.version",
+        "sonypradana/security": "self.version",
+        "sonypradana/support": "self.version",
+        "sonypradana/template": "self.version",
+        "sonypradana/text": "self.version",
+        "sonypradana/time": "self.version",
+        "sonypradana/view": "self.version"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "0.x-dev"
+        }
+    },
+    "scripts": {
+        "refacto": "rector",
+        "lint": "php-cs-fixer fix -v",
+        "test:refacto": "rector --dry-run",
+        "test:lint": "php-cs-fixer fix -v --dry-run --diff",
+        "test:types": "phpstan analyse --ansi --memory-limit=-1 --debug",
+        "test:unit": "phpunit --testdox --exclude-group database,not-for-mysql5.7",
+        "test:release": "php ./bin/split-repo.php validate",
+        "test:dev": [
+            "@test:refacto",
+            "@test:lint",
+            "@test:types",
+            "@test:unit",
+            "@test:release"
+        ],
+        "test": [
+            "rector --dry-run",
+            "php-cs-fixer fix -v --dry-run",
+            "phpstan analyse --ansi --memory-limit=-1",
+            "phpunit --exclude-group database,not-for-mysql5.7",
+            "php ./bin/split-repo.php validate"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
