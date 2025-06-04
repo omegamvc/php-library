@@ -17,7 +17,7 @@
         "php": "^8.3",
         "ext-mbstring": "*",
         "php-di/php-di": "^7.0",
-        "sonypradana/validator": "^0.8"
+        "omegamvc/validator": "^0.8"
     },
     "autoload": {
         "psr-4": {
