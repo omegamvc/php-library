@@ -116,3 +116,7 @@ $filter = $val->failedOrFilter());
 Why use validator over `GUMP` validator.
 - Avoid typo when building validator rule. When using validator may accidentally typing wrong validate rule (typo). It make runtime error.
 - Autocomplete out of the box. Auto complete validator rule and maintainable rule.
+
+## License
+
+This project is open-source software licensed under the [GNU General Public License v3.0](LICENSE).
