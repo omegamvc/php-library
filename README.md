@@ -16,10 +16,6 @@
 
 Php mvc with minimum mvc framework. is simple and easy to use
 
-> **Note:** This repository contains the core code of the php-mvc. If you want to build an application, visit the main [php-mvc](https://github.com/SonyPradana/php-mvc).
-
-> **Note:** This repository high inspire with `laravel\framework` and `symfony\symfony`.
-
 ## Feature
 - MVC base
 - Container (dependency injection)
