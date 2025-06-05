@@ -43,10 +43,30 @@ Php mvc with minimum mvc framework. is simple and easy to use
   </thead>
   <tbody>
     <tr>
+        <td><code>Application</code></td>
+        <td>Handles the core lifecycle and bootstrapping of the framework.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+        <td><code>Cache</code></td>
+        <td>Provides a unified interface for various caching drivers.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
         <td><code>Collection</code></td>
         <td>Offers a fluent, convenient wrapper for working with arrays of data.</td>
         <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Collection.md" target="_blank">📖</a></td>
      </tr>
+    <tr>
+        <td><code>Container</code></td>
+        <td>Manages dependency injection and service resolution.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+        <td><code>Cron</code></td>
+        <td>Schedules and executes periodic tasks using defined intervals.</td>
+        <td>N/A</td>
+    </tr>
     <tr>
         <td><code>Console</code></td>
         <td>Provides tools to define and run CLI commands within the application.</td>
