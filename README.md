@@ -88,13 +88,18 @@ Php mvc with minimum mvc framework. is simple and easy to use
         <td>N/A</td>
     </tr>
     <tr>
+        <td><code>Macroable</code></td>
+        <td>Adds macro support to classes, enabling dynamic method registration.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
         <td><code>Router</code></td>
         <td>Maps incoming HTTP requests to controller actions or callbacks.</td>
         <td>N/A</td>
     </tr>
     <tr>
         <td><code>Security</code></td>
-        <td></td>
+        <td>Offers basic tools for data encryption, hashing, and input sanitization.</td>
         <td>N/A</td>
     </tr>
     <tr>
@@ -103,8 +108,13 @@ Php mvc with minimum mvc framework. is simple and easy to use
       <td>N/A</td>
     </tr>
     <tr>
+        <td><code>Support</code></ts>
+        <td>Contains helper classes and general-purpose utility functions.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
         <td><code>Template</code></td>
-        <td></td>
+        <td>Handles template compilation and dynamic content injection.</td>
         <td>N/A</td>
     </tr>
     <tr>
@@ -114,7 +124,7 @@ Php mvc with minimum mvc framework. is simple and easy to use
     </tr>
     <tr>
         <td><code>Time</code></td>
-        <td></td>
+        <td>Provides utilities for date, time, and duration manipulation.</td>
         <td>N/A</td>
     </tr>
     <tr>
@@ -124,7 +134,7 @@ Php mvc with minimum mvc framework. is simple and easy to use
     </tr>
     <tr>
         <td><code>View</code></td>
-        <td></td>
+        <td>Manages the rendering of templates and passing of view data.</td>
         <td>N/A</td>
     </tr>
   </tbody>
