@@ -305,6 +305,8 @@ available regex
 
 [🔝 Back to contents](#Feature)
 
+## Documentation
+
 <table>
   <thead style="background-color:black;color:white">
     <tr>
@@ -314,32 +316,12 @@ available regex
   </thead>
   <tbody>
     <tr>
-      <td><code>Application</code></td>
+      <td><code>Serializable Closure</code></td>
       <td>Entry point del framework. Coordina bootstrapping, lifecycle e servizi principali.</td>
     </tr>
     <tr>
-      <td><code>Console</code></td>
+      <td><code>Validator</code></td>
       <td>Gestione CLI. Include <code>Kernel.php</code>, comandi e generatori (stubs).</td>
-    </tr>
-    <tr>
-      <td><code>Http</code></td>
-      <td>Router, request/response, controller e middleware.</td>
-    </tr>
-    <tr>
-      <td><code>Providers</code></td>
-      <td>Service provider che registrano e avviano servizi nel container.</td>
-    </tr>
-    <tr>
-      <td><code>System</code></td>
-      <td>Utilities core condivise tra pacchetti (helpers, traits, macro, etc).</td>
-    </tr>
-    <tr>
-      <td><code>Integrate</code></td>
-      <td>Bridge e interfacce con componenti esterni o interni specializzati.</td>
-    </tr>
-    <tr>
-      <td><code>Exceptions</code></td>
-      <td>Handler e definizione delle eccezioni del framework.</td>
     </tr>
   </tbody>
 </table>
