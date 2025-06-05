@@ -66,7 +66,7 @@ DB::table('table_name')
 ```
 its supported cancel translation if you needed
 ```php
-use System\Support\Facades;
+use Omega\Support\Facades;
 
 PDO::transaction(function() {
     DB::table('table_name')
