@@ -256,9 +256,9 @@ Str::match('i love php', '/love/'); // love
 - `fillEnd`
 - `limit`
 
-### Costume macro
+### Custom macro
 
-costume macro string;
+custom macro string;
 
 ```php
 Str::macro('prefix', fn($text, $prefix) => $prefix.$test);
@@ -304,3 +304,47 @@ available regex
 - `url`
 
 [🔝 Back to contents](#Feature)
+
+<table>
+  <thead style="background-color:black;color:white">
+    <tr>
+      <th>Package Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Application</code></td>
+      <td>Entry point del framework. Coordina bootstrapping, lifecycle e servizi principali.</td>
+    </tr>
+    <tr>
+      <td><code>Console</code></td>
+      <td>Gestione CLI. Include <code>Kernel.php</code>, comandi e generatori (stubs).</td>
+    </tr>
+    <tr>
+      <td><code>Http</code></td>
+      <td>Router, request/response, controller e middleware.</td>
+    </tr>
+    <tr>
+      <td><code>Providers</code></td>
+      <td>Service provider che registrano e avviano servizi nel container.</td>
+    </tr>
+    <tr>
+      <td><code>System</code></td>
+      <td>Utilities core condivise tra pacchetti (helpers, traits, macro, etc).</td>
+    </tr>
+    <tr>
+      <td><code>Integrate</code></td>
+      <td>Bridge e interfacce con componenti esterni o interni specializzati.</td>
+    </tr>
+    <tr>
+      <td><code>Exceptions</code></td>
+      <td>Handler e definizione delle eccezioni del framework.</td>
+    </tr>
+  </tbody>
+</table>
+
+
+## License
+
+This project is open-source software licensed under the [GNU General Public License v3.0](LICENSE).
