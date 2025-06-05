@@ -76,14 +76,29 @@ Php mvc with minimum mvc framework. is simple and easy to use
         <td><code>Database</code></td>
         <td>Provides a database abstraction, CRUD operations, and a QueryBuilder.</td>
         <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Database.md" target="_blank">📖</a></td>
-      </tr>
-    <!--tr>
+    </tr>
+    <tr>
+        <td><code>File</code></td>
+        <td>Provides utilities for file handling and filesystem interactions</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+        <td><code>Http</code></td>
+        <td>Manages HTTP requests, responses, and headers.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
+        <td><code>Router</code></td>
+        <td>Maps incoming HTTP requests to controller actions or callbacks.</td>
+        <td>N/A</td>
+    </tr>
+    <tr>
       <td><code>Serializable Closure</code></td>
       <td>Enables the serialization of closures in a secure and portable way.</td>
-      <td><a href="https://example.com/serializable-closure" target="_blank">📖</a></td>
-    </tr-->
+      <td>N/A</td>
+    </tr>
     <tr>
-      <td><code>Strr</code></td>
+      <td><code>Str</code></td>
       <td>Provides methods to manipulate strings.</td>
       <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Str.md" target="_blank">📖</a></td>
     </tr>
