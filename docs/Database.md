@@ -24,7 +24,6 @@ its same with SQL query
 ```SQL
 SELECT `column_1` FROM `table_name` WHERE (`column_2` = 'fast_mvc') ORDER BY `table_name`.`column_1` ASC LIMIT 1, 10
 ```
-[🔝 Back to contents](#Feature)
 
 ### Update data
 ```php
@@ -44,7 +43,6 @@ its same with SQL query
 ```SQL
 UPDATE `table_name` SET `column_1` = 'simple_mvc', `column_2` = 'fast_mvc', 'column_3' = 123  WHERE (`column_4` = 'speed')
 ```
-[🔝 Back to contents](#Feature)
 
 ### Insert and Delete
 ```php

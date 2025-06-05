@@ -22,55 +22,14 @@ Php mvc with minimum mvc framework. is simple and easy to use
 - Route
 - Model (database class relation)
 - View and Controller
-- [MyQuery](#Built-in-Query-Builder) (database query builder)
-- [Collection](#Collection) (array collection)
-- [Console](#Console) (assembling beautiful console app)
+- MyQuery (database query builder)
+- Collection (array collection)
+- Console (assembling beautiful console app)
 - Template (create class using class generator)
 - Cron
 - Now (time managing)
 - Http request and response
-- [Str](#Str) (string manipulation)
-
-## Collection
-Array collection, handel functional array as chain method
-
-### Create New Collection
-```php
-$coll = new Collection(['vb_net', 'c_sharp', 'java', 'python', 'php', 'javascript', 'html']);
-
-$arr = $coll
-  ->remove('html')
-  ->sort()
-  ->filter(fn ($item) => strlen($item) > 4)
-  ->map(fn ($item) => ucfirst($item))
-  ->each(function($item) {
-    echo $item . PHP_EOL;
-  })
-  ->all()
-;
-
-// arr = ['c_sharp', 'javascript', 'python', 'vb_net']
-```
-[🔝 Back to contents](#Feature)
-
-### Available Methods
-- `add()`
-- `remove()`
-- `set()`
-- `clear()`
-- `replace()`
-- `each()`
-- `map`
-- `filter()`
-- `sort()`
-- `sortDesc()`
-- `sortKey()`
-- `sortKeyDesc()`
-- `sortBy()`
-- `sortByDesc()`
-- `all()`
-
-[🔝 Back to contents](#Feature)
+- Str (string manipulation)
 
 ## Console
 
@@ -223,6 +182,16 @@ available regex
     </tr>
   </thead>
   <tbody>
+    <tr>
+        <td><code>Collection</code></td>
+        <td>Offers a fluent, convenient wrapper for working with arrays of data.</td>
+        <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Collection.md" target="_blank">📖</a></td>
+     </tr>
+    <tr>
+        <td><code>Console</code></td>
+        <td>Provides tools to define and run CLI commands within the application.</td>
+        <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Console.md" target="_blank">📖</a></td>
+     </tr>
      <tr>
         <td><code>Database</code></td>
         <td>Provides a database abstraction, CRUD operations, and a QueryBuilder.</td>
