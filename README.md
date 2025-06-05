@@ -312,16 +312,19 @@ available regex
     <tr>
       <th>Package Name</th>
       <th>Description</th>
+      <th>Read</th>
     </tr>
   </thead>
   <tbody>
     <tr>
       <td><code>Serializable Closure</code></td>
-      <td>Entry point del framework. Coordina bootstrapping, lifecycle e servizi principali.</td>
+      <td>Enables the serialization of closures in a secure and portable way, useful for caching or queueing logic that contains anonymous functions</td>
+      <td></td>
     </tr>
     <tr>
       <td><code>Validator</code></td>
-      <td>Gestione CLI. Include <code>Kernel.php</code>, comandi e generatori (stubs).</td>
+      <td>Provides a flexible and extensible validation system for input data, supporting rules, custom messages, and conditional logic.</td>
+      <td></td>
     </tr>
   </tbody>
 </table>
