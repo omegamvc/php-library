@@ -318,13 +318,13 @@ available regex
   <tbody>
     <tr>
       <td><code>Serializable Closure</code></td>
-      <td>Enables the serialization of closures in a secure and portable way, useful for caching or queueing logic that contains anonymous functions</td>
-      <td></td>
+      <td>Enables the serialization of closures in a secure and portable way.</td>
+      <td><a href="https://example.com/serializable-closure" target="_blank">📖</a></td>
     </tr>
     <tr>
       <td><code>Validator</code></td>
-      <td>Provides a flexible and extensible validation system for input data, supporting rules, custom messages, and conditional logic.</td>
-      <td></td>
+      <td>Provides a flexible and extensible validation system for input data.</td>
+      <td><a href="https://example.com/validator" target="_blank">📖</a></td>
     </tr>
   </tbody>
 </table>
