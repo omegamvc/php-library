@@ -7,14 +7,14 @@ namespace System\Test\Integrate\Console;
 use PHPUnit\Framework\TestCase;
 use System\Console\Command;
 use System\Integrate\Application;
-use System\Integrate\Console\Karnel;
+use System\Integrate\Console\CliKernel;
 use System\Integrate\PackageManifest;
 use System\Integrate\ValueObjects\CommandMap;
 use System\Text\Str;
 
 use function System\Console\style;
 
-final class KarnelTest extends TestCase
+final class CliKernelTest extends TestCase
 {
     private $app;
 
@@ -218,7 +218,7 @@ final class KarnelTest extends TestCase
     public function itCanBootstrap()
     {
         $this->assertFalse($this->app->isBootstrapped());
-        $this->app->make(Karnel::class)->bootstrap();
+        $this->app->make(CliKernel::class)->bootstrap();
         $this->assertTrue($this->app->isBootstrapped());
     }
 
@@ -238,14 +238,14 @@ final class KarnelTest extends TestCase
      */
     public function itCanGetSimilarCommand()
     {
-        $karnel = new Karnel($this->app);
+        $karnel = new CliKernel($this->app);
         $result = (fn () => $this->{'getSimilarity'}('make:view', ['view:clear', 'make:view', 'make:controller']))->call($karnel);
         $this->assertArrayHasKey('make:view', $result);
         $this->assertArrayHasKey('make:controller', $result);
     }
 }
 
-class NormalCommand extends Karnel
+class NormalCommand extends CliKernel
 {
     protected function commands(): array
     {

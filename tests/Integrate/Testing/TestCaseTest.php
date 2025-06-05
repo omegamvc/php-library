@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Test\Integrate\Testing;
 
 use System\Integrate\Application;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\HttpKernel;
 use System\Integrate\Testing\TestCase;
 
 final class TestCaseTest extends TestCase
@@ -14,7 +14,7 @@ final class TestCaseTest extends TestCase
     {
         require_once dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Bootstrap' . DIRECTORY_SEPARATOR . 'RegisterProvidersTest.php';
         $this->app = new Application(dirname(__DIR__) . '/assets/app2');
-        $this->app->set(Karnel::class, fn () => new Karnel($this->app));
+        $this->app->set(HttpKernel::class, fn () => new HttpKernel($this->app));
 
         parent::setUp();
     }

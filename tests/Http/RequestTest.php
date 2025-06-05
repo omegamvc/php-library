@@ -3,9 +3,9 @@
 use PHPUnit\Framework\TestCase;
 use System\File\UploadFile;
 use System\Http\Request;
-use Validator\Rule\FilterPool;
-use Validator\Rule\ValidPool;
-use Validator\Validator;
+use System\Validator\Rule\FilterPool;
+use System\Validator\Rule\ValidPool;
+use System\Validator\Validator;
 
 class RequestTest extends TestCase
 {

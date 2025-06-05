@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\HttpKernel;
 
 final class KarnelTerminateTest extends TestCase
 {
@@ -18,11 +18,11 @@ final class KarnelTerminateTest extends TestCase
         $this->app = new Application('/');
 
         $this->app->set(
-            Karnel::class,
+            HttpKernel::class,
             fn () => new $this->karnel($this->app)
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->karnel = new class($this->app) extends HttpKernel {
             public function handle(Request $request)
             {
                 return new Response('ok');
@@ -44,7 +44,7 @@ final class KarnelTerminateTest extends TestCase
     /** @test */
     public function itCanTerminate()
     {
-        $karnel      = $this->app->make(Karnel::class);
+        $karnel      = $this->app->make(HttpKernel::class);
         $response    = $karnel->handle(
             $request = new Request('/test')
         );

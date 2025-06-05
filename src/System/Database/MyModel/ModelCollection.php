@@ -33,11 +33,11 @@ class ModelCollection extends Collection
      *
      * @throws \Exception No records founds
      */
-    public function getPrimeryKey()
+    public function getPrimaryKey()
     {
         $primeryKeys = [];
         foreach ($this->collection as $model) {
-            $primeryKeys[] = $model->getPrimeryKey();
+            $primeryKeys[] = $model->getPrimaryKey();
         }
 
         return $primeryKeys;
@@ -71,7 +71,7 @@ class ModelCollection extends Collection
         $primery_key = (fn () => $this->{'primery_key'})->call($this->model);
         $update      = new Update($table_name, $pdo);
 
-        $update->values($values)->in($primery_key, $this->getPrimeryKey());
+        $update->values($values)->in($primery_key, $this->getPrimaryKey());
 
         return $update->execute();
     }
@@ -86,7 +86,7 @@ class ModelCollection extends Collection
         $primery_key = (fn () => $this->{'primery_key'})->call($this->model);
         $delete      = new Delete($table_name, $pdo);
 
-        $delete->in($primery_key, $this->getPrimeryKey());
+        $delete->in($primery_key, $this->getPrimaryKey());
 
         return $delete->execute();
     }

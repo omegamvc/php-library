@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace System\Integrate\Bootstrap;
 
 use System\Integrate\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Integrate\Exceptions\ExceptionHandler;
 
 class HandleExceptions
 {
@@ -79,9 +79,9 @@ class HandleExceptions
         return false;
     }
 
-    private function getHandler(): Handler
+    private function getHandler(): ExceptionHandler
     {
-        return $this->app[Handler::class];
+        return $this->app[ExceptionHandler::class];
     }
 
     private function isDeprecation(int $level): bool

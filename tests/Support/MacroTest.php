@@ -1,17 +1,17 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use System\Support\Exceptions\MacroNotFound;
-use System\Support\Marco;
+use System\Macroable\Exceptions\MacroNotFoundException;
+use System\Macroable\MacroableTrait;
 
-final class MacroTest extends TestCase
+final class MacroableTest extends TestCase
 {
     protected $mock_class;
 
     protected function setUp(): void
     {
         $this->mock_class = new class {
-            use Marco;
+            use MarcoableTrait;
         };
     }
 

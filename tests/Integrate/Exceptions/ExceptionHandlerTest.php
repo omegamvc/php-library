@@ -8,9 +8,9 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Integrate\Exceptions\ExceptionHandler;
 use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\HttpKernel;
 use System\Integrate\PackageManifest;
 use System\Text\Str;
 use System\View\Templator;
@@ -19,8 +19,8 @@ use System\View\TemplatorFinder;
 final class HandlerTest extends TestCase
 {
     private Application $app;
-    private Karnel $karnel;
-    private Handler $handler;
+    private HttpKernel $karnel;
+    private ExceptionHandler $handler;
 
     /**
      * Mock Logger.
@@ -41,16 +41,16 @@ final class HandlerTest extends TestCase
         ));
 
         $this->app->set(
-            Karnel::class,
+            HttpKernel::class,
             fn () => new $this->karnel($this->app)
         );
 
         $this->app->set(
-            Handler::class,
+            ExceptionHandler::class,
             fn () => $this->handler
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->karnel = new class($this->app) extends HttpKernel {
             protected function dispatcher(Request $request): array
             {
                 throw new HttpException(429, 'Too Many Request');
@@ -63,7 +63,7 @@ final class HandlerTest extends TestCase
             }
         };
 
-        $this->handler = new class($this->app) extends Handler {
+        $this->handler = new class($this->app) extends ExceptionHandler {
             public function render(Request $request, \Throwable $th): Response
             {
                 // try to bypass test for json format
@@ -94,7 +94,7 @@ final class HandlerTest extends TestCase
     /** @test */
     public function itCanRenderException()
     {
-        $karnel      = $this->app->make(Karnel::class);
+        $karnel      = $this->app->make(HttpKernel::class);
         $response    = $karnel->handle(new Request('/test'));
 
         $this->assertEquals('Too Many Request', $response->getContent());
@@ -104,7 +104,7 @@ final class HandlerTest extends TestCase
     /** @test */
     public function itCanReportException()
     {
-        $karnel      = $this->app->make(Karnel::class);
+        $karnel      = $this->app->make(HttpKernel::class);
         $karnel->handle(new Request('/test'));
 
         $this->assertEquals(['Too Many Request'], HandlerTest::$logs);
@@ -117,7 +117,7 @@ final class HandlerTest extends TestCase
             $this->app->set('app.debug', false);
         });
 
-        $karnel      = $this->app->make(Karnel::class);
+        $karnel      = $this->app->make(HttpKernel::class);
         $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
             'content-type' => 'application/json',
         ]));
@@ -138,7 +138,7 @@ final class HandlerTest extends TestCase
             $this->app->set('app.debug', true);
         });
 
-        $karnel      = $this->app->make(Karnel::class);
+        $karnel      = $this->app->make(HttpKernel::class);
         $response    = $karnel->handle(new Request('/test', [], [], [], [], [], [
             'content-type' => 'application/json',
         ]));
@@ -176,7 +176,7 @@ final class HandlerTest extends TestCase
             )
         );
 
-        $handler = $this->app->make(Handler::class);
+        $handler = $this->app->make(ExceptionHandler::class);
 
         $exception = new HttpException(429, 'Internal Error', null, []);
         $render    = (fn () => $this->{'handleHttpException'}($exception))->call($handler);

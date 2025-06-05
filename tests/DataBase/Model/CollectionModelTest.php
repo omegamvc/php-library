@@ -69,7 +69,7 @@ final class CollectionModelTest extends TestDatabase
     {
         $users = $this->users()->get();
 
-        $this->assertEqualsCanonicalizing(['nuno', 'taylor', 'pradana'], $users->getPrimeryKey());
+        $this->assertEqualsCanonicalizing(['nuno', 'taylor', 'pradana'], $users->getPrimaryKey());
     }
 
     /**

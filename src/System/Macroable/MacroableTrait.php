@@ -2,30 +2,28 @@
 
 declare(strict_types=1);
 
-namespace System\Support;
+namespace System\Macroable;
 
-use System\Support\Exceptions\MacroNotFound;
+use Closure;
+use System\Macroable\Exceptions\MacroNotFoundException;
 
-trait Marco
+use function array_key_exists;
+
+trait MacroableTrait
 {
-    /**
-     * List registered macro.
-     *
-     * @var string[]
-     */
-    protected static $macros = [];
+    /** @var string[] List of registered macro. */
+    protected static array $macros = [];
 
     /**
      * Register string macro.
      *
-     * @param string   $macro_name Method name
-     * @param callable $call_back  Method call able
-     *
+     * @param string   $macroName Method name
+     * @param callable $callBack  Method call able
      * @return void
      */
-    public static function macro(string $macro_name, $call_back)
+    public static function macro(string $macroName, callable $callBack): void
     {
-        self::$macros[$macro_name] = $call_back;
+        self::$macros[$macroName] = $callBack;
     }
 
     /**
@@ -33,21 +31,19 @@ trait Marco
      *
      * @param string             $method     Method name
      * @param array<int, string> $parameters Parameters
-     *
      * @return mixed
-     *
-     * @throw MacroNotFound
+     * @throws MacroNotFoundException
      */
     public static function __callStatic(string $method, array $parameters)
     {
         if (!array_key_exists($method, self::$macros)) {
-            throw new MacroNotFound($method);
+            throw new MacroNotFoundException($method);
         }
 
-        /** @var \Closure */
+        /** @var Closure $macro */
         $macro = static::$macros[$method];
 
-        if ($macro instanceof \Closure) {
+        if ($macro instanceof Closure) {
             $macro = $macro->bindTo(null, static::class);
         }
 
@@ -59,21 +55,19 @@ trait Marco
      *
      * @param string             $method     Method name
      * @param array<int, string> $parameters Parameters
-     *
      * @return mixed
-     *
-     * @throw MacroNotFound
+     * @throws MacroNotFoundException
      */
     public function __call(string $method, array $parameters)
     {
         if (!array_key_exists($method, self::$macros)) {
-            throw new MacroNotFound($method);
+            throw new MacroNotFoundException($method);
         }
 
-        /** @var \Closure */
+        /** @var Closure $macro */
         $macro = static::$macros[$method];
 
-        if ($macro instanceof \Closure) {
+        if ($macro instanceof Closure) {
             $macro = $macro->bindTo($this, static::class);
         }
 
@@ -83,13 +77,12 @@ trait Marco
     /**
      * Cek macro already register.
      *
-     * @param string $macro_name Macro name
-     *
+     * @param string $macroName Macro name
      * @return bool True if macro has register
      */
-    public static function hasMacro(string $macro_name)
+    public static function hasMacro(string $macroName): bool
     {
-        return array_key_exists($macro_name, self::$macros);
+        return array_key_exists($macroName, self::$macros);
     }
 
     /**
@@ -97,7 +90,7 @@ trait Marco
      *
      * @return void
      */
-    public static function resetMacro()
+    public static function resetMacro(): void
     {
         self::$macros = [];
     }

@@ -390,7 +390,7 @@ final class BaseModelTest extends TestDatabase
     {
         $user = $this->user();
 
-        $this->assertEquals('taylor', $user->getPrimeryKey());
+        $this->assertEquals('taylor', $user->getPrimaryKey());
     }
 
     // getter setter - should return firts query
@@ -634,8 +634,8 @@ final class BaseModelTest extends TestDatabase
 
 class User extends Model
 {
-    protected string $table_name  = 'users';
-    protected string $primery_key = 'user';
+    protected string $tableName  = 'users';
+    protected string $primaryKey = 'user';
     /** @var string[] Hide from shoing column */
     protected $stash = ['password'];
 
@@ -652,5 +652,5 @@ class User extends Model
 
 class Order extends Model
 {
-    protected string $table_name = 'orders';
+    protected string $tableName = 'orders';
 }

@@ -7,7 +7,7 @@ namespace System\Integrate\Providers;
 use System\File\UploadFile;
 use System\Http\Request;
 use System\Integrate\ServiceProvider;
-use Validator\Validator;
+use System\Validator\Validator;
 
 class IntegrateServiceProvider extends ServiceProvider
 {

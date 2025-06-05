@@ -12,7 +12,7 @@ use System\Integrate\Http\Exception\HttpException;
 use System\View\Templator;
 use System\View\TemplatorFinder;
 
-class Handler
+class ExceptionHandler
 {
     protected Container $app;
 

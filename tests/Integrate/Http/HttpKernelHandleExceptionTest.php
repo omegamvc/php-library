@@ -6,16 +6,16 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
-use System\Integrate\Exceptions\Handler;
+use System\Integrate\Exceptions\ExceptionHandler;
 use System\Integrate\Http\Exception\HttpException;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\HttpKernel;
 use System\Integrate\PackageManifest;
 
 final class KarnelHandleExceptionTest extends TestCase
 {
     private Application $app;
-    private Karnel $karnel;
-    private Handler $handler;
+    private HttpKernel $karnel;
+    private ExceptionHandler $handler;
 
     protected function setUp(): void
     {
@@ -29,16 +29,16 @@ final class KarnelHandleExceptionTest extends TestCase
         ));
 
         $this->app->set(
-            Karnel::class,
+            HttpKernel::class,
             fn () => new $this->karnel($this->app)
         );
 
         $this->app->set(
-            Handler::class,
+            ExceptionHandler::class,
             fn () => $this->handler
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->karnel = new class($this->app) extends HttpKernel {
             protected function dispatcher(Request $request): array
             {
                 throw new HttpException(500, 'Test Exception');
@@ -51,7 +51,7 @@ final class KarnelHandleExceptionTest extends TestCase
             }
         };
 
-        $this->handler = new class($this->app) extends Handler {
+        $this->handler = new class($this->app) extends ExceptionHandler {
             public function render(Request $request, Throwable $th): Response
             {
                 return new Response($th->getMessage(), 500);
@@ -67,7 +67,7 @@ final class KarnelHandleExceptionTest extends TestCase
     /** @test */
     public function itCanRenderException()
     {
-        $karnel      = $this->app->make(Karnel::class);
+        $karnel      = $this->app->make(HttpKernel::class);
         $response    = $karnel->handle(new Request('/test'));
 
         $this->assertEquals('Test Exception', $response->getContent());

@@ -4,21 +4,25 @@ declare(strict_types=1);
 
 namespace System\Http;
 
+use ArrayAccess;
+use IteratorAggregate;
 use System\Collection\Collection;
 use System\Collection\CollectionImmutable;
-use System\Support\Marco;
+use System\File\UploadFile;
+use System\Macroable\MacroableTrait;
 use System\Text\Str;
+use System\Validator\Validator;
 
 /**
- * @method \Validator\Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
- * @method \System\File\UploadFile upload(array $file_name)
+ * @method Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
+ * @method UploadFile upload(array $file_name)
  *
- * @implements \ArrayAccess<string, string>
- * @implements \IteratorAggregate<string, string>
+ * @implements ArrayAccess<string, string>
+ * @implements IteratorAggregate<string, string>
  */
-class Request implements \ArrayAccess, \IteratorAggregate
+class Request implements ArrayAccess, IteratorAggregate
 {
-    use Marco;
+    use MacroableTrait;
 
     /**
      * Request method.
@@ -295,7 +299,7 @@ class Request implements \ArrayAccess, \IteratorAggregate
         return $this->files[$key];
     }
 
-    public function getCookie(string $key): string
+    public function getCookie(string $key): ?string
     {
         return $this->cookies[$key] ?? null;
     }

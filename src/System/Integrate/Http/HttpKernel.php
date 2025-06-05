@@ -12,11 +12,11 @@ use System\Integrate\Bootstrap\ConfigProviders;
 use System\Integrate\Bootstrap\HandleExceptions;
 use System\Integrate\Bootstrap\RegisterFacades;
 use System\Integrate\Bootstrap\RegisterProviders;
-use System\Integrate\Exceptions\Handler;
+use System\Integrate\Exceptions\ExceptionHandler;
 use System\Integrate\Http\Middleware\MaintenanceMiddleware;
 use System\Router\Router;
 
-class Karnel
+class HttpKernel
 {
     /**
      * Application Container.
@@ -72,7 +72,7 @@ class Karnel
 
             $response = $pipeline($request);
         } catch (\Throwable $th) {
-            $handler = $this->app->get(Handler::class);
+            $handler = $this->app->get(ExceptionHandler::class);
 
             $handler->report($th);
             $response = $handler->render($request, $th);

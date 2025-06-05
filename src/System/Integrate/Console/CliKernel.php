@@ -12,7 +12,7 @@ use System\Integrate\Bootstrap\RegisterFacades;
 use System\Integrate\Bootstrap\RegisterProviders;
 use System\Integrate\ValueObjects\CommandMap;
 
-class Karnel
+class CliKernel
 {
     /**
      * Application Container.

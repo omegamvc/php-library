@@ -7,7 +7,7 @@ use System\Console\Command;
 use System\Console\Style\Style;
 use System\Console\Traits\ValidateCommandTrait;
 use System\Text\Str;
-use Validator\Rule\ValidPool;
+use System\Validator\Rule\ValidPool;
 
 final class ValidateTraitTest extends TestCase
 {

@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 use System\Http\Request;
 use System\Http\Response;
 use System\Integrate\Application;
-use System\Integrate\Http\Karnel;
+use System\Integrate\Http\HttpKernel;
 use System\Integrate\PackageManifest;
 
 final class KarnelTest extends TestCase
@@ -26,11 +26,11 @@ final class KarnelTest extends TestCase
         ));
 
         $this->app->set(
-            Karnel::class,
+            HttpKernel::class,
             fn () => new $this->karnel($this->app)
         );
 
-        $this->karnel = new class($this->app) extends Karnel {
+        $this->karnel = new class($this->app) extends HttpKernel {
             protected function dispatcher(Request $request): array
             {
                 return [
@@ -74,7 +74,7 @@ final class KarnelTest extends TestCase
     /** @test */
     public function itCanRedirectByMiddleware()
     {
-        $respone = $this->app->make(Karnel::class);
+        $respone = $this->app->make(HttpKernel::class);
         $test    = $respone->handle(
             new Request('test')
         );
@@ -92,7 +92,7 @@ final class KarnelTest extends TestCase
     public function itCanBootstrap()
     {
         $this->assertFalse($this->app->isBootstrapped());
-        $this->app->make(Karnel::class)->bootstrap();
+        $this->app->make(HttpKernel::class)->bootstrap();
         $this->assertTrue($this->app->isBootstrapped());
     }
 }

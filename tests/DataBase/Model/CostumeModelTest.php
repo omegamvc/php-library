@@ -164,8 +164,8 @@ final class CostumeModelTest extends TestDatabase
 
 class Profile extends Model
 {
-    protected string $table_name  = 'profiles';
-    protected string $primery_key = 'user';
+    protected string $tableName  = 'profiles';
+    protected string $primaryKey = 'user';
 
     public function filterGender(string $gender): static
     {

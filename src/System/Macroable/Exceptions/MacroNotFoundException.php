@@ -2,12 +2,11 @@
 
 declare(strict_types=1);
 
-namespace System\Support\Exceptions;
+namespace System\Macroable\Exceptions;
 
-/**
- * @internal
- */
-final class MacroNotFound extends \InvalidArgumentException
+use InvalidArgumentException;
+
+class MacroNotFoundException extends InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.
