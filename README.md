@@ -79,7 +79,7 @@ Php mvc with minimum mvc framework. is simple and easy to use
     </tr>
     <tr>
         <td><code>File</code></td>
-        <td>Provides utilities for file handling and filesystem interactions</td>
+        <td>Provides utilities for file handling and filesystem interactions.</td>
         <td>N/A</td>
     </tr>
     <tr>
