@@ -316,11 +316,11 @@ available regex
     </tr>
   </thead>
   <tbody>
-    <tr>
+    <!--tr>
       <td><code>Serializable Closure</code></td>
       <td>Enables the serialization of closures in a secure and portable way.</td>
       <td><a href="https://example.com/serializable-closure" target="_blank">📖</a></td>
-    </tr>
+    </tr-->
     <tr>
       <td><code>Validator</code></td>
       <td>Provides a flexible and extensible validation system for input data.</td>
