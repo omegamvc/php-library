@@ -12,24 +12,21 @@
     <a href="https://github.com/omegamvc/omega/blob/main/LICENSE">License</a>
 </p>
 
-# PHP MVC
+## About Omega Framework
 
-Php mvc with minimum mvc framework. is simple and easy to use
+Omega Framework is a **lightweight**, **modular**, and **highly extensible** PHP framework designed to streamline the development of modern web applications. Built around the principles of the **MVC architecture** (Model-View-Controller), Omega provides a solid foundation for **rapid application development**, all while ensuring clean, well-organized code.
 
-## Feature
-- MVC base
-- Container (dependency injection)
-- Route
-- Model (database class relation)
-- View and Controller
-- MyQuery (database query builder)
-- Collection (array collection)
-- Console (assembling beautiful console app)
-- Template (create class using class generator)
-- Cron
-- Now (time managing)
-- Http request and response
-- Str (string manipulation)
+Focused on simplicity, performance, and scalability, Omega Framework equips developers with the necessary tools to build scalable and maintainable web solutions. Whether you're working on a small project or a large enterprise application, Omega offers the flexibility to grow with your needs.
+
+## Key Features
+
+- **Lightweight & Modular**: Add only what you need with minimal overhead.
+- **MVC Architecture**: Enforce clean separation of concerns for maintainable code.
+- **Routing System**: Flexible and easy-to-use routing for handling requests.
+- **Dependency Injection**: Simplify object management and testing.
+- **Extensible**: Easily extend functionality with a plugin system or custom modules.
+- **Optimized for Performance**: Crafted with speed and scalability in mind.
+- **Database Integration**: Built-in ORM for seamless database operations.
 
 ## Documentation
 
@@ -140,6 +137,9 @@ Php mvc with minimum mvc framework. is simple and easy to use
   </tbody>
 </table>
 
+## Contributing
+
+If you'd like to contribute to the Omega framework, please follow our [contribution guidelines](CONTRIBUTING.md).
 
 ## License
 
