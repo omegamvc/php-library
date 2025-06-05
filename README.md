@@ -104,17 +104,17 @@ Php mvc with minimum mvc framework. is simple and easy to use
     </tr>
     <tr>
         <td><code>Template</code></td>
-        <td>Maps incoming HTTP requests to controller actions or callbacks.</td>
+        <td></td>
         <td>N/A</td>
     </tr>
     <tr>
-      <td><code>Text/code></td>
+      <td><code>Text</code></td>
       <td>Provides methods to manipulate strings.</td>
       <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Str.md" target="_blank">📖</a></td>
     </tr>
     <tr>
         <td><code>Time</code></td>
-        <td>Maps incoming HTTP requests to controller actions or callbacks.</td>
+        <td></td>
         <td>N/A</td>
     </tr>
     <tr>
@@ -124,7 +124,7 @@ Php mvc with minimum mvc framework. is simple and easy to use
     </tr>
     <tr>
         <td><code>View</code></td>
-        <td>Maps incoming HTTP requests to controller actions or callbacks.</td>
+        <td></td>
         <td>N/A</td>
     </tr>
   </tbody>
