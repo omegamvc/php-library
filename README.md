@@ -31,146 +31,6 @@ Php mvc with minimum mvc framework. is simple and easy to use
 - Http request and response
 - Str (string manipulation)
 
-## Console
-
-Assembling beautifully console app make easy
-
-- naming parameter
-- coloring console (text and background)
-
-### Build simple console app
-```php
-class GreatConsole extends Console
-{
-  public function main()
-  {
-    // getter to get param form cli argument
-    $name = $this->name ?? 'animus';
-
-    style("Great console Application")
-    	->textGreen()
-        ->newLines()
-        ->push("hay my name is ")
-        ->push($name)
-        ->textYellow()
-        ->out()
-    ;
-  }
-}
-```
-
-**Run your app**
-
-- create bootstrapper
-```php
-#!usr/bin/env php
-
-// $argv come with default global php
-return (new greatConsole($argv))->main();
-
-```
-
-- on your console
-```bash
-php cli create --name php_mvc
-
-# output:
-# Great console application
-# hay my name is php_mvc
-```
-[🔝 Back to contents](#Feature)
-
-## Str
-
-Make string manipulation.
-
-```php
-Str::chartAt('i love php', 3); // o
-Str::concat(['i', 'love', 'php']); // i love php
-Str::indexOf('i love php', 'p'); // 8
-Str::lastIndexOf('i love php', 'p'); // 10
-Str::match('i love php', '/love/'); // love
-// ...
-// and many more
-```
-- `chartAt`
-- `concat`
-- `indexOf`
-- `lastIndexOf`
-- `match`
-- `slice`
-- `split`
-- `replace`
-- `toUpperCase`
-- `toLowerCase`
-- `firstUpper`
-- `firstUpperAll`
-- `toSnackCase`
-- `toKebabCase`
-- `toPascalCase`
-- `toCamelCase`
-- `contains`
-- `startsWith`
-- `endsWith`
-- `slug`
-- `template`
-- `length`
-- `repeat`
-- `isString`
-- `isEmpty`
-- `fill`
-- `fillEnd`
-- `limit`
-
-### Custom macro
-
-custom macro string;
-
-```php
-Str::macro('prefix', fn($text, $prefix) => $prefix.$test);
-
-echo Str::prefix('cool', 'its '); // its cool
-```
-
-### String class
-
-use chain string class.
-
-```php
-$string = new Text('I Love rust');
-
-echo $string->replace('rust', 'php')->lower()->slug();
-// i-love-php
-
-echo $string->length(); // 10
-echo $string->isEmpty(); // false
-```
-
-### String Regex
-
-```php
-Str::is('some@email.com', Regex::EMAIL); // true
-```
-
-available regex
-- `email`
-- `user`
-- `plain_text`
-- `slug`
-- `html_tag`
-- `js_inline`
-- `password_complex`
-- `password_moderate`
-- `date_yyyymmdd`
-- `date_ddmmyyyy`
-- `date_ddmmmyyyy`
-- `ip4`
-- `ip6`
-- `ip4_6`
-- `url`
-
-[🔝 Back to contents](#Feature)
-
 ## Documentation
 
 <table>
@@ -202,6 +62,11 @@ available regex
       <td>Enables the serialization of closures in a secure and portable way.</td>
       <td><a href="https://example.com/serializable-closure" target="_blank">📖</a></td>
     </tr-->
+    <tr>
+      <td><code>Strr</code></td>
+      <td>Provides methods to manipulate strings.</td>
+      <td><a href="https://github.com/omegamvc/php-library/blob/main/docs/Str.md" target="_blank">📖</a></td>
+    </tr>
     <tr>
       <td><code>Validator</code></td>
       <td>Provides a flexible and extensible validation system for input data.</td>
