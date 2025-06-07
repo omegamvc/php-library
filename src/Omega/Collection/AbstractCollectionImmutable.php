@@ -1,12 +1,70 @@
 <?php
 
+/**
+ * Part of Omega - Collection Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Collection;
 
-use Omega\Collection\Interfaces\CollectionInterface;
+use ArrayIterator;
+use Traversable;
+
+use function array_column;
+use function array_count_values;
+use function array_key_exists;
+use function array_key_first;
+use function array_key_last;
+use function array_keys;
+use function array_rand;
+use function array_slice;
+use function array_sum;
+use function array_values;
+use function call_user_func;
+use function count;
+use function current;
+use function in_array;
+use function is_array;
+use function is_null;
+use function is_object;
+use function json_encode;
+use function max;
+use function min;
+use function next;
+use function prev;
+use function var_dump;
 
 /**
+ * Abstract base class for an immutable collection.
+ *
+ * This class provides a foundation for collections that store key-value pairs
+ * and prevent direct modification after construction. It implements common
+ * collection operations such as retrieval, iteration, filtering, and
+ * transformation while maintaining immutability.
+ *
+ * The collection supports generic key (TKey) and value (TValue) types, and
+ * offers methods for safe access, querying, and manipulation without
+ * altering the underlying data.
+ *
+ * Subclasses can extend and customize behavior while preserving the core.
+ *
+ * immutable nature.
+ * @category  Omega
+ * @package   Collection
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ *
  * @template TKey of array-key
  * @template TValue
  *
@@ -15,14 +73,18 @@ use Omega\Collection\Interfaces\CollectionInterface;
 abstract class AbstractCollectionImmutable implements CollectionInterface
 {
     /**
+     * The internal array holding the collection items.
+     *
      * @var array<TKey, TValue>
      */
     protected array $collection = [];
 
     /**
-     * @param iterable<TKey, TValue> $collection
+     * Initializes the collection with an iterable of items.
+     *
+     * @param iterable<TKey, TValue> $collection Initial items for the collection.
      */
-    public function __construct($collection)
+    public function __construct(array $collection)
     {
         foreach ($collection as $key => $item) {
             $this->set($key, $item);
@@ -30,9 +92,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $name
+     * Magic getter to access collection items by key.
      *
-     * @return TValue|null
+     * @param TKey $name The key to retrieve.
+     * @return TValue|null Returns the item at the specified key or null if not found.
      */
     public function __get($name)
     {
@@ -40,7 +103,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return array<TKey, TValue>
+     * Returns all items in the collection as an array.
+     *
+     * @return array<TKey, TValue> The entire collection as an associative array.
      */
     public function all(): array
     {
@@ -48,7 +113,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * {@inheritdoc}
+     * Converts the collection to an array.
+     *
+     * @return array<TKey, TValue> The collection as an array.
      */
     public function toArray(): array
     {
@@ -56,12 +123,13 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
+     * Retrieves an item by key with an optional default if key does not exist.
+     *
      * @template TGetDefault
      *
-     * @param TKey             $name
-     * @param TGetDefault|null $default
-     *
-     * @return TValue|TGetDefault|null
+     * @param TKey             $name    The key to get.
+     * @param TGetDefault|null $default The default value to return if key is missing.
+     * @return TValue|TGetDefault|null The item value or the default if not found.
      */
     public function get($name, $default = null)
     {
@@ -69,10 +137,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey   $name
-     * @param TValue $value
+     * Sets an item in the collection by key.
      *
-     * @return $this
+     * @param TKey   $name  The key where to set the item.
+     * @param TValue $value The value to set.
+     * @return $this Fluent interface.
      */
     protected function set($name, $value): self
     {
@@ -82,11 +151,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * Push item (set without key).
+     * Adds an item to the collection without specifying a key.
      *
-     * @param TValue $value
-     *
-     * @return $this
+     * @param TValue $value The value to add.
+     * @return $this Fluent interface.
      */
     protected function push($value): self
     {
@@ -96,7 +164,10 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TKey $key
+     * Checks whether the collection contains the specified key.
+     *
+     * @param TKey $key The key to check.
+     * @return bool True if the key exists in the collection, false otherwise.
      */
     public function has($key): bool
     {
@@ -104,7 +175,11 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param TValue $item
+     * Checks if the collection contains a given item.
+     *
+     * @param TValue $item   The item to search for.
+     * @param bool   $strict Whether to use strict comparison (default false).
+     * @return bool True if item is found, false otherwise.
      */
     public function contain($item, bool $strict = false): bool
     {
@@ -112,7 +187,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TKey[]
+     * Returns all keys in the collection.
+     *
+     * @return TKey[] Array of all keys in the collection.
      */
     public function keys(): array
     {
@@ -120,7 +197,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue[]
+     * Returns all values in the collection.
+     *
+     * @return TValue[] Array of all values in the collection.
      */
     public function items(): array
     {
@@ -128,14 +207,13 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * Puck given value by array key.
+     * Extracts values from a collection of arrays or objects by a given key.
      *
-     * @param TKey      $value Pluck key target as value
-     * @param TKey|null $key   Pluck key target as key
-     *
-     * @return array<TKey, TValue>
+     * @param TKey      $value The key to pluck values from.
+     * @param TKey|null $key   Optional key to use as the keys in the result array.
+     * @return array<TKey, TValue> An array of plucked values.
      */
-    public function pluck($value, $key = null)
+    public function pluck($value, $key = null): array
     {
         $results = [];
 
@@ -154,28 +232,38 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return $results;
     }
 
+    /**
+     * Returns the number of items in the collection.
+     *
+     * @return int The count of items.
+     */
     public function count(): int
     {
         return count($this->collection);
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * Counts the items matching a given condition.
+     *
+     * @param callable(TValue, TKey): bool $condition A callback function that returns true for items to count.
+     * @return int The count of items that satisfy the condition.
      */
     public function countIf(callable $condition): int
     {
         $count = 0;
         foreach ($this->collection as $key => $item) {
-            $do_somethink = call_user_func($condition, $item, $key);
+            $doSomething = call_user_func($condition, $item, $key);
 
-            $count += $do_somethink === true ? 1 : 0;
+            $count += $doSomething === true ? 1 : 0;
         }
 
         return $count;
     }
 
     /**
-     * @return array<TKey, int>
+     * Counts the occurrences of each unique value in the collection.
+     *
+     * @return array<TKey, int> An associative array of values and their counts.
      */
     public function countBy(): array
     {
@@ -183,16 +271,18 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): (bool|void) $callable
+     * Iterates over each item in the collection and applies the given callback.
+     * If the callback returns false, the iteration stops.
      *
-     * @return $this
+     * @param callable(TValue, TKey): (bool|void) $callable The callback to apply.
+     * @return $this Fluent interface.
      */
-    public function each($callable): self
+    public function each(callable $callable): self
     {
         foreach ($this->collection as $key => $item) {
-            $do_somethink = call_user_func($callable, $item, $key);
+            $doSomething = call_user_func($callable, $item, $key);
 
-            if (false === $do_somethink) {
+            if ($doSomething === false) {
                 break;
             }
         }
@@ -201,7 +291,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return $this
+     * Dumps the internal collection for debugging purposes.
+     *
+     * @return $this Fluent interface.
      */
     public function dump(): self
     {
@@ -211,14 +303,15 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * Determines if any item in the collection satisfies the given condition.
+     *
+     * @param callable(TValue, TKey): bool $condition The condition callback.
+     * @return bool True if at least one item satisfies the condition, false otherwise.
      */
     public function some(callable $condition): bool
     {
         foreach ($this->collection as $key => $item) {
-            $call = call_user_func($condition, $item, $key);
-
-            if ($call === true) {
+            if (call_user_func($condition, $item, $key) === true) {
                 return true;
             }
         }
@@ -227,14 +320,15 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param callable(TValue, TKey=): bool $condition
+     * Determines if every item in the collection satisfies the given condition.
+     *
+     * @param callable(TValue, TKey): bool $condition The condition callback.
+     * @return bool True if all items satisfy the condition, false otherwise.
      */
     public function every(callable $condition): bool
     {
         foreach ($this->collection as $key => $item) {
-            $call = call_user_func($condition, $item, $key);
-
-            if ($call === false) {
+            if (call_user_func($condition, $item, $key) === false) {
                 return false;
             }
         }
@@ -242,17 +336,23 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return true;
     }
 
+    /**
+     * Returns the JSON-encoded string representation of the collection.
+     *
+     * @return string JSON encoded collection.
+     */
     public function json(): string
     {
         return json_encode($this->collection);
     }
 
     /**
+     * Returns the first item in the collection or a default value if empty.
+     *
      * @template TGetDefault
      *
-     * @param TGetDefault|null $default
-     *
-     * @return TValue|TGetDefault|null
+     * @param TGetDefault|null $default Default value if collection is empty.
+     * @return TValue|TGetDefault|null The first item or the default.
      */
     public function first($default = null)
     {
@@ -262,21 +362,23 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param positive-int $take
+     * Returns the first N items from the collection.
      *
-     * @return array<TKey, TValue>
+     * @param positive-int $take Number of items to take.
+     * @return array<TKey, TValue> Array containing the first N items.
      */
-    public function firsts(int $take)
+    public function firsts(int $take): array
     {
-        return array_slice($this->collection, 0, (int) $take);
+        return array_slice($this->collection, 0, $take);
     }
 
     /**
+     * Returns the last item in the collection or a default value if empty.
+     *
      * @template TGetDefault
      *
-     * @param TGetDefault|null $default
-     *
-     * @return TValue|TGetDefault|null
+     * @param TGetDefault|null $default Default value if collection is empty.
+     * @return TValue|TGetDefault|null The last item or the default.
      */
     public function last($default = null)
     {
@@ -286,33 +388,40 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @param positive-int $take
+     * Returns the last N items from the collection.
      *
-     * @return array<TKey, TValue>
+     * @param positive-int $take Number of items to take.
+     * @return array<TKey, TValue> Array containing the last N items.
      */
-    public function lasts(int $take)
+    public function lasts(int $take): array
     {
-        return array_slice($this->collection, -$take, (int) $take);
+        return array_slice($this->collection, -$take, $take);
     }
 
     /**
-     * @return TKey|null
+     * Returns the first key of the collection.
+     *
+     * @return int|string|null The first key if present, or null if the collection is empty.
      */
-    public function firstKey()
+    public function firstKey(): int|string|null
     {
         return array_key_first($this->collection);
     }
 
     /**
-     * @return TKey|null
+     * Returns the last key of the collection.
+     *
+     * @return int|string|null The last key if present, or null if the collection is empty.
      */
-    public function lastKey()
+    public function lastKey(): int|string|null
     {
         return array_key_last($this->collection);
     }
 
     /**
-     * @return TValue
+     * Returns the current element in the collection.
+     *
+     * @return TValue|null The current element or null if the internal pointer is invalid.
      */
     public function current()
     {
@@ -320,7 +429,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * Advances the internal pointer and returns the next element.
+     *
+     * @return TValue|false The next element or false if there are no more elements.
      */
     public function next()
     {
@@ -328,7 +439,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * Moves the internal pointer backward and returns the previous element.
+     *
+     * @return TValue|false The previous element or false if at the beginning.
      */
     public function prev()
     {
@@ -336,7 +449,9 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
     }
 
     /**
-     * @return TValue
+     * Returns a random element from the collection.
+     *
+     * @return TValue|null A random element or null if the collection is empty.
      */
     public function rand()
     {
@@ -345,95 +460,140 @@ abstract class AbstractCollectionImmutable implements CollectionInterface
         return $this->get($rand);
     }
 
+    /**
+     * Checks if the collection is empty.
+     *
+     * @return bool True if the collection contains no items, false otherwise.
+     */
     public function isEmpty(): bool
     {
         return empty($this->collection);
     }
 
-    public function lenght(): int
+    /**
+     * Returns the number of items in the collection.
+     *
+     * @return int The count of items.
+     */
+    public function length(): int
     {
         return count($this->collection);
     }
 
+    /**
+     * Returns the sum of all values in the collection.
+     *
+     * @return int The sum of values.
+     */
     public function sum(): int
     {
         return array_sum($this->collection);
     }
 
-    public function avg(): int
+    /**
+     * Returns the average (mean) of all values in the collection.
+     *
+     * @return float The average value.
+     */
+    public function avg(): float
     {
-        return $this->sum() / $this->count();
+        return $this->count() === 0 ? 0 : $this->sum() / $this->count();
     }
 
     /**
-     * Find higest value.
+     * Finds the highest value in the collection or in a given key column.
      *
-     * @param string|int|null $key
+     * @param int|string|null $key Optional key to find max value from nested arrays/objects.
+     * @return int The highest value found.
      */
-    public function max($key = null): int
+    public function max(int|string|null $key = null): int
     {
         return max(array_column($this->collection, $key));
     }
 
     /**
-     * Find lowest value.
+     * Finds the lowest value in the collection or in a given key column.
      *
-     * @param string|int|null $key
+     * @param int|string|null $key Optional key to find min value from nested arrays/objects.
+     * @return int The lowest value found.
      */
-    public function min($key = null): int
+    public function min(int|string|null $key = null): int
     {
         return min(array_column($this->collection, $key));
     }
 
-    // array able
-
     /**
-     * @param TKey $offset
+     * Checks if the given offset exists in the collection.
+     *
+     * @param TKey $offset The key to check.
+     * @return bool True if the offset exists, false otherwise.
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
 
     /**
-     * @param TKey $offset
+     * Retrieves the value at the given offset.
      *
-     * @return TValue|null
+     * @param TKey $offset The key to retrieve.
+     * @return TValue|null The value at the offset, or null if not found.
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->__get($offset);
     }
 
-    public function offsetSet($offset, $value): void
+    /**
+     * Sets the value at the given offset.
+     *
+     * @param TKey|null $offset The key to set.
+     * @param TValue $value The value to set.
+     * @return void
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
 
-    public function offsetUnset($offset): void
+    /**
+     * Unsetting values is not supported in an immutable collection.
+     *
+     * @param TKey $offset The key to unset.
+     */
+    public function offsetUnset(mixed $offset): void
     {
+        // Immutable collection; no action performed.
     }
 
     /**
-     * @return \Traversable<TKey, TValue>
+     * Returns an iterator for the collection.
+     *
+     * @return Traversable<TKey, TValue> Iterator for key-value pairs.
      */
-    public function getIterator(): \Traversable
+    public function getIterator(): Traversable
     {
-        return new \ArrayIterator($this->all());
+        return new ArrayIterator($this->all());
     }
 
+    /**
+     * Deep clones the collection when the object is cloned.
+     *
+     * @return void
+     */
     public function __clone()
     {
         $this->collection = $this->deepClone($this->collection);
     }
 
     /**
-     * @param array<TKey, TValue> $collection
+     * Recursively clones an array of values.
      *
-     * @return array<TKey, TValue>
+     * @param array<TKey, TValue> $collection The array to deep clone.
+     * @return array<TKey, TValue> The deep cloned array.
      */
-    protected function deepClone($collection)
+    protected function deepClone(array $collection): array
     {
         $clone = [];
         foreach ($collection as $key => $value) {

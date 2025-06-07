@@ -18,7 +18,6 @@ use DateInterval;
 use DateTimeImmutable;
 use DateTimeInterface;
 use FilesystemIterator;
-use InvalidArgumentException;
 use Omega\Cache\Exceptions\ValueNotIncrementableException;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;

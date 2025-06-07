@@ -76,6 +76,6 @@ class ServeCommand extends Command
 
         $adress = $this->expose ? '0.0.0.0' : '127.0.0.1';
 
-        shell_exec("php -S {$adress}:{$port} -tests public/");
+        shell_exec("php -S {$adress}:{$port} -t public/");
     }
 }
