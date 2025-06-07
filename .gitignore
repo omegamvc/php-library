@@ -1,4 +1,4 @@
-vendor/
+vendorgit co
 composer.lock
 .phpunit.result.cache
 .php-cs-fixer.cache

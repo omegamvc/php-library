@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Omega\Collection;
 
 /**
+ * @property string|null $bau_1
+ * @property string|null $bau_8
  * @template TKey of array-key
  * @template TValue
  *

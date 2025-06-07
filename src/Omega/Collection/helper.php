@@ -2,7 +2,14 @@
 
 declare(strict_types=1);
 
-use Omega\Collection\Collection;
+namespace Omega\Collection;
+
+use function array_key_exists;
+use function array_slice;
+use function count;
+use function explode;
+use function function_exists;
+use function implode;
 
 if (!function_exists('collection')) {
     /**
@@ -12,10 +19,9 @@ if (!function_exists('collection')) {
      * @template TValue
      *
      * @param iterable<TKey, TValue> $collection Array collection
-     *
      * @return Collection<TKey, TValue>
      */
-    function collection($collection = []): Collection
+    function collection(iterable $collection = []): Collection
     {
         return new Collection($collection);
     }
@@ -29,10 +35,9 @@ if (!function_exists('collection_immutable')) {
      * @template TValue
      *
      * @param iterable<TKey, TValue> $collection Array collection
-     *
      * @return Collection<TKey, TValue>
      */
-    function collection_immutable($collection = []): Collection
+    function collection_immutable(iterable $collection = []): Collection
     {
         return new Collection($collection);
     }
@@ -48,10 +53,9 @@ if (!function_exists('data_get')) {
      * @param array<array-key, TValue> $array
      * @param array-key                $key     String of dot array key
      * @param TGetDefault              $default
-     *
      * @return TGetDefault|array<array-key, TValue>|null
      */
-    function data_get($array, $key, $default = null)
+    function data_get(array $array, int|string $key, $default = null)
     {
         $segments = explode('.', (string) $key);
         foreach ($segments as $segment) {

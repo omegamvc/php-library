@@ -628,7 +628,7 @@ class Valid
 
     /**
      * Check the uploaded file for extension.
-     * Doesn't check mime-type yet.
+     * Doesn'tests check mime-type yet.
      *
      * @param string $extension Extention without dot
      */

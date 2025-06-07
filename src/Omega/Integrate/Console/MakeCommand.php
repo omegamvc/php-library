@@ -285,7 +285,7 @@ class MakeCommand extends Command
         $template = str_replace('__table__', $name, $template);
 
         if (false === file_exists($path_to_file) || false === file_put_contents($file_name, $template)) {
-            fail('Can\'t create migration file.')->out();
+            fail('Can\'tests create migration file.')->out();
 
             return 1;
         }

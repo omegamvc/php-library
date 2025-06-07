@@ -56,7 +56,7 @@ class PackageDiscoveryCommand extends Command
             $style->out(false);
         } catch (\Throwable $th) {
             fail($th->getMessage())->out(false);
-            fail('Can\'t create package mainfest cahce file.')->out();
+            fail('Can\'tests create package mainfest cahce file.')->out();
 
             return 1;
         }

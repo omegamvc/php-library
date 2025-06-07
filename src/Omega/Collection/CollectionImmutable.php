@@ -7,6 +7,9 @@ namespace Omega\Collection;
 use Omega\Collection\Exceptions\NoModify;
 
 /**
+ *
+ * @property null $bau_1
+ *
  * @template TKey of array-key
  * @template TValue
  *

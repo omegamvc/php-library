@@ -15,7 +15,7 @@ class Regex
 
     /**
      * Regex common user name.
-     * - First character can't be number
+     * - First character can'tests be number
      * - Combine aplha numeric
      * - More that 3 and less that 16 character.
      *

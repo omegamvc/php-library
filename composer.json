@@ -35,11 +35,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "System\\Test\\Database\\": "tests/DataBase"
-        },
-        "files": [
-            "tests/Integrate/Commands/CommandTest.php"
-        ]
+            "Tests\\": "tests/Tests/"
+        }
     },
     "extra": {
         "branch-alias": {
