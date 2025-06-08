@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Omega\Integrate;
 
+use Omega\Config\ConfigRepository;
 use Omega\Container\Container;
 use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Http\Request;
