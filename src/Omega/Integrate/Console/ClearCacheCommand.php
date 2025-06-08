@@ -120,7 +120,6 @@ class ClearCacheCommand extends Command
         /** @var string[]|string|bool $userDrivers */
         $userDrivers = $this->option('drivers', false);
 
-        // Recupera l'elenco dei driver registrati
         $registeredDrivers = array_keys((fn (): array => $this->{'driver'})->call($cache));
 
         if ($this->option('all', false) && false === $userDrivers) {
@@ -130,7 +129,6 @@ class ClearCacheCommand extends Command
         if ($userDrivers) {
             $drivers = is_array($userDrivers) ? $userDrivers : [$userDrivers];
 
-            // Verifica che tutti i driver esistano
             $unknownDrivers = array_diff($drivers, $registeredDrivers);
 
             if (!empty($unknownDrivers)) {
@@ -143,7 +141,7 @@ class ClearCacheCommand extends Command
 
         if (null === $drivers) {
             $cache->driver()->clear();
-            ok('Done default cache driver has been clear.')->out(false);
+            ok('Done default cache driver has been cleared.')->out(false);
             return 0;
         }
 
