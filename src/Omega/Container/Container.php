@@ -1,20 +1,58 @@
 <?php
 
+/**
+ * Part of Omega - Container Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Container;
 
+use ArrayAccess;
 use DI\Container as DIContainer;
+use DI\DependencyException;
+use DI\NotFoundException;
+use Omega\Container\Exceptions\AliasConflictException;
+use ReturnTypeWillChange;
+
+use function array_key_exists;
+use function sprintf;
 
 /**
- * @implements \ArrayAccess<string|class-string<mixed>, mixed>
+ * Extended dependency injection container based on PHP-DI.
+ * This container inherits the core functionality of PHP-DI's container
+ * while adding support for entry aliasing and additional management features.
+ * It also implements ArrayAccess, allowing you to access entries via array syntax.
+ *
+ * Example:
+ * ```php
+ * $container['MyService'] = fn() => new MyService();
+ * $container->alias(MyService::class, 'service');
+ * $service = $container['service'];
+ * ```
+ *
+ * @category  Omega
+ * @package   Container
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ *
+ * @implements ArrayAccess<string|class-string<mixed>, mixed>
  */
-class Container extends DIContainer implements \ArrayAccess
+class Container extends DIContainer implements ArrayAccess, ContainerInterface
 {
     /**
-     * Registed aliases entry container.
-     *
      * @var array<string, string>
+     * Stores alias mappings where the key is the alias and the value is the original entry name.
      */
     protected array $aliases = [];
 
@@ -30,10 +68,6 @@ class Container extends DIContainer implements \ArrayAccess
 
     /**
      * {@inheritDoc}
-     *
-     * @param array<array-key, mixed> $parameters Optional parameters to use to build the entry. Use this to force
-     *                                            specific parameters to specific values. Parameters not defined in this
-     *                                            array will be resolved using the container.
      */
     public function make(string $name, array $parameters = []): mixed
     {
@@ -53,19 +87,27 @@ class Container extends DIContainer implements \ArrayAccess
     }
 
     /**
-     * Set entry alias conntainer.
+     * {@inheritdoc}
+     *
+     * @throws AliasConflictException If the alias is the same as the abstract.
      */
     public function alias(string $abstract, string $alias): void
     {
         if ($abstract === $alias) {
-            throw new \Exception("{$abstract} is aliased to itself.");
+            throw new AliasConflictException(
+                sprintf(
+                    "Cannot register alias '%s' for '%s': alias and abstract must be different.",
+                    $alias,
+                    $abstract
+                )
+            );
         }
 
         $this->aliases[$alias] = $abstract;
     }
 
     /**
-     * Get alias for an abstract if available.
+     * {@inheritdoc}
      */
     public function getAlias(string $abstract): string
     {
@@ -75,7 +117,7 @@ class Container extends DIContainer implements \ArrayAccess
     }
 
     /**
-     * Flush container.
+     * {@inheritdoc}
      */
     public function flush(): void
     {
@@ -85,45 +127,51 @@ class Container extends DIContainer implements \ArrayAccess
     }
 
     /**
-     * Offest exist check.
+     * Determines whether the given entry exists in the container.
      *
-     * @param string $offset
+     * @param string $offset The entry name or alias.
+     * @return bool True if the entry exists, false otherwise.
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
 
     /**
-     * Get the value.
+     * Retrieves an entry from the container using array syntax.
      *
-     * @param string|class-string<mixed> $offset entry name or a class name
-     *
-     * @return mixed
+     * @param string|class-string<mixed> $offset The entry name or a class name.
+     * @return mixed The resolved entry.
+     * @throws DependencyException
+     * @throws NotFoundException
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    #[ReturnTypeWillChange]
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->make($offset);
     }
 
     /**
-     * Set the value.
+     * Sets a container entry using array syntax.
      *
-     * @param string $offset
-     * @param mixed  $value
+     * @param string $offset The entry name.
+     * @param mixed $value The value or factory.
+     * @return void
      */
-    public function offsetSet($offset, $value): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->set($offset, $value);
     }
 
     /**
-     * Unset the value.
+     * Unsets an entry from the container using array syntax.
      *
-     * @param string $offset
+     * Note: this only clears the resolved instance, not the actual definition.
+     *
+     * @param string $offset The entry name.
+     * @return void
      */
-    public function offsetUnset($offset): void
+    public function offsetUnset(mixed $offset): void
     {
         unset($this->resolvedEntries[$offset]);
     }

@@ -20,7 +20,6 @@ use DateTime;
 use Omega\Cache\Storage\ArrayStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-
 use function time;
 
 /**

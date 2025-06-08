@@ -15,9 +15,10 @@ declare(strict_types=1);
 
 namespace Tests\Collection;
 
-use PHPUnit\Framework\TestCase;
 use Omega\Collection\Collection;
 use Omega\Collection\CollectionImmutable;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 
 use function array_filter;
 use function array_keys;
@@ -54,6 +55,7 @@ use function str_contains;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version    2.0.0
  */
+#[CoversClass(Collection::class)]
 class CollectionTest extends TestCase
 {
     /**
