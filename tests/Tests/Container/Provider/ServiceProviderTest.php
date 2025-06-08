@@ -57,6 +57,14 @@ use function unlink;
 #[CoversClass(AbstractServiceProvider::class)]
 class ServiceProviderTest extends TestCase
 {
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         @unlink(__DIR__ . '/assets/copy/to/file.txt');
