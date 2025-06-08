@@ -9,7 +9,7 @@ use Omega\Http\Request;
 use Omega\Http\Response;
 use Omega\Integrate\Application;
 use Omega\Integrate\Http\HttpKernel;
-use Omega\Integrate\ServiceProvider;
+use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Support\Facades\Facade;
 
 class TestCase extends BaseTestCase
@@ -22,7 +22,7 @@ class TestCase extends BaseTestCase
     {
         $this->app->flush();
         Facade::flushInstance();
-        ServiceProvider::flushModule();
+        AbstractServiceProvider::flushModule();
         unset($this->app);
         unset($this->kernel);
     }

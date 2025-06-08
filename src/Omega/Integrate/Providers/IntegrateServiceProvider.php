@@ -6,15 +6,15 @@ namespace Omega\Integrate\Providers;
 
 use Omega\File\UploadFile;
 use Omega\Http\Request;
-use Omega\Integrate\ServiceProvider;
+use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Validator\Validator;
 
-class IntegrateServiceProvider extends ServiceProvider
+class IntegrateServiceProvider extends AbstractServiceProvider
 {
     /**
      * {@inheritDoc}
      */
-    public function register()
+    public function register(): void
     {
         Request::macro(
             'validate',
