@@ -143,7 +143,7 @@ abstract class AbstractServiceProvider
                 }
             }
 
-            if (!copy($from, $to)) {
+            if (!@copy($from, $to)) {
                 throw new FileCopyException("Failed to copy file from $from to $to");
             }
 

@@ -260,7 +260,7 @@ class ServiceProviderTest extends TestCase
 
         AbstractServiceProvider::importFile(
             __DIR__ . '/assets/copy/from/missing.txt',
-            __DIR__ . '/assets/copy/to/file.txt'
+            __DIR__ . '/assets/copy/to/missing.txt'
         );
     }
 }
