@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Omega\Console\Style;
 
+use Closure;
 use Omega\Console\Interfaces\OutputStream;
 use Omega\Console\Interfaces\RuleInterface;
 use Omega\Console\Style\Color\BackgroundColor;
@@ -43,6 +44,9 @@ use function Omega\Text\text;
  * @method self bgLightMagenta()
  * @method self bgLightCyan()
  * @method self bgWhite()
+ * @method text_red_500()
+ * @method bg_blue_500()
+ * @method text_red_10()
  */
 class Style
 {
@@ -328,12 +332,12 @@ class Style
     /**
      * Print terminal style if condition true.
      *
-     * @param bool $condition If true will echo out
+     * @param Closure|bool $condition If true will echo out
      * @param bool $new_line  True if print with new line in end line
      *
      * @return void
      */
-    public function outIf($condition, $new_line = true)
+    public function outIf(Closure|bool $condition, bool $new_line = true): void
     {
         if ($condition) {
             $out = $this . ($new_line ? PHP_EOL : null);

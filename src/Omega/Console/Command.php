@@ -12,8 +12,31 @@ use Omega\Text\Str;
  * - TraitCommand (optional).
  *
  * @property string $_ Get argument name
+ * @property bool|int|string|string[]|null $name
+ * @property bool|int|string|string[]|null $nick
+ * @property bool|int|string|string[]|null $whois
+ * @property bool|int|string|string[]|null $default
+ * @property bool|int|string|string[]|null $t
+ * @property bool|int|string|string[]|null $n
+ * @property bool|int|string|string[]|null $s
+ * @property bool|int|string|string[]|null $l
+ * @property bool|int|string|string[]|null $cp
+ * @property bool|int|string|string[]|null $io
+ * @property bool|int|string|string[]|null $i
+ * @property bool|int|string|string[]|null $o
+ * @property bool|int|string|string[]|null $ab
+ * @property bool|int|string|string[]|null $a
+ * @property bool|int|string|string[]|null $b
+ * @property bool|int|string|string[]|null $y
+ * @property bool|int|string|string[]|null $d
+ * @property bool|int|string|string[]|null $vvv
+ * @property bool|int|string|string[]|null $v
+ * @property bool|int|string|string[]|null $last
  *
  * @implements \ArrayAccess<string, string|bool|int|null>
+ * @method echoTextRed()
+ * @method echoTextYellow()
+ * @method echoTextGreen()
  */
 class Command implements \ArrayAccess
 {

@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Console\Commands;
 
 use Omega\Integrate\Application;
-use Omega\Integrate\Console\ConfigCommand;
+use Omega\Console\Commands\ConfigCommand;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

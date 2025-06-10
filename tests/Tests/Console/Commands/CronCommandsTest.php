@@ -17,7 +17,7 @@ namespace Tests\Console\Commands;
 
 use Omega\Cron\InterpolateInterface;
 use Omega\Cron\Schedule;
-use Omega\Integrate\Console\CronCommand;
+use Omega\Console\Commands\CronCommand;
 use Omega\Support\Facades\Schedule as FacadesSchedule;
 use PHPUnit\Framework\Attributes\CoversClass;
 
@@ -98,7 +98,7 @@ class CronCommandsTest extends CommandTest
      */
     private function maker(): CronCommand
     {
-        return new class($this->argv('cli cron')) extends CronCommand {
+        return new class($this->argv('omega cron')) extends CronCommand {
             public function __construct($argv)
             {
                 parent::__construct($argv);
@@ -166,7 +166,7 @@ class CronCommandsTest extends CommandTest
         $out  = ob_get_clean();
 
         $this->assertContain('from-static', $out);
-        $this->assertContain('cli-schedule', $out);
+        $this->assertContain('omega-schedule', $out);
         $this->assertSuccess($exit);
     }
 
