@@ -104,7 +104,7 @@ abstract class MyCRUD
     }
 
     /**
-     * Featch from database using primery_key and identifer.
+     * Featch from database using primary_key and identifer.
      */
     public function read(): bool
     {

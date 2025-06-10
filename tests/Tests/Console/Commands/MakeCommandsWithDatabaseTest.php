@@ -13,6 +13,8 @@ use Omega\Support\Facades\Schema;
 use Tests\Database\AbstractDatabaseTest;
 use Omega\Text\Str;
 
+require_once __DIR__ . '/../../Database/AbstractDatabaseTest.php';
+
 class MakeCommandsWithDatabaseTest extends AbstractDatabaseTest
 {
     private Application $app;
@@ -61,6 +63,6 @@ class MakeCommandsWithDatabaseTest extends AbstractDatabaseTest
 
         $model = file_get_contents($file);
         $this->assertTrue(Str::contains($model, 'protected string $' . "table_name  = 'users'"));
-        $this->assertTrue(Str::contains($model, 'protected string $' . "primary_key = 'user'"));
+        $this->assertTrue(Str::contains($model, 'protected string $' . "primary_key = 'id'"));
     }
 }

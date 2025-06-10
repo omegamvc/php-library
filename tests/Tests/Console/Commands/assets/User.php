@@ -9,5 +9,5 @@ use Omega\Database\MyModel\Model;
 class User extends Model
 {
     protected string $table_name  = 'users';
-    protected string $primery_key = 'id';
+    protected string $primary_key = 'id';
 }

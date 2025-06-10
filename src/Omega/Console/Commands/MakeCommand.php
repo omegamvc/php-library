@@ -171,7 +171,7 @@ class MakeCommand extends Command
         $class->uses(['Omega\Database\MyModel\Model']);
         $class->extend('Model');
 
-        $primery_key = 'id';
+        $primary_key = 'id';
         $table_name  = $this->OPTION[0];
         if ($this->option('table-name', false)) {
             $table_name = $this->option('table-name');
@@ -180,7 +180,7 @@ class MakeCommand extends Command
                 foreach (DB::table($table_name)->info() as $column) {
                     $class->addComment('@property mixed $' . $column['COLUMN_NAME']);
                     if ('PRI' === $column['COLUMN_KEY']) {
-                        $primery_key = $column['COLUMN_NAME'];
+                        $primary_key = $column['COLUMN_NAME'];
                     }
                 }
             } catch (\Throwable $th) {
@@ -189,7 +189,7 @@ class MakeCommand extends Command
         }
 
         $class->addProperty('table_name')->visibility(Property::PROTECTED_)->dataType('string')->expecting(" = '{$table_name}'");
-        $class->addProperty('primery_key')->visibility(Property::PROTECTED_)->dataType('string')->expecting("= '{$primery_key}'");
+        $class->addProperty('primary_key')->visibility(Property::PROTECTED_)->dataType('string')->expecting("= '{$primary_key}'");
 
         if (false === file_put_contents($model_location, $class->generate())) {
             fail('Failed Create model file')->out();

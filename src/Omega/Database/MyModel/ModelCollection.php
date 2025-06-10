@@ -68,10 +68,10 @@ class ModelCollection extends Collection
     {
         $table_name  = (fn () => $this->{'table_name'})->call($this->model);
         $pdo         = (fn () => $this->{'pdo'})->call($this->model);
-        $primery_key = (fn () => $this->{'primery_key'})->call($this->model);
+        $primary_key = (fn () => $this->{'primary_key'})->call($this->model);
         $update      = new Update($table_name, $pdo);
 
-        $update->values($values)->in($primery_key, $this->getPrimaryKey());
+        $update->values($values)->in($primary_key, $this->getPrimaryKey());
 
         return $update->execute();
     }
@@ -83,10 +83,10 @@ class ModelCollection extends Collection
     {
         $table_name  = (fn () => $this->{'table_name'})->call($this->model);
         $pdo         = (fn () => $this->{'pdo'})->call($this->model);
-        $primery_key = (fn () => $this->{'primery_key'})->call($this->model);
+        $primary_key = (fn () => $this->{'primary_key'})->call($this->model);
         $delete      = new Delete($table_name, $pdo);
 
-        $delete->in($primery_key, $this->getPrimaryKey());
+        $delete->in($primary_key, $this->getPrimaryKey());
 
         return $delete->execute();
     }

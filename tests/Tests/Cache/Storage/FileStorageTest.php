@@ -55,7 +55,7 @@ class FileStorageTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->storage = new FileStorage(__DIR__ . '/cache');
+        $this->storage = new FileStorage(dirname(__DIR__, 2) . '/fixtures/cache');
     }
 
     /**

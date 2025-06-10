@@ -89,17 +89,17 @@ class MigrationCommand extends Command
                 'migrate:reset'            => 'Rolling back all migrations (down)',
                 'migrate:refresh'          => 'Rolling back and run migration all',
                 'migrate:rollback'         => 'Rolling back last migrations (down)',
-                'migrate:init'             => 'Initialize migartion table',
-                'migrate:status'           => 'Show migartion status.',
+                'migrate:init'             => 'Initialize migration table',
+                'migrate:status'           => 'Show migration status.',
                 'database:create'          => 'Create database',
                 'database:drop'            => 'Drop database',
                 'database:show'            => 'Show database table',
             ],
             'options'   => [
                 '--take'              => 'Limit of migrations to be run.',
-                '--batch'             => 'Batch migration excution.',
-                '--dry-run'           => 'Excute migration but olny get query output.',
-                '--force'             => 'Force runing migration/database query in production.',
+                '--batch'             => 'Batch migration execution.',
+                '--dry-run'           => 'Execute migration but only get query output.',
+                '--force'             => 'Force running migration/database query in production.',
                 '--seed'              => 'Run seeder after migration.',
                 '--seed-namespace'    => 'Run seeder after migration using class namespace.',
                 '--yes'               => 'Accept it without having it ask any questions',
@@ -127,7 +127,7 @@ class MigrationCommand extends Command
         }
 
         /* @var bool */
-        return (new Prompt(style('Runing migration/database in production?')->textRed(), [
+        return (new Prompt(style('Running migration/database in production?')->textRed(), [
             'yes' => fn () => true,
             'no'  => fn () => false,
         ], 'no'))
@@ -663,7 +663,7 @@ class MigrationCommand extends Command
         $has_migration_table = $this->hasMigrationTable();
 
         if ($has_migration_table) {
-            info('Migration table alredy exist on your database table.')->out(false);
+            info('Migration table already exist on your database table.')->out(false);
 
             return 0;
         }

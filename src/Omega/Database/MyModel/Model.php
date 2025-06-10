@@ -91,7 +91,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         array $column,
         MyPDO $pdo,
         Where $where,
-        string $primery_key,
+        string $primary_key,
         array $stash,
         array $resistant,
     ): self {
@@ -99,7 +99,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
         $this->columns     = $this->fresh = $column;
         $this->pdo         = $pdo;
         $this->where       = $where;
-        $this->primaryKey = $primery_key;
+        $this->primaryKey = $primary_key;
         $this->stash       = $stash;
         $this->resistant   = $resistant;
 
@@ -354,7 +354,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             /** @var object */
             $model      = new $model($this->pdo, []);
             $table_name = $model->table_name;
-            $join_ref   = $ref ?? $model->primery_key;
+            $join_ref   = $ref ?? $model->primary_key;
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primaryKey;
@@ -383,7 +383,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             /** @var object */
             $model      = new $model($this->pdo, []);
             $table_name = $model->table_name;
-            $join_ref   = $ref ?? $model->primery_key;
+            $join_ref   = $ref ?? $model->primary_key;
         } else {
             $table_name = $model;
             $join_ref   = $ref ?? $this->primaryKey;
