@@ -12,9 +12,9 @@ class UserSeeder extends Seeder
     {
         $this->create('users')
             ->values([
-                'user'      => 'test',
+                'user' => 'test',
                 'password'  => password_hash('password', PASSWORD_DEFAULT),
-                'stat'      => 10,
+                'stat' => 10,
             ])
             ->execute();
     }

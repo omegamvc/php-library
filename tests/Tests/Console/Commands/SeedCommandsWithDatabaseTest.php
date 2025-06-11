@@ -24,7 +24,7 @@ class SeedCommandsWithDatabaseTest extends AbstractDatabaseTest
         $this->createConnection();
         $this->createUserSchema();
 
-        require_once __DIR__ . '/assets/database/seeders/BasicSeeder.php';
+        require_once __DIR__ . '/assets/database/seeders/basic/BasicSeeder.php';
         require_once __DIR__ . '/assets/database/seeders/UserSeeder.php';
         require_once __DIR__ . '/assets/database/seeders/ChainSeeder.php';
         require_once __DIR__ . '/assets/database/seeders/CustomNamespaceSeeder.php';

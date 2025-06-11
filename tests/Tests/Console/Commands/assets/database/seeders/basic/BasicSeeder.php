@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use System\Database\Seeder\Seeder;
+use Omega\Database\Seeder\Seeder;
 
-use function System\Console\style;
+use function Omega\Console\style;
 
 class BasicSeeder extends Seeder
 {

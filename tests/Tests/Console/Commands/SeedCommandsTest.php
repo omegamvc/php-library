@@ -6,14 +6,17 @@ namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\SeedCommand;
 
-final class SeedCommandsTest extends CommandTest
+class SeedCommandsTest extends CommandTest
 {
     protected function tearDown(): void
     {
         parent::tearDown();
 
-        $migration = __DIR__ . '/assets/seeders/';
-        array_map('unlink', glob("$migration/*.php"));
+        $migration = __DIR__ . '/assets/database/seeders/BaseSeeder.php';
+
+        if (file_exists($migration)) {
+            @unlink($migration);
+        }
     }
 
     /**
@@ -30,7 +33,7 @@ final class SeedCommandsTest extends CommandTest
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/seeders/BaseSeeder.php';
+        $file = __DIR__ . '/assets/database/seeders/BaseSeeder.php';
         $this->assertTrue(file_exists($file));
 
         $class = file_get_contents($file);
@@ -60,7 +63,7 @@ final class SeedCommandsTest extends CommandTest
      */
     public function testItCanCallMakeCommandSeedWithFailsFileExist(): void
     {
-        app()->setSeederPath(__DIR__ . '//assets//seeders//basic//');
+        app()->setSeederPath(__DIR__ . '//assets//database//seeders//basic//');
         $makeCommand = new SeedCommand($this->argv('omega make:seed BasicSeeder'));
         ob_start();
         $exit = $makeCommand->make();
@@ -76,7 +79,7 @@ final class SeedCommandsTest extends CommandTest
      */
     public function testItCanCallMakeExistCommandSeeder(): void
     {
-        app()->setSeederPath(__DIR__ . '//assets//seeders//');
+        app()->setSeederPath(__DIR__ . '//assets//database//seeders//');
         $makeCommand = new SeedCommand($this->argv('omega make:seed ExistSeeder --force'));
         ob_start();
         $exit = $makeCommand->make();
@@ -84,7 +87,7 @@ final class SeedCommandsTest extends CommandTest
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '//assets//seeders//ExistSeeder.php';
+        $file = __DIR__ . '//assets//database//seeders//ExistSeeder.php';
         $this->assertTrue(file_exists($file));
 
         $class = file_get_contents($file);
