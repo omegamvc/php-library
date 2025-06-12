@@ -1,22 +1,65 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console;
 
-use PHPUnit\Framework\TestCase;
-use Omega\Console\Command;
+use Omega\Console\Stubs\CommandTraitStub;
 use Omega\Console\Style\Color\ForegroundColor;
-use Omega\Console\Traits\CommandTrait;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 
+use function chr;
+use function ob_get_clean;
+use function ob_start;
+use function sprintf;
+
+/**
+ * Unit test for testing the CommandTraitStub methods.
+ *
+ * This test class verifies that the methods defined in the CommandTraitStub
+ * correctly output colored text in the console. It includes tests for the
+ * `echoTextRed`, `echoTextYellow`, `echoTextGreen`, and `textColor` methods.
+ * These methods are expected to output text with specific foreground colors.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(CommandTraitStub::class)]
+#[CoversClass(ForegroundColor::class)]
 class TraitCommandTest extends TestCase
 {
-    private $command;
+    /** @var CommandTraitStub Instance of the CommandTraitStub used for testing. */
+    private CommandTraitStub $command;
 
+    /**
+     * Set up the test environment before each test.
+     *
+     * This method is called before each test method is run.
+     * Override it to initialize objects, mock dependencies, or reset state.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
-        $this->command = new class (['omega', '--test']) extends Command {
-            use CommandTrait;
+        $this->command = new class (['omega', '--test']) extends CommandTraitStub {
 
             public function __call($name, $arguments)
             {

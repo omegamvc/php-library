@@ -1,13 +1,57 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console;
 
-use PHPUnit\Framework\TestCase;
 use Omega\Console\Command;
-use Omega\Console\Traits\CommandTrait;
+use Omega\Console\Stubs\CommandTraitStub;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 
+use function chr;
+use function explode;
+use function ob_get_clean;
+use function ob_start;
+use function sprintf;
+
+/**
+ * Class ConsoleParseTest
+ *
+ * This test suite verifies the parsing capabilities of the Command class
+ * used in the console application. It ensures that command line arguments,
+ * options (both short and long), quoted values, grouped flags, aliases,
+ * and default values are correctly parsed and accessible via the Command API.
+ *
+ * The tests cover various input scenarios, including:
+ * - Normal commands with parameters
+ * - Commands with quoted arguments
+ * - Commands with spaced arguments
+ * - Multiple arguments for a single option
+ * - Alias parsing and grouped flags with counts
+ * - Execution of a stubbed main command method to test output formatting
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(CommandTraitStub::class)]
 class ConsoleParseTest extends TestCase
 {
     /**
@@ -18,29 +62,15 @@ class ConsoleParseTest extends TestCase
     public function testItCanParseNormalCommand(): void
     {
         $command = 'php omega test --nick=john -tests';
-        $argv = explode(' ', $command);
-        $cli = new Command($argv, ['default' => true]);
+        $argv    = explode(' ', $command);
+        $cli     = new Command($argv, ['default' => true]);
 
         // parse name
-        $this->assertEquals(
-            'test',
-            $cli->name,
-            'valid parse name'
-        );
-        $this->assertEquals(
-            'test',
-            $cli->_,
-            'valid parse name'
-        );
-
+        $this->assertEquals('test', $cli->name, 'valid parse name');
+        $this->assertEquals('test', $cli->_, 'valid parse name');
         // parse long param
-        $this->assertEquals(
-            'john',
-            $cli->nick,
-            'valid parse from long param'
-        );
+        $this->assertEquals('john', $cli->nick, 'valid parse from long param');
         $this->assertNull($cli->whois, 'long param not valid');
-
         // parse null but have default
         $this->assertTrue($cli->default);
 
@@ -61,24 +91,10 @@ class ConsoleParseTest extends TestCase
         $cli = new Command($argv);
 
         // parse name
-        $this->assertEquals(
-            'test',
-            $cli->name,
-            'valid parse name: test'
-        );
-        $this->assertEquals(
-            'test',
-            $cli->_,
-            'valid parse name'
-        );
-
+        $this->assertEquals('test', $cli->name, 'valid parse name: test');
+        $this->assertEquals('test', $cli->_, 'valid parse name');
         // parse short param
-        $this->assertEquals(
-            'john',
-            $cli->n,
-            'valid parse from short param with spare space: --n'
-        );
-
+        $this->assertEquals('john', $cli->n, 'valid parse from short param with spare space: --n');
         // parse short param
         $this->assertTrue($cli->t, 'valid parse from short param: -tests');
         $this->assertTrue($cli->s, 'valid parse from short param: -s');
@@ -100,9 +116,7 @@ class ConsoleParseTest extends TestCase
      */
     public function testItCanRunMainMethod(): void
     {
-        $console = new class (['test', '--test', 'Oke']) extends Command {
-            use CommandTrait;
-
+        $console = new class (['test', '--test', 'Oke']) extends CommandTraitStub {
             public function main(): void
             {
                 echo $this->textGreen($this->name);
@@ -127,17 +141,8 @@ class ConsoleParseTest extends TestCase
         $argv = explode(' ', $command);
         $cli = new Command($argv, ['default' => true]);
 
-        $this->assertEquals(
-            'john',
-            $cli->nick,
-            'valid parse from long param with double quote'
-        );
-
-        $this->assertEquals(
-            'john',
-            $cli->last,
-            'valid parse from long param with quote'
-        );
+        $this->assertEquals('john', $cli->nick, 'valid parse from long param with double quote');
+        $this->assertEquals('john', $cli->last, 'valid parse from long param with quote');
     }
 
     /**
@@ -175,10 +180,7 @@ class ConsoleParseTest extends TestCase
         $argv = explode(' ', $command);
         $cli = new Command($argv);
 
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->cp);
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->cp);
         $this->assertTrue($cli->__get('dry-run'));
     }
 
@@ -201,15 +203,8 @@ class ConsoleParseTest extends TestCase
             }
         };
 
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->__get(''));
-
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->getPosition());
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->__get(''));
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->getPosition());
     }
 
     /**
@@ -223,18 +218,9 @@ class ConsoleParseTest extends TestCase
         $argv = explode(' ', $command);
         $cli = new Command($argv);
 
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->io);
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->i);
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->o);
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->io);
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->i);
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->o);
     }
 
     /**
@@ -256,13 +242,7 @@ class ConsoleParseTest extends TestCase
         $this->assertEquals(2, $cli->t, 'count group');
         $this->assertEquals(2, $cli->d, 'count with different argument group');
 
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->vvv);
-        $this->assertEquals([
-            '/path/to/inputfile',
-            '/path/to/ouputfile',
-        ], $cli->v);
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->vvv);
+        $this->assertEquals(['/path/to/inputfile', '/path/to/ouputfile'], $cli->v);
     }
 }

@@ -1,13 +1,47 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console;
 
-use PHPUnit\Framework\TestCase;
 use Omega\Console\Command;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use function explode;
+
+/**
+ * Test suite for parsing command-line arguments using the Omega\Console\Command class.
+ *
+ * This test class validates how the Command class parses an array of CLI arguments
+ * passed via $argv. It ensures correct extraction of command names and options,
+ * proper immutability behavior when attempting to modify or unset parameters,
+ * and internal option lookup via protected method invocation.
+ *
+ * It directly contributes to code coverage for the Command class.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(Command::class)]
 class ConsoleParseAsArrayTest extends TestCase
 {
     /**
