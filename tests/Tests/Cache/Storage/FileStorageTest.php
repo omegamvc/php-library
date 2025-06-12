@@ -19,6 +19,13 @@ use Omega\Cache\Storage\FileStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+use function array_diff;
+use function dirname;
+use function is_dir;
+use function rmdir;
+use function scandir;
+use function unlink;
+
 /**
  * Unit test suite for the FileStorage cache implementation.
  *
@@ -56,6 +63,46 @@ class FileStorageTest extends TestCase
     protected function setUp(): void
     {
         $this->storage = new FileStorage(dirname(__DIR__, 2) . '/fixtures/cache');
+    }
+
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
+    protected function tearDown(): void
+    {
+        $cacheDir = dirname(__DIR__, 2) . '/fixtures/cache';
+
+        if (!is_dir($cacheDir)) {
+            return;
+        }
+
+        $deleteRecursive = function(string $dir) use (&$deleteRecursive) {
+            $items = array_diff(scandir($dir), ['.', '..']);
+            foreach ($items as $item) {
+                $path = $dir . DIRECTORY_SEPARATOR . $item;
+                if (is_dir($path)) {
+                    $deleteRecursive($path);
+                } else {
+                    @unlink($path);
+                }
+            }
+            @rmdir($dir);
+        };
+
+        $items = array_diff(scandir($cacheDir), ['.', '..']);
+        foreach ($items as $item) {
+            $path = $cacheDir . DIRECTORY_SEPARATOR . $item;
+            if (is_dir($path)) {
+                $deleteRecursive($path);
+            } else {
+                @unlink($path);
+            }
+        }
     }
 
     /**
@@ -144,12 +191,15 @@ class FileStorageTest extends TestCase
      *
      * @return void
      */
-    // public function testSetMultiple(): void
-    // {
-    //     $this->assertFalse($this->storage->setMultiple(['key7' => 'value7', 'key8' => 'value8']));
-    //     $this->assertEquals('value7', $this->storage->get('key7'));
-    //     $this->assertEquals('value8', $this->storage->get('key8'));
-    // }
+    public function testSetMultiple(): void
+    {
+        $result = $this->storage->setMultiple(['key7' => 'value7', 'key8' => 'value8']);
+
+        $this->assertTrue($result);
+
+        $this->assertEquals('value7', $this->storage->get('key7'));
+        $this->assertEquals('value8', $this->storage->get('key8'));
+    }
 
     /**
      * Test delete multiple.

@@ -208,7 +208,6 @@ class CollectionImmutableTest extends TestCase
      * Test it can count using count function.
      *
      * @return void
-     * @noinspection PhpUnitAssertCountInspection
      */
     public function testItCanCountUsingCountFunction(): void
     {
