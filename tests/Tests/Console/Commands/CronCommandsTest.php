@@ -15,9 +15,9 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
+use Omega\Console\Commands\CronCommand;
 use Omega\Cron\InterpolateInterface;
 use Omega\Cron\Schedule;
-use Omega\Console\Commands\CronCommand;
 use Omega\Support\Facades\Schedule as FacadesSchedule;
 use PHPUnit\Framework\Attributes\CoversClass;
 

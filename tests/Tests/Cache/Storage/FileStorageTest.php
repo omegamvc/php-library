@@ -81,7 +81,7 @@ class FileStorageTest extends TestCase
             return;
         }
 
-        $deleteRecursive = function(string $dir) use (&$deleteRecursive) {
+        $deleteRecursive = function (string $dir) use (&$deleteRecursive) {
             $items = array_diff(scandir($dir), ['.', '..']);
             foreach ($items as $item) {
                 $path = $dir . DIRECTORY_SEPARATOR . $item;

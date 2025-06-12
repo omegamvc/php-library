@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
+use Omega\Console\Commands\MakeCommand;
 use Omega\Database\MyPDO;
 use Omega\Database\MyQuery;
 use Omega\Integrate\Application;
-use Omega\Console\Commands\MakeCommand;
 use Omega\Support\Facades\PDO;
 use Omega\Support\Facades\Schema;
-use Tests\Database\AbstractDatabase;
 use Omega\Text\Str;
+use Tests\Database\AbstractDatabase;
 
 class MakeCommandsWithDatabaseTest extends AbstractDatabase
 {

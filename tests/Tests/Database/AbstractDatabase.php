@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Tests\Database;
 
-use PHPUnit\Framework\Attributes\CoversNothing;
-use PHPUnit\Framework\TestCase;
 use Omega\Database\MyPDO;
 use Omega\Database\MyQuery\Insert;
 use Omega\Database\MySchema;
+use PHPUnit\Framework\Attributes\CoversNothing;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @internal

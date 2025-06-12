@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
-use PHPUnit\Framework\TestCase;
-use Omega\Integrate\Application;
 use Omega\Console\Commands\PackageDiscoveryCommand;
+use Omega\Integrate\Application;
 use Omega\Integrate\PackageManifest;
+use PHPUnit\Framework\TestCase;
 
 class PackageDiscoveryCommandTest extends TestCase
 {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of Omega - Tests\Console\Commands Package
+ * Part of Omega - Tests\Console Package
  * php version 8.3
  *
  * @link      https://omegamvc.github.io
@@ -17,8 +17,8 @@ namespace Tests\Console\Commands;
 
 use Omega\Cache\Cache;
 use Omega\Cache\Storage\ArrayStorage;
-use Omega\Integrate\Application;
 use Omega\Console\Commands\ClearCacheCommand;
+use Omega\Integrate\Application;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

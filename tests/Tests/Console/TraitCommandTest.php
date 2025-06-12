@@ -60,7 +60,6 @@ class TraitCommandTest extends TestCase
     protected function setUp(): void
     {
         $this->command = new class (['omega', '--test']) extends CommandTraitStub {
-
             public function __call($name, $arguments)
             {
                 if ($name === 'echoTextRed') {

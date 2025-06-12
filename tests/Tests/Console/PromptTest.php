@@ -136,7 +136,7 @@ class PromptTest extends TestCase
 
     /**
      * Test text prompt.
-     * 
+     *
      * @return void
      */
     public function testTextPrompt(): void

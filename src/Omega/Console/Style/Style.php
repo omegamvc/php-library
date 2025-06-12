@@ -588,7 +588,7 @@ class Style
      *
      * @return self
      */
-    public function newLines($repeat = 1)
+    public function newLines(int $repeat = 1): self
     {
         return $this->repeat("\n", $repeat);
     }

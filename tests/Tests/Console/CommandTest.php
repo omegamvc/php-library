@@ -15,9 +15,9 @@ declare(strict_types=1);
 
 namespace Tests\Console;
 
+use Omega\Console\Command;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Omega\Console\Command;
 
 /**
  * Test suite for the Omega\Console\Command class.

@@ -1,17 +1,63 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console\Style;
 
-use PHPUnit\Framework\TestCase;
 use Omega\Console\IO\ResourceOutputStream;
 use Omega\Console\Style\Colors;
 use Omega\Console\Style\Style;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 use Throwable;
 
+use function chr;
+use function fclose;
+use function fopen;
+use function ob_get_clean;
+use function ob_start;
 use function Omega\Console\style;
+use function rewind;
+use function sprintf;
+use function stream_get_contents;
 
+/**
+ * Class StyleTest
+ *
+ * This test suite verifies the behavior of the Style class used to render
+ * ANSI escape sequences for terminal output. It includes tests for:
+ * - Standard text and background color rendering
+ * - RGB and HEX color parsing
+ * - Raw ANSI code injection
+ * - Magic method support for color variants (e.g., Tailwind-style names)
+ * - Style composition and chaining (with push, repeat, tabs, new lines)
+ * - Integration with the global `style()` helper function
+ *
+ * Each test ensures the final output string is correctly formatted with
+ * ANSI codes, and maintains visual accuracy for terminal rendering.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console\Style
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(Colors::class)]
+#[CoversClass(Style::class)]
 class StyleTest extends TestCase
 {
     /**
@@ -164,7 +210,7 @@ class StyleTest extends TestCase
         $cmd = new Style('text');
         $text = $cmd
             ->textBlue()
-            ->new_lines(2);
+            ->newLines(2);
         $this->assertEquals(sprintf('%s[34;49mtext%s[0m%s[39;49m%s%s[0m', chr(27), chr(27), chr(27), "\n\n", chr(27)), $text);
 
         $cmd = new Style('text');

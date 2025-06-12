@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
-use PHPUnit\Framework\TestCase;
-use Omega\Integrate\Application;
 use Omega\Config\ConfigRepository;
 use Omega\Console\Commands\ViewCommand;
+use Omega\Integrate\Application;
 use Omega\View\Templator;
 use Omega\View\TemplatorFinder;
+use PHPUnit\Framework\TestCase;
 
 class ViewCommandsTest extends TestCase
 {

@@ -15,8 +15,10 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
-use Omega\Integrate\Application;
+use DI\DependencyException;
+use DI\NotFoundException;
 use Omega\Console\Commands\ConfigCommand;
+use Omega\Integrate\Application;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -71,6 +73,8 @@ class ConfigCommandTest extends TestCase
      * Test it can create config file.
      *
      * @return void
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function testItCanCreateConfigFile(): void
     {
@@ -93,6 +97,8 @@ class ConfigCommandTest extends TestCase
      * Test it can remove config file.
      *
      * @return void
+     * @throws DependencyException
+     * @throws NotFoundException
      */
     public function testItCanRemoveConfigFile(): void
     {

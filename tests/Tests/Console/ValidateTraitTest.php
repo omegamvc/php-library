@@ -64,7 +64,6 @@ class ValidateTraitTest extends TestCase
     protected function setUp(): void
     {
         $this->command = new class (['php', 'omega', '--test', 'oke']) extends ValidateCommandTraitStub {
-
             public function main(): void
             {
                 $this->initValidate($this->option_mapper);

@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
-use Omega\Console\Command;
 use Omega\Config\ConfigRepository;
+use Omega\Console\Command;
 use Omega\Console\Commands\HelpCommand;
 
 class HelpCommandsTest extends CommandTestHelper

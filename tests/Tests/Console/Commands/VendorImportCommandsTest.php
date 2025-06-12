@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
-use PHPUnit\Framework\TestCase;
 use Omega\Console\Commands\VendorImportCommand;
 use Omega\Container\Provider\AbstractServiceProvider;
+use PHPUnit\Framework\TestCase;
 
 class VendorImportCommandsTest extends TestCase
 {

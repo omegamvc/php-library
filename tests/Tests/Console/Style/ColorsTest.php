@@ -1,13 +1,47 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console\Style;
 
-use PHPUnit\Framework\TestCase;
 use Omega\Console\Style\Colors;
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 use Throwable;
 
+/**
+ * Unit tests for the Colors class.
+ *
+ * This test suite verifies the conversion of color values into terminal-compatible
+ * ANSI escape codes, including:
+ * - Hexadecimal foreground (`hexText`) and background (`hexBg`) color codes.
+ * - RGB foreground (`rgbText`) and background (`rgbBg`) color codes.
+ * - Exception handling for invalid or malformed color input.
+ *
+ * These tests ensure the correctness and robustness of terminal color formatting
+ * logic used throughout the application.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console\Style
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(Colors::class)]
 class ColorsTest extends TestCase
 {
     /**
