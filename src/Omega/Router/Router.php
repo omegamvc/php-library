@@ -56,9 +56,11 @@ class Router
      */
     public static function addRoutes(array $route): void
     {
-        if (isset($route['expression'])
-        && isset($route['function'])
-        && isset($route['method'])) {
+        if (
+            isset($route['expression'])
+            && isset($route['function'])
+            && isset($route['method'])
+        ) {
             self::$routes[] = new Route($route);
         }
     }

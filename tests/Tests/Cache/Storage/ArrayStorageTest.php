@@ -20,6 +20,7 @@ use DateTime;
 use Omega\Cache\Storage\ArrayStorage;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
+
 use function time;
 
 /**
@@ -140,7 +141,7 @@ class ArrayStorageTest extends TestCase
 
     /**
      * Test set multiple.
-     * 
+     *
      * @return void
      */
     public function testSetMultiple(): void

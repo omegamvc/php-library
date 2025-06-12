@@ -174,7 +174,7 @@ class ServiceProviderTest extends TestCase
         file_put_contents(dirname(__DIR__, 2) . '/fixtures/container/copy/to/file.txt', '');
 
         $this->assertFalse(AbstractServiceProvider::importFile(
-                dirname(__DIR__, 2) . '/fixtures/container/copy/from/file.txt',
+            dirname(__DIR__, 2) . '/fixtures/container/copy/from/file.txt',
             dirname(__DIR__, 2) . '/fixtures/container/copy/to/file.txt'
         ));
 
@@ -191,7 +191,7 @@ class ServiceProviderTest extends TestCase
         $random = now()->format('YmdHis') . microtime();
         $this->assertTrue(AbstractServiceProvider::importDir(
             dirname(__DIR__, 2) . '/fixtures/container/copy/from/folder',
-                dirname(__DIR__, 2) . '/fixtures/container/copy/to/folders/folder-' . $random
+            dirname(__DIR__, 2) . '/fixtures/container/copy/to/folders/folder-' . $random
         ));
 
         $this->assertTrue(file_exists(dirname(__DIR__, 2) . '/fixtures/container/copy/to/folders/folder-' . $random . '/file.txt'));
@@ -222,7 +222,7 @@ class ServiceProviderTest extends TestCase
     public function testItCanImportFolderWithTargetExists(): void
     {
         $this->assertTrue(AbstractServiceProvider::importDir(
-                dirname(__DIR__, 2) . '/fixtures/container/copy/from/folder',
+            dirname(__DIR__, 2) . '/fixtures/container/copy/from/folder',
             dirname(__DIR__, 2) . '/fixtures/container/copy/to/folder',
             true
         ));
@@ -241,7 +241,7 @@ class ServiceProviderTest extends TestCase
         // @todo: I’ll need to check whether assertFalse was the intended behavior, but incorrect
         // @todo: due to the implementation of importDir.
         $this->assertTrue(AbstractServiceProvider::importDir(
-                dirname(__DIR__, 2) . '/fixtures/container/copy/from/folder',
+            dirname(__DIR__, 2) . '/fixtures/container/copy/from/folder',
             dirname(__DIR__, 2) . '/fixtures/container/copy/to/folder'
         ));
 

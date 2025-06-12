@@ -36,7 +36,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @version    2.0.0
  */
 #[CoversClass(Container::class)]
-class ConcreteContainerTest extends AbstractContainerInterfaceTest
+class ConcreteContainerTest extends AbstractContainerInterface
 {
     /**
      * Returns a new instance of the Container implementation.

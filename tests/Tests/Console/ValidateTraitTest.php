@@ -17,7 +17,7 @@ class ValidateTraitTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->command = new class(['php', 'omega', '--test', 'oke']) extends Command {
+        $this->command = new class (['php', 'omega', '--test', 'oke']) extends Command {
             use ValidateCommandTrait;
 
             public function main(): void

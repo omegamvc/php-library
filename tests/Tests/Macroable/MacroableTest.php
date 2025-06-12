@@ -14,9 +14,9 @@
 declare(strict_types=1);
 
 namespace Tests\Macroable;
-    
+
 use Omega\Macroable\Exceptions\MacroNotFoundException;
-use Omega\Macroable\MacroableTrait;
+use Omega\Macroable\Macroable;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -37,11 +37,11 @@ use PHPUnit\Framework\TestCase;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MacroableTrait::class)]
+#[CoversClass(Macroable::class)]
 class MacroableTest extends TestCase
 {
     /** @var object Holds mockClass. */
-    protected $mockClass;
+    protected object $mockClass;
 
     /**
      * Set up the test environment before each test.
@@ -53,9 +53,9 @@ class MacroableTest extends TestCase
      */
     protected function setUp(): void
     {
-        $this->mockClass = new class {
-            use MacroableTrait;
-        };
+        // Use the dedicated Macroable class to test the MacroableTrait with proper coverage.
+        // This class is internal and designed specifically for this purpose.
+        $this->mockClass = new Macroable();
     }
 
     /**

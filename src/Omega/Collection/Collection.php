@@ -48,7 +48,6 @@ use function uasort;
  * Typical use cases include data transformation pipelines, filtering datasets,
  * and performing complex array operations with readable, chainable syntax.
  *
- * immutable nature.
  * @category  Omega
  * @package   Collection
  * @link      https://omegamvc.github.io

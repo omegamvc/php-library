@@ -166,7 +166,7 @@ class CollectionImmutableTest extends TestCase
 
     /**
      * Test it can by iterator.
-     * 
+     *
      * @return void
      */
     public function testItCanByIterator(): void

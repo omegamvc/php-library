@@ -67,7 +67,7 @@ class ConfigRepositoryTest extends TestCase
 
     /**
      * Test it can perform repository using array access.
-     * 
+     *
      * @return void
      */
     public function testItCanPerformRepositoryUsingArrayAccess(): void

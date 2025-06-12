@@ -76,7 +76,7 @@ class RouteCommand extends Command
         if (is_array($methods)) {
             $group  = new Style();
             $length = count($methods);
-            for ($i=0; $i < $length; $i++) {
+            for ($i = 0; $i < $length; $i++) {
                 $group->tap($this->coloringMethod($methods[$i]));
                 if ($i < $length - 1) {
                     $group->push('|')->textDim();

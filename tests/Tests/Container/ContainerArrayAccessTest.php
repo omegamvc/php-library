@@ -12,6 +12,7 @@
  */
 
 declare(strict_types=1);
+
 namespace Tests\Container;
 
 use DI\DependencyException;
@@ -83,7 +84,7 @@ class ContainerArrayAccessTest extends TestCase
 
     /**
      * Test it can unset.
-     * 
+     *
      * @return void
      */
     public function testItCanUnset(): void

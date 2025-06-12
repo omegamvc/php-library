@@ -10,12 +10,10 @@ use Omega\Integrate\Application;
 use Omega\Console\Commands\MigrationCommand;
 use Omega\Support\Facades\Facade;
 use Omega\Support\Facades\Schema;
-use Tests\Database\AbstractDatabaseTest;
+use Tests\Database\AbstractDatabase;
 use Omega\Text\Str;
 
-require_once __DIR__ . '/../../Database/AbstractDatabaseTest.php';
-
-final class MigrationCommandsTest extends AbstractDatabaseTest
+class MigrationCommandsTest extends AbstractDatabase
 {
     private Application $app;
 

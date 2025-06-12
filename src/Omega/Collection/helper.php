@@ -37,8 +37,7 @@ use function implode;
  * @version   2.0.0
  */
 
-if (!function_exists('collection'))
-{
+if (!function_exists('collection')) {
     /**
      * Create a new mutable Collection instance from an iterable.
      *
@@ -54,8 +53,7 @@ if (!function_exists('collection'))
     }
 }
 
-if (!function_exists('collection_immutable'))
-{
+if (!function_exists('collection_immutable')) {
     /**
      * Create a new immutable Collection instance from an iterable.
      *
@@ -73,8 +71,7 @@ if (!function_exists('collection_immutable'))
     }
 }
 
-if (!function_exists('data_get'))
-{
+if (!function_exists('data_get')) {
     /**
      * Retrieve a value from a nested array using dot notation keys.
      *

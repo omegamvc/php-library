@@ -116,7 +116,7 @@ class FileStorageTest extends TestCase
 
     /**
      * Test clear.
-     * 
+     *
      * @return void
      */
     public function testClear(): void
@@ -214,7 +214,7 @@ class FileStorageTest extends TestCase
 
     /**
      * Test remember caches result and returnsIt.
-     * 
+     *
      * @return void
      */
     public function testRememberCachesResultAndReturnsIt(): void

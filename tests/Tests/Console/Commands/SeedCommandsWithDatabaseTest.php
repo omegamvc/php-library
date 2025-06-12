@@ -10,12 +10,10 @@ use Omega\Console\Commands\SeedCommand;
 use Omega\Support\Facades\DB;
 use Omega\Support\Facades\PDO as FacadesPDO;
 use Omega\Support\Facades\Schema;
-use Tests\Database\AbstractDatabaseTest;
+use Tests\Database\AbstractDatabase;
 use Omega\Text\Str;
 
-require_once __DIR__ . '/../../Database/AbstractDatabaseTest.php';
-
-class SeedCommandsWithDatabaseTest extends AbstractDatabaseTest
+class SeedCommandsWithDatabaseTest extends AbstractDatabase
 {
     private Application $app;
 

@@ -49,7 +49,8 @@ class ResourceController
         $uri  = Router::$group['prefix'] . $uri;
 
         if (array_key_exists('index', $map)) {
-            $this->resource->set($map['index'],
+            $this->resource->set(
+                $map['index'],
                 (new Route([
                     'expression' => Router::mapPatterns($uri),
                     'function'   => [$class_name, $map['index']],
@@ -60,7 +61,8 @@ class ResourceController
         }
 
         if (array_key_exists('create', $map)) {
-            $this->resource->set($map['create'],
+            $this->resource->set(
+                $map['create'],
                 (new Route([
                     'expression' => Router::mapPatterns("{$uri}create"),
                     'function'   => [$class_name, $map['create']],
@@ -71,7 +73,8 @@ class ResourceController
         }
 
         if (array_key_exists('store', $map)) {
-            $this->resource->set($map['store'],
+            $this->resource->set(
+                $map['store'],
                 (new Route([
                     'expression' => Router::mapPatterns($uri),
                     'function'   => [$class_name, $map['store']],
@@ -82,7 +85,8 @@ class ResourceController
         }
 
         if (array_key_exists('show', $map)) {
-            $this->resource->set($map['show'],
+            $this->resource->set(
+                $map['show'],
                 (new Route([
                     'expression' => Router::mapPatterns("{$uri}(:id)"),
                     'function'   => [$class_name, $map['show']],
@@ -93,7 +97,8 @@ class ResourceController
         }
 
         if (array_key_exists('edit', $map)) {
-            $this->resource->set($map['edit'],
+            $this->resource->set(
+                $map['edit'],
                 (new Route([
                     'expression' => Router::mapPatterns("{$uri}(:id)/edit"),
                     'function'   => [$class_name, $map['edit']],
@@ -104,7 +109,8 @@ class ResourceController
         }
 
         if (array_key_exists('update', $map)) {
-            $this->resource->set($map['update'],
+            $this->resource->set(
+                $map['update'],
                 (new Route([
                     'expression' => Router::mapPatterns("{$uri}(:id)"),
                     'function'   => [$class_name, $map['update']],
@@ -115,7 +121,8 @@ class ResourceController
         }
 
         if (array_key_exists('destroy', $map)) {
-            $this->resource->set($map['destroy'],
+            $this->resource->set(
+                $map['destroy'],
                 (new Route([
                     'expression' => Router::mapPatterns("{$uri}(:id)"),
                     'function'   => [$class_name, $map['destroy']],

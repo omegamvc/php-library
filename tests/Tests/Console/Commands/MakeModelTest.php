@@ -6,7 +6,7 @@ namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MakeCommand;
 
-final class MakeModelTest extends CommandTest
+class MakeModelTest extends CommandTestHelper
 {
     protected function setUp(): void
     {

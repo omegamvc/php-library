@@ -50,8 +50,8 @@ class Property
 
         $comment = $this->generateComment(1);
         $comment = count($this->comments) > 0
-      ? $comment . "\n" . $tab_dept(1)
-      : $comment;
+        ? $comment . "\n" . $tab_dept(1)
+        : $comment;
 
         // generate visibility
         $visibility = '';
@@ -87,8 +87,8 @@ class Property
                 array_filter($this->expecting, fn ($key) => $key > 0, ARRAY_FILTER_USE_KEY)
             );
             $expecting = count($this->expecting) > 1
-        ? ' ' . $single_line . "\n" . $tab_dept(1) . $multy_line
-        : ' ' . $single_line;
+            ? ' ' . $single_line . "\n" . $tab_dept(1) . $multy_line
+            : ' ' . $single_line;
         }
 
         // final

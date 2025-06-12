@@ -8,7 +8,7 @@ use Omega\Console\Command;
 use Omega\Config\ConfigRepository;
 use Omega\Console\Commands\HelpCommand;
 
-class HelpCommandsTest extends CommandTest
+class HelpCommandsTest extends CommandTestHelper
 {
     private array $command = [];
 

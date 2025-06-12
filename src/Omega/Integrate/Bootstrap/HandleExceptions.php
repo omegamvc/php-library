@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace Omega\Integrate\Bootstrap;
 
+use ErrorException;
 use Omega\Integrate\Application;
 use Omega\Integrate\Exceptions\ExceptionHandler;
+use Throwable;
 
 class HandleExceptions
 {
@@ -21,9 +23,10 @@ class HandleExceptions
         error_reporting(E_ALL);
 
         /* @phpstan-ignore-next-line */
-        set_error_handler([$this, 'handleError']);
-
-        set_exception_handler([$this, 'handleException']);
+        if ($app->environment() !== 'testing') {
+            set_error_handler([$this, 'handleError']);
+            set_exception_handler([$this, 'handleException']);
+        }
 
         register_shutdown_function([$this, 'handleShutdown']);
 
@@ -32,6 +35,9 @@ class HandleExceptions
         }
     }
 
+    /**
+     * @throws ErrorException
+     */
     public function handleError(int $level, string $message, string $file = '', ?int $line = 0): void
     {
         if ($this->isDeprecation($level)) {
@@ -39,7 +45,7 @@ class HandleExceptions
         }
 
         if (error_reporting() & $level) {
-            throw new \ErrorException($message, 0, $level, $file, $line);
+            throw new ErrorException($message, 0, $level, $file, $line);
         }
     }
 
@@ -48,7 +54,10 @@ class HandleExceptions
         $this->log($level, $message);
     }
 
-    public function handleException(\Throwable $th): void
+    /**
+     * @throws Throwable
+     */
+    public function handleException(Throwable $th): void
     {
         self::$reserveMemory = null;
 
@@ -59,12 +68,15 @@ class HandleExceptions
         }
     }
 
+    /**
+     * @throws Throwable
+     */
     public function handleShutdown(): void
     {
         self::$reserveMemory = null;
         $error               = error_get_last();
         if ($error && $this->isFatal($error['type'])) {
-            $this->handleException(new \ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']));
+            $this->handleException(new ErrorException($error['message'], 0, $error['type'], $error['file'], $error['line']));
         }
     }
 

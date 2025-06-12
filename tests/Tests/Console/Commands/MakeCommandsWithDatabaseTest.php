@@ -10,12 +10,10 @@ use Omega\Integrate\Application;
 use Omega\Console\Commands\MakeCommand;
 use Omega\Support\Facades\PDO;
 use Omega\Support\Facades\Schema;
-use Tests\Database\AbstractDatabaseTest;
+use Tests\Database\AbstractDatabase;
 use Omega\Text\Str;
 
-require_once __DIR__ . '/../../Database/AbstractDatabaseTest.php';
-
-class MakeCommandsWithDatabaseTest extends AbstractDatabaseTest
+class MakeCommandsWithDatabaseTest extends AbstractDatabase
 {
     private Application $app;
 

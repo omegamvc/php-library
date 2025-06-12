@@ -7,7 +7,7 @@ namespace Tests\Console\Commands;
 use Omega\Console\Commands\RouteCommand;
 use Omega\Router\Router;
 
-final class RouteCommandsTest extends CommandTest
+class RouteCommandsTest extends CommandTestHelper
 {
     /**
      * Test it can render route with some router.

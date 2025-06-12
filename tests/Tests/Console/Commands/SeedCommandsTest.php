@@ -6,7 +6,7 @@ namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\SeedCommand;
 
-class SeedCommandsTest extends CommandTest
+class SeedCommandsTest extends CommandTestHelper
 {
     protected function tearDown(): void
     {

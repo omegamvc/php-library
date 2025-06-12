@@ -61,7 +61,7 @@ class HelpCommand extends Command
         ];
     }
 
-    protected string $banner ='
+    protected string $banner = '
      _              _ _
  ___| |_ ___    ___| |_|
 | . |   | . |  |  _| | |

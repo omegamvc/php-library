@@ -57,7 +57,7 @@ abstract class AbstractCache implements CacheInterface
 
     /**
      * Initializes the cache manager with a default in-memory array driver.
-     * 
+     *
      * @return void
      */
     public function __construct()

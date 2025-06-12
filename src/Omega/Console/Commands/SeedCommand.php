@@ -31,7 +31,7 @@ class SeedCommand extends Command
      */
     public static array $command = [
         [
-            'pattern'=> 'db:seed',
+            'pattern' => 'db:seed',
             'fn'     => [self::class, 'main'],
         ], [
             'pattern' => 'make:seed',

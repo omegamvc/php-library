@@ -115,7 +115,7 @@ class ScheduleTest extends TestCase
 
     /**
      * Test it can run retry schedule.
-     * 
+     *
      * @return void
      */
     public function testItCanRunRetrySchedule(): void

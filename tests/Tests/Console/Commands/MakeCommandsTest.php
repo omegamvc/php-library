@@ -6,13 +6,14 @@ namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MakeCommand;
 
-final class MakeCommandsTest extends CommandTest
+class MakeCommandsTest extends CommandTestHelper
 {
     protected function setUp(): void
     {
         parent::setUp();
         if (!file_exists($command_config = __DIR__ . '/assets/command.php')) {
-            file_put_contents($command_config,
+            file_put_contents(
+                $command_config,
                 '<?php return array_merge(
                     // more command here
                 );'

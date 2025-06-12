@@ -8,6 +8,7 @@ use PHPUnit\Framework\Assert;
 use Omega\Http\Response;
 
 use function Omega\Collection\data_get;
+
 /**
  * @implements \ArrayAccess<string, mixed>
  */

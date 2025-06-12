@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 use Omega\Console\Commands\VendorImportCommand;
 use Omega\Container\Provider\AbstractServiceProvider;
 
-final class VendorImportCommandsTest extends TestCase
+class VendorImportCommandsTest extends TestCase
 {
     private ?string $base_path;
 

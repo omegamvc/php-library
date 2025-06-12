@@ -6,7 +6,7 @@ namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MaintenanceCommand;
 
-class MaintenanceCommandsTest extends CommandTest
+class MaintenanceCommandsTest extends CommandTestHelper
 {
     protected function tearDown(): void
     {

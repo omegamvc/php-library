@@ -40,7 +40,7 @@ use function ob_start;
  * @version    2.0.0
  */
 #[CoversClass(CronCommand::class)]
-class CronCommandsTest extends CommandTest
+class CronCommandsTest extends CommandTestHelper
 {
     /**
      * @var int The current test time used to simulate scheduled tasks.
@@ -98,7 +98,7 @@ class CronCommandsTest extends CommandTest
      */
     private function maker(): CronCommand
     {
-        return new class($this->argv('omega cron')) extends CronCommand {
+        return new class ($this->argv('omega cron')) extends CronCommand {
             public function __construct($argv)
             {
                 parent::__construct($argv);

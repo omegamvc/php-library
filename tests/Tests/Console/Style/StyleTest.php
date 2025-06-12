@@ -8,8 +8,8 @@ use PHPUnit\Framework\TestCase;
 use Omega\Console\IO\ResourceOutputStream;
 use Omega\Console\Style\Colors;
 use Omega\Console\Style\Style;
-
 use Throwable;
+
 use function Omega\Console\style;
 
 class StyleTest extends TestCase
@@ -148,7 +148,7 @@ class StyleTest extends TestCase
         );
     }
 
-    /** 
+    /**
      * Test it can render text color terminal code with push new line tabs spaces.
      *
      * @return void
@@ -269,7 +269,7 @@ class StyleTest extends TestCase
         $this->assertEquals(5, $text->length());
     }
 
-    /** 
+    /**
      * Test it can count text number length without rule counted.
      *
      * @return void

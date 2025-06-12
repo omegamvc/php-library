@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Part of Omega - Cache Package
  * php version 8.3

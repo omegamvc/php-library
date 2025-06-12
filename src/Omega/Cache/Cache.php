@@ -45,7 +45,7 @@ class Cache extends AbstractCache
 {
     /**
      * Initializes the cache manager with a default in-memory array driver.
-     * 
+     *
      * @return void
      */
     public function __construct()

@@ -65,7 +65,7 @@ class ExceptionHandler
     }
 
     /**
-     * Report exception (usefull for logging).
+     * Report exception (usefully for logging).
      */
     public function report(\Throwable $th): void
     {
@@ -90,20 +90,20 @@ class ExceptionHandler
 
     protected function handleJsonResponse(\Throwable $th): Response
     {
-        $respone = new Response([
+        $response = new Response([
             'code'     => 500,
             'messages' => [
                 'message'   => 'Internal Server Error',
             ]], 500);
 
         if ($th instanceof HttpException) {
-            $respone->setResponeCode($th->getStatusCode());
-            $respone->headers->add($th->getHeaders());
+            $response->setResponeCode($th->getStatusCode());
+            $response->headers->add($th->getHeaders());
         }
 
         if ($this->isDebug()) {
-            return $respone->json([
-                'code'     => $respone->getStatusCode(),
+            return $response->json([
+                'code'     => $response->getStatusCode(),
                 'messages' => [
                     'message'   => $th->getMessage(),
                     'exception' => $th::class,
@@ -113,7 +113,7 @@ class ExceptionHandler
             ]);
         }
 
-        return $respone->json();
+        return $response->json();
     }
 
     protected function handleResponse(\Throwable $th): Response

@@ -363,7 +363,7 @@ class CollectionTest extends TestCase
         $collect = new Collection([]);
         $collect->ref($collect_1)->ref($collect_2);
 
-        $this->assertEquals(['a'=>'b', 'c'=>'d'], $collect->all());
+        $this->assertEquals(['a' => 'b', 'c' => 'd'], $collect->all());
     }
 
     /**
@@ -491,7 +491,7 @@ class CollectionTest extends TestCase
 
     /**
      * Test it can get sum using reduce.
-     * 
+     *
      * @return void
      */
     public function testItCanGetSumUsingReduce(): void

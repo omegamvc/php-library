@@ -15,7 +15,7 @@ class TraitCommandTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->command = new class(['omega', '--test']) extends Command {
+        $this->command = new class (['omega', '--test']) extends Command {
             use CommandTrait;
 
             public function __call($name, $arguments)

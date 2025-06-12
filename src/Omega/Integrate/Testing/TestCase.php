@@ -11,10 +11,13 @@ use Omega\Integrate\Application;
 use Omega\Integrate\Http\HttpKernel;
 use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Support\Facades\Facade;
+use Omega\Integrate\Testing\Traits\ResponseStatusTrait;
 
 class TestCase extends BaseTestCase
 {
-    protected Application $app;
+    use ResponseStatusTrait;
+
+    protected ?Application $app;
     protected HttpKernel $kernel;
     protected string $class;
 
@@ -87,7 +90,7 @@ class TestCase extends BaseTestCase
      * @param array<string, string> $post
      * @param array<string, string> $files
      */
-    protected function post(string $url, array $post, array $files =[]): TestResponse
+    protected function post(string $url, array $post, array $files = []): TestResponse
     {
         return $this->call(url: $url, post: $post, files: $files, method: 'POST');
     }
