@@ -64,7 +64,7 @@ class ConfigCommandTest extends TestCase
      */
     protected function tearDown(): void
     {
-        if (file_exists($file = __DIR__ . '/assets/app1/bootstrap/cache/cache.php')) {
+        if (file_exists($file = dirname(__DIR__, 2) . '/fixtures/console/app/bootstrap/cache/cache.php')) {
             @unlink($file);
         }
     }
@@ -78,7 +78,7 @@ class ConfigCommandTest extends TestCase
      */
     public function testItCanCreateConfigFile(): void
     {
-        $app = new Application(__DIR__ . '/assets/app1/');
+        $app = new Application(dirname(__DIR__, 2) . '/fixtures/console/app/');
         $app->setConfigPath('/config/');
 
         $command = new ConfigCommand([]);
@@ -102,7 +102,7 @@ class ConfigCommandTest extends TestCase
      */
     public function testItCanRemoveConfigFile(): void
     {
-        $app = new Application(__DIR__ . '/assets/app1/');
+        $app = new Application(dirname(__DIR__, 2) . '/fixtures/console/app/');
         $app->setConfigPath('/config/');
 
         $command = new ConfigCommand([]);
