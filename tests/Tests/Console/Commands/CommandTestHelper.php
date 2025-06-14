@@ -70,15 +70,16 @@ class CommandTestHelper extends TestCase
     {
         $this->app = new Application('');
 
-        $this->app->setViewPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
-        $this->app->setContollerPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
-        $this->app->setServicesPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
-        $this->app->setModelPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
-        $this->app->setCommandPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
-        $this->app->setConfigPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR);
-        $this->app->setMigrationPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'database/migration' . DIRECTORY_SEPARATOR);
-        $this->app->setSeederPath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'database/seeders' . DIRECTORY_SEPARATOR);
-        $this->app->setStoragePath(__DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR);
+        $this->app->setViewPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+        $this->app->setContollerPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+        $this->app->setServicesPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+        $this->app->setModelPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+        $this->app->setCommandPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+        $this->app->setConfigPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+
+        $this->app->setMigrationPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR);
+        $this->app->setSeederPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR);
+        $this->app->setStoragePath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
     }
 
     /**
@@ -137,6 +138,6 @@ class CommandTestHelper extends TestCase
      */
     public function assertContain(string $contain, string $in): void
     {
-        Assert::assertTrue(Str::contains($in, $contain), "This {$contain} is contain in {$in}.");
+        Assert::assertTrue(Str::contains($in, $contain), "This $contain is contain in $in.");
     }
 }

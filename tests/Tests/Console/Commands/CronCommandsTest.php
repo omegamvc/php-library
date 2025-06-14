@@ -86,6 +86,7 @@ class CronCommandsTest extends CommandTestHelper
     protected function tearDown(): void
     {
         parent::tearDown();
+
         FacadesSchedule::flush();
     }
 

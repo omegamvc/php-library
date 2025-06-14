@@ -56,6 +56,7 @@ use function str_contains;
  * @version    2.0.0
  */
 #[CoversClass(CollectionImmutable::class)]
+#[CoversClass(CollectionImmutableException::class)]
 class CollectionImmutableTest extends TestCase
 {
     /**

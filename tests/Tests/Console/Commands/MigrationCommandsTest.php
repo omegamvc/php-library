@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console\Commands;
@@ -11,18 +22,59 @@ use Omega\Integrate\Application;
 use Omega\Support\Facades\Facade;
 use Omega\Support\Facades\Schema;
 use Omega\Text\Str;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 
+use function ob_get_clean;
+use function ob_start;
+
+/**
+ * Test suite for the MigrationCommand class and related database migration features.
+ *
+ * This test covers various migration-related commands such as migrate, fresh, reset,
+ * refresh, rollback, and database operations including create, show, drop, and init.
+ * It ensures that migration flows work correctly within the application context, using
+ * an in-memory test database.
+ *
+ * Note: This test case must be run as part of the full test suite using `vendor/bin/phpunit`,
+ * as it depends on preloaded fixtures and environment setup.
+ * Also covers the core routing behavior through the Router class.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console\Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(Application::class)]
+#[CoversClass(Create::class)]
+#[CoversClass(Facade::class)]
+#[CoversClass(MigrationCommand::class)]
+#[CoversClass(MyPDO::class)]
+#[CoversClass(Schema::class)]
+#[CoversClass(Str::class)]
 class MigrationCommandsTest extends AbstractDatabase
 {
+    /** @var Application Holds the current application instance. */
     private Application $app;
 
+    /**
+     * Set up the test environment before each test.
+     *
+     * Initializes the application with a custom Schedule instance
+     * and binds it to the service container.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         $this->createConnection();
 
-        $this->app = new Application(__DIR__);
-        $this->app->setMigrationPath('/assets/database/migration/');
+        $this->app = new Application(dirname(__DIR__, 2));
+        $this->app->setMigrationPath('/fixtures/console/database/migration/');
         $this->app->set('environment', 'dev');
         $this->app->set(MyPDO::class, fn () => $this->pdo);
         $this->app->set('MySchema', fn () => $this->schema);
@@ -37,6 +89,14 @@ class MigrationCommandsTest extends AbstractDatabase
         })->execute();
     }
 
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         $this->dropConnection();
@@ -110,6 +170,7 @@ class MigrationCommandsTest extends AbstractDatabase
         $exit = $migrate->refresh();
         $out  = ob_get_clean();
 
+
         $this->assertEquals(0, $exit);
         $this->assertTrue(Str::contains($out, '2023_08_07_181000_users'));
         $this->assertTrue(Str::contains($out, 'DONE'));
@@ -126,6 +187,7 @@ class MigrationCommandsTest extends AbstractDatabase
         ob_start();
         $exit = $migrate->rollback();
         $out  = ob_get_clean();
+
 
         $this->assertEquals(0, $exit);
         $this->assertTrue(Str::contains($out, '2023_08_07_181000_users'));
@@ -215,7 +277,7 @@ class MigrationCommandsTest extends AbstractDatabase
     public function testItCanRunMigrationFromVendor(): void
     {
         $migrate = new MigrationCommand(['omega', 'migrate']);
-        MigrationCommand::addVendorMigrationPath(__DIR__ . '/assets/database/vendor-migration/');
+        MigrationCommand::addVendorMigrationPath(dirname(__DIR__, 2) . '/fixtures/console/database/vendor-migration/');
         ob_start();
         $exit = $migrate->main();
         $out  = ob_get_clean();

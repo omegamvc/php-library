@@ -1,22 +1,65 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MakeCommand;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+use function dirname;
+use function file_exists;
+use function file_get_contents;
+use function ob_get_clean;
+use function ob_start;
+use function unlink;
+
+/**
+ * Test suite for the `make:model` console command.
+ *
+ * This class tests the behavior of the `make:model` command,
+ * ensuring that it generates the correct model files with various
+ * options, including table name customization and forced overwriting.
+ *
+ * It verifies file creation, content structure, and command success/failure states.
+ * The generated files are stored in the fixtures directory and cleaned up after each test.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console\Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(MakeCommand::class)]
 class MakeModelTest extends CommandTestHelper
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         parent::tearDown();
-        if (file_exists($model = __DIR__ . '/assets/User2.php')) {
+
+        if (file_exists($model = dirname(__DIR__, 2) . '/fixtures/console/User2.php')) {
             unlink($model);
         }
     }
@@ -35,7 +78,7 @@ class MakeModelTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/User2.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/User2.php';
         $this->assertTrue(file_exists($file));
 
         $model = file_get_contents($file);
@@ -56,7 +99,7 @@ class MakeModelTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/User.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/User.php';
         $this->assertTrue(file_exists($file));
 
         $model = file_get_contents($file);
@@ -77,7 +120,7 @@ class MakeModelTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__  . '/assets/User2.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/User2.php';
         $this->assertTrue(file_exists($file));
 
         $model = file_get_contents($file);

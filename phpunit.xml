@@ -3,7 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" 
 	bootstrap="tests/bootstrap.php"
-	cacheDirectory="cache/phpunit"
+	cacheDirectory="/home/morpheus/cache/phpunit"
 	executionOrder="depends,defects"
 	defaultTestSuite="Omega Test Suite"
 	beStrictAboutOutputDuringTests="false"
@@ -28,10 +28,10 @@
   	</source>
   	<coverage pathCoverage="true">
     		<report>
-      			<html outputDirectory="cache/coverage-report"/>
+      			<html outputDirectory="/home/morpheus/cache/coverage-report"/>
     		</report>
   	</coverage>
   	<logging>
-    		<testdoxHtml outputFile="cache/coverage-report/testdox.html"/>
+    		<testdoxHtml outputFile="/home/morpheus/cache/coverage-report/testdox.html"/>
   	</logging>
 </phpunit>

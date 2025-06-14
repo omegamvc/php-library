@@ -1,17 +1,64 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console\Commands Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MakeCommand;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use function array_map;
+use function dirname;
+use function file_exists;
+use function file_get_contents;
+use function file_put_contents;
+use function glob;
+use function ob_get_clean;
+use function ob_start;
+use function unlink;
+
+/**
+ * Test suite for the Omega Console MakeCommand class.
+ *
+ * This class verifies that all `omega make:*` CLI commands generate
+ * the expected files (controllers, views, services, commands, migrations)
+ * and fail appropriately when necessary.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console\Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(MakeCommand::class)]
 class MakeCommandsTest extends CommandTestHelper
 {
+    /**
+     * Set up the test environment before each test.
+     *
+     * Initializes the application with a custom Schedule instance
+     * and binds it to the service container.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
-        if (!file_exists($command_config = __DIR__ . '/assets/command.php')) {
+        if (!file_exists($command_config = dirname(__DIR__, 2) . '/fixtures/console/command.php')) {
             file_put_contents(
                 $command_config,
                 '<?php return array_merge(
@@ -21,30 +68,39 @@ class MakeCommandsTest extends CommandTestHelper
         }
     }
 
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
-        parent::tearDown();
-        if (file_exists($command_config = __DIR__ . '/assets/command.php')) {
+        parent::tearDownAfterClass();
+
+        if (file_exists($command_config = dirname(__DIR__, 2) . '/fixtures/console/command.php')) {
             unlink($command_config);
         }
 
-        if (file_exists($assetController = __DIR__ . '/assets/IndexController.php')) {
+        if (file_exists($assetController = dirname(__DIR__, 2) . '/fixtures/console/IndexController.php')) {
             unlink($assetController);
         }
 
-        if (file_exists($view = __DIR__ . '/assets/welcome.template.php')) {
-            unlink($view);
+        if (file_exists($view = dirname(__DIR__, 2) . '/fixtures/console/welcome.template.php')) {
+           unlink($view);
         }
 
-        if (file_exists($service = __DIR__ . '/assets/ApplicationService.php')) {
+        if (file_exists($service = dirname(__DIR__, 2) . '/fixtures/console/ApplicationService.php')) {
             unlink($service);
         }
 
-        if (file_exists($command = __DIR__ . '/assets/CacheCommand.php')) {
+        if (file_exists($command = dirname(__DIR__, 2) . '/fixtures/console/CacheCommand.php')) {
             unlink($command);
         }
 
-        $migration = __DIR__ . DIRECTORY_SEPARATOR . 'assets' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR;
+        $migration = dirname(__DIR__, 2) . '/fixtures/console/migration/';
         array_map('unlink', glob("{$migration}/*.php"));
     }
 
@@ -62,7 +118,7 @@ class MakeCommandsTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/IndexController.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/IndexController.php';
         $this->assertTrue(file_exists($file));
 
         $class = file_get_contents($file);
@@ -99,7 +155,7 @@ class MakeCommandsTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/welcome.template.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/welcome.template.php';
         $this->assertTrue(file_exists($file));
 
         $view = file_get_contents($file);
@@ -135,7 +191,7 @@ class MakeCommandsTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/ApplicationService.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/ApplicationService.php';
         $this->assertTrue(file_exists($file));
 
         $service = file_get_contents($file);
@@ -171,7 +227,7 @@ class MakeCommandsTest extends CommandTestHelper
 
         $this->assertSuccess($exit);
 
-        $file = __DIR__ . '/assets/CacheCommand.php';
+        $file = dirname(__DIR__, 2) . '/fixtures/console/CacheCommand.php';
         $this->assertTrue(file_exists($file));
 
         $command = file_get_contents($file);

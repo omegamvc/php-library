@@ -48,6 +48,14 @@ use PHPUnit\Framework\TestCase;
 #[CoversClass(PackageDiscoveryCommand::class)]
 class PackageDiscoveryCommandTest extends TestCase
 {
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         if (file_exists($file = dirname(__DIR__, 2) . '/fixtures/console/app/bootstrap/cache/packages.php')) {

@@ -41,6 +41,7 @@ use PHPUnit\Framework\TestCase;
  * @version    2.0.0
  */
 #[CoversClass(Cache::class)]
+#[CoversClass(ArrayStorage::class)]
 class CacheTest extends TestCase
 {
     /**

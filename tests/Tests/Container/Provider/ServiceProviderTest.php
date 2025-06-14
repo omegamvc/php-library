@@ -20,10 +20,16 @@ use Omega\Container\Provider\AbstractServiceProvider;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+use function array_diff;
+use function count;
+use function dirname;
 use function file_exists;
 use function file_put_contents;
+use function glob;
+use function is_dir;
 use function microtime;
 use function now;
+use function scandir;
 use function unlink;
 
 /**
@@ -67,7 +73,50 @@ class ServiceProviderTest extends TestCase
      */
     protected function tearDown(): void
     {
-        @unlink(dirname(__DIR__, 2) . '/fixtures/container/copy/to/file.txt');
+        $file        = dirname(__DIR__, 2) . '/fixtures/container/copy/to/file.txt';
+        $file1       = dirname(__DIR__, 2) . '/fixtures/container/copy/to/folder/file.txt';
+        $foldersBase = dirname(__DIR__, 2) . '/fixtures/container/copy/to/folders/';
+
+        // Cancella il file se esiste
+        if (file_exists($file)) {
+            @unlink($file);
+        }
+
+        if (file_exists($file1)) {
+            @unlink($file1);
+        }
+
+        // Cancella tutte le cartelle folder-* se non vuote
+        foreach (glob($foldersBase . 'folder-*') as $folder) {
+            if (is_dir($folder) && !$this->isDirEmpty($folder)) {
+                $this->deleteDir($folder);
+            }
+        }
+    }
+
+    /**
+     * Controlla se una directory è vuota
+     */
+    private function isDirEmpty(string $dir): bool
+    {
+        return count(array_diff(scandir($dir), ['.', '..'])) === 0;
+    }
+
+    /**
+     * Cancella ricorsivamente directory e file
+     */
+    private function deleteDir(string $dir): void
+    {
+        $files = array_diff(scandir($dir), ['.', '..']);
+        foreach ($files as $file) {
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
+            if (is_dir($path)) {
+                $this->deleteDir($path);
+            } else {
+                @unlink($path);
+            }
+        }
+        @rmdir($dir);
     }
 
     /**
@@ -240,6 +289,8 @@ class ServiceProviderTest extends TestCase
         // @todo: Always keep in mind that assertTrue might not be the right solution.
         // @todo: I’ll need to check whether assertFalse was the intended behavior, but incorrect
         // @todo: due to the implementation of importDir.
+        //
+        // @todo: unlink del folder.
         $this->assertTrue(AbstractServiceProvider::importDir(
             dirname(__DIR__, 2) . '/fixtures/container/copy/from/folder',
             dirname(__DIR__, 2) . '/fixtures/container/copy/to/folder'

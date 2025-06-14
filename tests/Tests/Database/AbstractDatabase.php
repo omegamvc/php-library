@@ -10,9 +10,6 @@ use Omega\Database\MySchema;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-/**
- * @internal
- */
 #[CoversNothing]
 abstract class AbstractDatabase extends TestCase
 {

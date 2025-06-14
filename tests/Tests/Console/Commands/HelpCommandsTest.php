@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Console\Commands;
@@ -7,11 +18,46 @@ namespace Tests\Console\Commands;
 use Omega\Config\ConfigRepository;
 use Omega\Console\Command;
 use Omega\Console\Commands\HelpCommand;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+use function ob_get_clean;
+use function ob_start;
+
+/**
+ * Test suite for the HelpCommand functionality.
+ *
+ * This test class ensures that the HelpCommand correctly displays
+ * help messages, command lists, and individual command help texts.
+ * It also verifies the integration with dynamically registered commands.
+ *
+ * Assertions include expected output, success or failure exit codes,
+ * and correct formatting of help messages.
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Console\Commands
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(Command::class)]
+#[CoversClass(ConfigRepository::class)]
+#[CoversClass(HelpCommand::class)]
 class HelpCommandsTest extends CommandTestHelper
 {
+    /** @var array Holds an array of commands. */
     private array $command = [];
 
+    /**
+     * Set up the test environment before each test.
+     *
+     * Initializes the application with a custom Schedule instance
+     * and binds it to the service container.
+     *
+     * @return void
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -20,9 +66,18 @@ class HelpCommandsTest extends CommandTestHelper
         ]));
     }
 
+    /**
+     * Clean up the test environment after each test.
+     *
+     * This method flushes and resets the application container
+     * to ensure a clean state between tests.
+     *
+     * @return void
+     */
     protected function tearDown(): void
     {
         parent::tearDown();
+
         $this->command = [];
     }
 
@@ -185,26 +240,5 @@ class HelpCommandsTest extends CommandTestHelper
 
         $this->assertFails($exit);
         $this->assertContain('php omega help <command_name>', $out);
-    }
-}
-
-class RegisterHelpCommand extends Command
-{
-    /**
-     * @return array<string, array<string, string|string[]>>
-     */
-    public function printHelp(): array
-    {
-        return [
-            'commands'  => [
-                'test' => 'some test will appear in test',
-            ],
-            'options'   => [
-                '--test' => 'this also will display in test',
-            ],
-            'relation'  => [
-                'test' => ['[unit]'],
-            ],
-        ];
     }
 }
