@@ -16,7 +16,7 @@ trait PrintHelpTrait
      */
     protected $print_help = [
         'margin-left'         => 12,
-        'column-1-min-lenght' => 24,
+        'column-1-min-length' => 24,
     ];
 
     /**
@@ -28,7 +28,7 @@ trait PrintHelpTrait
     {
         $option_names =  array_keys($this->command_describes);
 
-        $min_length = $this->print_help['column-1-min-lenght'];
+        $min_length = $this->print_help['column-1-min-length'];
         foreach ($option_names as $name) {
             $arguments_lenght = 0;
             if (isset($this->command_relation[$name])) {
@@ -36,9 +36,9 @@ trait PrintHelpTrait
                 $arguments_lenght = \strlen($arguments);
             }
 
-            $lenght = \strlen($name) + $arguments_lenght;
-            if ($lenght > $min_length) {
-                $min_length = $lenght;
+            $length = \strlen($name) + $arguments_lenght;
+            if ($length > $min_length) {
+                $min_length = $length;
             }
         }
 
@@ -73,11 +73,11 @@ trait PrintHelpTrait
     {
         $option_names =  array_keys($this->option_describes);
 
-        $min_length = $this->print_help['column-1-min-lenght'];
+        $min_length = $this->print_help['column-1-min-length'];
         foreach ($option_names as $name) {
-            $lenght = \strlen($name);
-            if ($lenght > $min_length) {
-                $min_length = $lenght;
+            $length = \strlen($name);
+            if ($length > $min_length) {
+                $min_length = $length;
             }
         }
 

@@ -76,7 +76,7 @@ class HelpCommand extends Command
         $has_visited      = [];
         $this->print_help = [
             'margin-left'         => 8,
-            'column-1-min-lenght' => 16,
+            'column-1-min-length' => 16,
         ];
 
         foreach ($this->commandMaps() as $command) {
@@ -160,15 +160,15 @@ class HelpCommand extends Command
         $commands = $this->commandMaps();
         foreach ($commands as $command) {
             $option = array_merge($command->cmd(), $command->patterns());
-            $lenght = Str::length(implode(', ', $option));
+            $length = Str::length(implode(', ', $option));
 
-            if ($lenght > $maks1) {
-                $maks1 = $lenght;
+            if ($length > $maks1) {
+                $maks1 = $length;
             }
 
-            $lenght = Str::length($command->class());
-            if ($lenght > $maks2) {
-                $maks2 = $lenght;
+            $length = Str::length($command->class());
+            if ($length > $maks2) {
+                $maks2 = $length;
             }
         }
 
@@ -176,12 +176,12 @@ class HelpCommand extends Command
             $option = array_merge($command->cmd(), $command->patterns());
             style(implode(', ', $option))->textLightYellow()->out(false);
 
-            $lenght1 = Str::length(implode(', ', $option));
-            $lenght2 = Str::length($command->class());
+            $length1 = Str::length(implode(', ', $option));
+            $length2 = Str::length($command->class());
             style('')
-                ->repeat(' ', $maks1 - $lenght1 + 4)
+                ->repeat(' ', $maks1 - $length1 + 4)
                 ->push($command->class())->textGreen()
-                ->repeat('.', $maks2 - $lenght2 + 8)->textDim()
+                ->repeat('.', $maks2 - $length2 + 8)->textDim()
                 ->push($command->method())
                 ->out();
         }

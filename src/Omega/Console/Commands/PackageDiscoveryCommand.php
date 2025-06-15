@@ -50,8 +50,8 @@ class PackageDiscoveryCommand extends Command
             $packages = (fn () => $this->{'getPackageManifest'}())->call($package) ?? [];
             $style    = new Style();
             foreach (array_keys($packages) as $name) {
-                $lenght = $this->getWidth(40, 60) - strlen($name) - 4;
-                $style->push($name)->repeat('.', $lenght)->textDim()->push('DONE')->textGreen()->newLines();
+                $length = $this->getWidth(40, 60) - strlen($name) - 4;
+                $style->push($name)->repeat('.', $length)->textDim()->push('DONE')->textGreen()->newLines();
             }
             $style->out(false);
         } catch (\Throwable $th) {

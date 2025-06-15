@@ -166,12 +166,12 @@ class Style
 
             if (Str::startsWith($name, 'text')) {
                 $constant              = 'TEXT' . text($constant)->upper()->slice(4);
-                $this->text_color_rule = [Decorate::getConst($constant)];
+                $this->text_color_rule = [Decorate::getConstant($constant)];
             }
 
             if (Str::startsWith($name, 'bg')) {
                 $constant            =  'BG' . text($constant)->upper()->slice(2);
-                $this->bg_color_rule = [Decorate::getConst($constant)];
+                $this->bg_color_rule = [Decorate::getConstant($constant)];
             }
 
             return $this;
@@ -180,12 +180,12 @@ class Style
         $constant = text($name)->upper();
         if ($constant->startsWith('TEXT_')) {
             $constant->slice(5);
-            $this->textColor(Colors::hexText(ColorVariant::getConst($constant->__toString())));
+            $this->textColor(Colors::hexText(ColorVariant::getConstant($constant->__toString())));
         }
 
         if ($constant->startsWith('BG_')) {
             $constant->slice(3);
-            $this->bgColor(Colors::hexBg(ColorVariant::getConst($constant->__toString())));
+            $this->bgColor(Colors::hexBg(ColorVariant::getConstant($constant->__toString())));
         }
 
         return $this;

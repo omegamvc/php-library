@@ -6,6 +6,19 @@ namespace Omega\Console\Style;
 
 use Omega\Console\Traits\CommandTrait;
 
+use function array_key_exists;
+use function array_keys;
+use function array_map;
+use function array_merge;
+use function call_user_func;
+use function call_user_func_array;
+use function ceil;
+use function str_pad;
+use function str_repeat;
+use function str_replace;
+
+use const PHP_EOL;
+
 class ProgressBar
 {
     use CommandTrait;
@@ -17,7 +30,7 @@ class ProgressBar
     private string $progress;
 
     /**
-     * Callback when task was complate.
+     * Callback when task was complete.
      *
      * @var callable(): string
      */
@@ -50,13 +63,12 @@ class ProgressBar
 
     public function __toString()
     {
-        $binds = [];
-        foreach ($this->binds as $key => $bind) {
-            $binds[$key] = call_user_func_array($bind, [
+        $binds = array_map(function ($bind) {
+            return call_user_func_array($bind, [
                 $this->current,
                 $this->maks,
             ]);
-        }
+        }, $this->binds);
 
         return str_replace(array_keys($binds), $binds, $this->template);
     }
@@ -94,13 +106,13 @@ class ProgressBar
 
     private function progress(int $current, int $maks): string
     {
-        $lenght = 20;
-        $tick   = (int) ceil($current * ($lenght / $maks)) - 1;
+        $length = 20;
+        $tick   = (int) ceil($current * ($length / $maks)) - 1;
         $head   = $current === $maks ? '=' : '>';
         $bar    = str_repeat('=', $tick) . $head;
         $left   = '-';
 
-        return '[' . str_pad($bar, $lenght, $left) . ']';
+        return '[' . str_pad($bar, $length, $left) . ']';
     }
 
     /**
@@ -108,7 +120,7 @@ class ProgressBar
      *
      * @param array<callable(int, int): string> $binds
      */
-    public function binding($binds): void
+    public function binding(array $binds): void
     {
         $binds = array_merge($binds, self::$costume_binds);
         if (false === array_key_exists(':progress', $binds)) {

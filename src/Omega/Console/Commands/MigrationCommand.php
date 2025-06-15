@@ -506,11 +506,11 @@ class MigrationCommand extends Command
             $name   = $table['table_name'];
             $time   = $table['create_time'];
             $size   = $table['size'];
-            $lenght = strlen($name) + strlen($time) + strlen($size);
+            $length = strlen($name) + strlen($time) + strlen($size);
 
             style($name)
                 ->push(' ' . $size . ' Mb ')->textDim()
-                ->repeat('.', $width - $lenght)->textDim()
+                ->repeat('.', $width - $length)->textDim()
                 ->push(' ' . $time)
                 ->out();
         }
@@ -536,11 +536,11 @@ class MigrationCommand extends Command
             }
 
             $info   = implode(', ', $will_print);
-            $lenght = strlen($column['COLUMN_NAME']) + strlen($column['COLUMN_TYPE']) + strlen($info);
+            $length = strlen($column['COLUMN_NAME']) + strlen($column['COLUMN_TYPE']) + strlen($info);
 
             $print->push($column['COLUMN_NAME'])->bold()->resetDecorate();
             $print->push(' ' . $info . ' ')->textDim();
-            $print->repeat('.', $width - $lenght)->textDim();
+            $print->repeat('.', $width - $length)->textDim();
             $print->push(' ' . $column['COLUMN_TYPE']);
             $print->newLines();
         }
@@ -556,11 +556,11 @@ class MigrationCommand extends Command
         $print->tap(info('show migration status'));
         $width = $this->getWidth(40, 60);
         foreach ($this->getMigrationTable() as $migration_name => $batch) {
-            $lenght = strlen($migration_name) + strlen((string) $batch);
+            $length = strlen($migration_name) + strlen((string) $batch);
             $print
                 ->push($migration_name)
                 ->push(' ')
-                ->repeat('.', $width - $lenght)->textDim()
+                ->repeat('.', $width - $length)->textDim()
                 ->push(' ')
                 ->push($batch)
                 ->newLines();

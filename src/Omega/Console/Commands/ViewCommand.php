@@ -256,12 +256,12 @@ class ViewCommand extends Command
         $watch_start     = microtime(true);
         $filename        = Str::replace($file_path, view_path(), '');
         $templator->compile($filename);
-        $lenght                  = strlen($filename);
+        $length                  = strlen($filename);
         $excutime                = round(microtime(true) - $watch_start, 3) * 1000;
         $excutime_length         = strlen((string) $excutime);
 
         style($filename)
-            ->repeat('.', $width - $lenght - $excutime_length - 2)->textDim()
+            ->repeat('.', $width - $length - $excutime_length - 2)->textDim()
             ->push((string) $excutime)
             ->push('ms')->textYellow()
             ->out();
