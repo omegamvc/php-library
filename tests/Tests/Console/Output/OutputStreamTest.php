@@ -13,10 +13,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Console\IO;
+namespace Tests\Console\Output;
 
-use InvalidArgumentException;
-use Omega\Console\IO\ResourceOutputStream;
+use Omega\Console\Exceptions\InvalidOutputStreamException;
+use Omega\Console\Exceptions\OutputWriteException;
+use Omega\Console\Output\OutputStream;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
@@ -26,9 +27,9 @@ use function rewind;
 use function stream_get_contents;
 
 /**
- * Unit test for the ResourceOutputStream class.
+ * Unit test for the OutputStream class.
  *
- * This test suite verifies the behavior of the ResourceOutputStream, ensuring:
+ * This test suite verifies the behavior of the OutputStream, ensuring:
  * - It accepts valid writable streams and rejects invalid or non-writable ones.
  * - It correctly writes data to the provided stream.
  * - It properly reports its interactive status.
@@ -45,20 +46,20 @@ use function stream_get_contents;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(ResourceOutputStream::class)]
-class ResourceOutputStreamTest extends TestCase
+#[CoversClass(OutputStream::class)]
+class OutputStreamTest extends TestCase
 {
     /**
-     * Test constructing the ResourceOutputStream with valid stream.
+     * Test constructing the OutputStream with valid stream.
      *
      * @return void
      */
     public function testConstructorWithValidStream(): void
     {
         $stream       = fopen('php://memory', 'w+');
-        $outputStream = new ResourceOutputStream($stream);
+        $outputStream = new OutputStream($stream);
 
-        $this->assertInstanceOf(ResourceOutputStream::class, $outputStream);
+        $this->assertInstanceOf(OutputStream::class, $outputStream);
         fclose($stream);
     }
 
@@ -69,10 +70,10 @@ class ResourceOutputStreamTest extends TestCase
      */
     public function testConstructorThrowsForInvalidStream(): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidOutputStreamException::class);
         $this->expectExceptionMessage('Expected a valid stream');
 
-        new ResourceOutputStream('invalid_stream');
+        new OutputStream('invalid_stream');
     }
 
     /**
@@ -84,10 +85,10 @@ class ResourceOutputStreamTest extends TestCase
     {
         $stream = fopen('php://memory', 'r');
 
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(InvalidOutputStreamException::class);
         $this->expectExceptionMessage('Expected a writable stream');
 
-        new ResourceOutputStream($stream);
+        new OutputStream($stream);
 
         fclose($stream);
     }
@@ -100,7 +101,7 @@ class ResourceOutputStreamTest extends TestCase
     public function testWriteToStream(): void
     {
         $stream       = fopen('php://memory', 'w+');
-        $outputStream = new ResourceOutputStream($stream);
+        $outputStream = new OutputStream($stream);
 
         $outputStream->write('Hello, World!');
 
@@ -118,10 +119,27 @@ class ResourceOutputStreamTest extends TestCase
     public function testIsInteractive(): void
     {
         $stream       = fopen('php://memory', 'w+');
-        $outputStream = new ResourceOutputStream($stream);
+        $outputStream = new OutputStream($stream);
 
         $this->assertFalse($outputStream->isInteractive());
 
         fclose($stream);
+    }
+
+    /**
+     * Test write throws when stream is closed.
+     *
+     * @return void
+     */
+    public function testWriteThrowsWhenStreamIsClosed(): void
+    {
+        $stream = fopen('php://memory', 'w+');
+        $output = new OutputStream($stream);
+        fclose($stream);
+
+        $this->expectException(OutputWriteException::class);
+        $this->expectExceptionMessage('Failed to write to stream');
+
+        $output->write("Test");
     }
 }

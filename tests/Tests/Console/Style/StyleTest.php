@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Console\Style;
 
-use Omega\Console\IO\ResourceOutputStream;
+use Omega\Console\Output\OutputStream;
 use Omega\Console\Style\Colors;
 use Omega\Console\Style\Style;
 use PHPUnit\Framework\Attributes\CoversClass;
@@ -508,7 +508,7 @@ class StyleTest extends TestCase
     public function testWriteToStream(): void
     {
         $stream = fopen('php://memory', 'w+');
-        $outputStream = new ResourceOutputStream($stream);
+        $outputStream = new OutputStream($stream);
         $style = new Style('');
 
         $style->setOutputStream($outputStream);

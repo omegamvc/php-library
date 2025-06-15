@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Omega\Console\Style;
 
 use Closure;
-use Omega\Console\Interfaces\OutputStream;
+use Omega\Console\Output\OutputStream;
 use Omega\Console\Interfaces\RuleInterface;
 use Omega\Console\Style\Color\BackgroundColor;
 use Omega\Console\Style\Color\ForegroundColor;
@@ -393,9 +393,9 @@ class Style
         $this->replaceLine($text, $line);
     }
 
-    public function setOutputStream(OutputStream $resourceOutputStream): self
+    public function setOutputStream(OutputStream $outputStream): self
     {
-        $this->output_stream = $resourceOutputStream;
+        $this->output_stream = $outputStream;
 
         return $this;
     }
