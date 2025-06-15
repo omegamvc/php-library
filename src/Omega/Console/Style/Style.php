@@ -6,7 +6,7 @@ namespace Omega\Console\Style;
 
 use Closure;
 use Omega\Console\Output\OutputStream;
-use Omega\Console\Interfaces\RuleInterface;
+use Omega\Console\Style\Color\RuleInterface;
 use Omega\Console\Style\Color\BackgroundColor;
 use Omega\Console\Style\Color\ForegroundColor;
 use Omega\Console\Traits\CommandTrait;

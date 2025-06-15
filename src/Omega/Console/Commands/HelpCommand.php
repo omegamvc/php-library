@@ -121,10 +121,10 @@ class HelpCommand extends Command
             ->push('Usage:')
             ->newLines(2)->tabs()
             ->push('php')->textGreen()
-            ->push(' cli [flag]')
+            ->push(' oemga [flag]')
             ->newLines()->tabs()
             ->push('php')->textGreen()
-            ->push(' cli [command] ')
+            ->push(' omega [command] ')
             ->push('[option]')->textDim()
             ->newLines(2)
 
