@@ -104,7 +104,7 @@ class VendorImportCommand extends Command
         }
 
         if ($current > 0) {
-            ok('Done ')->push($added)->textYellow()->push(' file/folder has been added.')->out(false);
+            ok('Done ')->push((string)$added)->textYellow()->push(' file/folder has been added.')->out(false);
         }
     }
 

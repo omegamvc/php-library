@@ -322,17 +322,17 @@ class StyleTest extends TestCase
      */
     public function testItCanCountTextNumberLengthWithoutRuleCounted(): void
     {
-        $text = new Style(12345);
+        $text = new Style('12345');
         $text->bgBlue()->textWhite()->underline();
 
         $this->assertEquals(5, $text->length());
 
         // add using invoke
-        $text(123)->bgBlue()->textWhite()->underline();
+        $text('123')->bgBlue()->textWhite()->underline();
         $this->assertEquals(3, $text->length());
 
         // add using push
-        $text->push(123)->bgBlue()->textWhite()->underline();
+        $text->push('123')->bgBlue()->textWhite()->underline();
         $this->assertEquals(6, $text->length());
     }
 

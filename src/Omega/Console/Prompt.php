@@ -70,7 +70,7 @@ class Prompt
     public function option()
     {
         $style = new Style();
-        $style->push($this->title)->push(' ');
+        $style->push((string)$this->title)->push(' ');
         foreach ($this->selection as $option) {
             if ($option instanceof Style) {
                 $style->tap($option);
