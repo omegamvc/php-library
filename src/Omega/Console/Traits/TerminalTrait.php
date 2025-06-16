@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Console\Traits;
@@ -12,14 +23,36 @@ use function preg_match;
 use function shell_exec;
 use function trim;
 
+use const PHP_OS_FAMILY;
+
+/**
+ * Trait TerminalTrait
+ *
+ * Provides functionality to determine the terminal's current width,
+ * with cross-platform support and fallbacks for environments
+ * where width cannot be detected automatically.
+ *
+ * @category   Omega
+ * @package    Console
+ * @subpackage Traits
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
 trait TerminalTrait
 {
     /**
-     * Get terminal width.
+     * Get the current terminal width, constrained between minimum and maximum values.
      *
-     * @param int $min
-     * @param int $max
-     * @return int
+     * This method attempts to retrieve the terminal width from environment variables,
+     * shell commands (`mode con` on Windows or `stty size` on Unix), or defaults to the
+     * minimum width if detection fails or shell_exec is disabled.
+     *
+     * @param int $min The minimum width to return (default: 80).
+     * @param int $max The maximum width to return (default: 160).
+     * @return int The detected terminal width, bounded between min and max.
      */
     protected function getWidth(int $min = 80, int $max = 160): int
     {
@@ -52,12 +85,12 @@ trait TerminalTrait
     }
 
     /**
-     * Helper to get between min-max value.
+     * Clamp a value between a minimum and maximum range.
      *
-     * @param int $value
-     * @param int $min
-     * @param int $max
-     * @return int
+     * @param int $value The value to evaluate.
+     * @param int $min The minimum allowed value.
+     * @param int $max The maximum allowed value.
+     * @return int The clamped value.
      */
     private function minMax(int $value, int $min, int $max): int
     {

@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Console\Traits;
@@ -10,16 +21,31 @@ use function chr;
 use function implode;
 use function str_repeat;
 
+/**
+ * Trait PrinterTrait
+ *
+ * Provides low-level utilities for styling and manipulating terminal output using ANSI escape codes.
+ * Includes methods for applying formatting rules, line and tab spacing, and manipulating cursor position.
+ *
+ * @category   Omega
+ * @package    Console
+ * @subpackage Traits
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
 trait PrinterTrait
 {
     /**
-     * Run commandline text rule.
+     * Apply multiple formatting rules to the given text.
      *
-     * @param array<int, string|int> $rule
-     * @param string|int $text
-     * @param bool $reset
-     * @param array<int, string|int> $resetRule
-     * @return string
+     * @param array<int, string|int> $rule ANSI code(s) to apply (e.g., color, style).
+     * @param string|int $text The text to style.
+     * @param bool $reset Whether to reset formatting after the text.
+     * @param array<int, string|int> $resetRule ANSI code(s) to reset styles (default: reset all).
+     * @return string The styled string with escape sequences applied.
      */
     protected function rules(
         array $rule,
@@ -34,13 +60,13 @@ trait PrinterTrait
     }
 
     /**
-     * Run color code.
+     * Apply a single formatting rule to the given text.
      *
-     * @param int|string $rule
-     * @param string     $text
-     * @param bool       $reset
-     * @param int|string $resetRule
-     * @return string
+     * @param int|string $rule The ANSI rule to apply (e.g., "1" for bold).
+     * @param string $text The text to style.
+     * @param bool $reset Whether to reset formatting after the text.
+     * @param int|string $resetRule The reset code to append after the text (default: reset all).
+     * @return string The styled string with escape sequences applied.
      */
     protected function rule(
         int|string $rule,
@@ -57,11 +83,11 @@ trait PrinterTrait
     }
 
     /**
-     * Print new line x times.
+     * Output one or more newlines to the console.
      *
-     * @deprecated
+     * @deprecated Use newLine() instead to return the string rather than echoing it.
      *
-     * @param int $count
+     * @param int $count Number of newlines to print.
      * @return void
      */
     protected function print_n(int $count = 1): void
@@ -70,11 +96,11 @@ trait PrinterTrait
     }
 
     /**
-     * Print tab x times.
+     * Output one or more tab characters to the console.
      *
-     * @deprecaated
+     * @deprecated Use tabs() instead to return the string rather than echoing it.
      *
-     * @param int $count
+     * @param int $count Number of tabs to print.
      * @return void
      */
     protected function print_t(int $count = 1): void
@@ -83,10 +109,10 @@ trait PrinterTrait
     }
 
     /**
-     * New line.
+     * Return a string containing one or more newline characters.
      *
-     * @param int $count
-     * @return string
+     * @param int $count Number of newline characters.
+     * @return string The generated newline string.
      */
     protected function newLine(int $count = 1): string
     {
@@ -94,10 +120,10 @@ trait PrinterTrait
     }
 
     /**
-     * Tabs
+     * Return a string containing one or more tab characters.
      *
-     * @param int $count
-     * @return string
+     * @param int $count Number of tab characters.
+     * @return string The generated tab string.
      */
     protected function tabs(int $count = 1): string
     {
@@ -105,9 +131,9 @@ trait PrinterTrait
     }
 
     /**
-     * Clear from the cursor position to the beginning of the line.
+     * Clear the terminal from the cursor position to the beginning of the line.
      *
-     * @deprecated
+     * @deprecated Not recommended for modern CLI output handling.
      *
      * @return void
      */
@@ -117,9 +143,9 @@ trait PrinterTrait
     }
 
     /**
-     * Clear everything on the line.
+     * Clear the entire current line in the terminal.
      *
-     * @deprecated
+     * @deprecated Use clearLine() instead for more precise control.
      *
      * @return void
      */
@@ -129,10 +155,10 @@ trait PrinterTrait
     }
 
     /**
-     * Replace single line output to new string.
+     * Replace the content of a specific terminal line with new text.
      *
-     * @param string $replace
-     * @param int    $line
+     * @param string $replace The replacement text to display.
+     * @param int $line The line offset from the current cursor position (negative = up).
      * @return void
      */
     protected function replaceLine(string $replace, int $line = -1): void
@@ -142,9 +168,9 @@ trait PrinterTrait
     }
 
     /**
-     * Remove / reset current line to empty.
+     * Clear the content of a specific terminal line.
      *
-     * @param int $line
+     * @param int $line The line offset from the current cursor position (negative = up).
      * @return void
      */
     protected function clearLine(int $line = -1): void
@@ -154,9 +180,9 @@ trait PrinterTrait
     }
 
     /**
-     * Move to line (start from bottom).
+     * Move the cursor up by a specified number of lines.
      *
-     * @param int $line
+     * @param int $line Number of lines to move up.
      * @return void
      */
     protected function moveLine(int $line): void
