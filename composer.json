@@ -17,6 +17,8 @@
         "php": "^8.3",
         "ext-intl": "*",
         "ext-mbstring": "*",
+        "ext-pcntl": "*",
+        "ext-posix": "*",
         "php-di/php-di": "^7.0.0",
         "wixel/gump": "^v2.2.0"
     },
