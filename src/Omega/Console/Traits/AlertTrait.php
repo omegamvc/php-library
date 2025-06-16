@@ -10,18 +10,17 @@ use Omega\Console\Style\Style;
 trait AlertTrait
 {
     /** @var int margin left */
-    protected $margin_left = 0;
+    protected int $marginLeft = 0;
 
     /**
      * Set margin left.
      *
-     * @param int $margin_left
-     *
+     * @param int $marginLeft
      * @return self
      */
-    public function marginLeft($margin_left)
+    public function marginLeft(int $marginLeft): static
     {
-        $this->margin_left = $margin_left;
+        $this->marginLeft = $marginLeft;
 
         return $this;
     }
@@ -30,14 +29,13 @@ trait AlertTrait
      * Render alert info.
      *
      * @param string $info
-     *
      * @return Style
      */
-    public function info($info)
+    public function info(string $info): Style
     {
         return (new Style())
             ->newLines()
-            ->repeat(' ', $this->margin_left)
+            ->repeat(' ', $this->marginLeft)
             ->push(' info ')
             ->bold()
             ->rawReset([Decorate::RESET_BOLD_DIM])
@@ -52,14 +50,13 @@ trait AlertTrait
      * Render alert warning.
      *
      * @param string $warn
-     *
      * @return Style
      */
-    public function warn($warn)
+    public function warn(string $warn): Style
     {
         return (new Style())
             ->newLines()
-            ->repeat(' ', $this->margin_left)
+            ->repeat(' ', $this->marginLeft)
             ->push(' warn ')
             ->bold()
             ->rawReset([Decorate::RESET_BOLD_DIM])
@@ -74,14 +71,13 @@ trait AlertTrait
      * Render alert fail.
      *
      * @param string $fail
-     *
      * @return Style
      */
-    public function fail($fail)
+    public function fail(string $fail): Style
     {
         return (new Style())
             ->newLines()
-            ->repeat(' ', $this->margin_left)
+            ->repeat(' ', $this->marginLeft)
             ->push(' fail ')
             ->bold()
             ->rawReset([Decorate::RESET_BOLD_DIM])
@@ -96,14 +92,13 @@ trait AlertTrait
      * Render alert ok (similar with success).
      *
      * @param string $ok
-     *
      * @return Style
      */
-    public function ok($ok)
+    public function ok(string $ok): Style
     {
         return (new Style())
             ->newLines()
-            ->repeat(' ', $this->margin_left)
+            ->repeat(' ', $this->marginLeft)
             ->push(' ok ')
             ->bold()
             ->rawReset([Decorate::RESET_BOLD_DIM])

@@ -4,10 +4,22 @@ declare(strict_types=1);
 
 namespace Omega\Console\Traits;
 
+use function array_key_exists;
+use function count;
+use function explode;
+use function function_exists;
+use function preg_match;
+use function shell_exec;
+use function trim;
+
 trait TerminalTrait
 {
     /**
      * Get terminal width.
+     *
+     * @param int $min
+     * @param int $max
+     * @return int
      */
     protected function getWidth(int $min = 80, int $max = 160): int
     {
@@ -41,9 +53,15 @@ trait TerminalTrait
 
     /**
      * Helper to get between min-max value.
+     *
+     * @param int $value
+     * @param int $min
+     * @param int $max
+     * @return int
      */
     private function minMax(int $value, int $min, int $max): int
     {
+        /** @noinspection PhpConditionCanBeReplacedWithMinMaxCallInspection */
         return $value < $min ? $min : ($value > $max ? $max : $value);
     }
 }

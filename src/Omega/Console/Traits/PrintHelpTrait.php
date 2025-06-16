@@ -7,6 +7,10 @@ namespace Omega\Console\Traits;
 use Omega\Console\Style\Style;
 use Omega\Text\Str;
 
+use function array_keys;
+use function implode;
+use function strlen;
+
 trait PrintHelpTrait
 {
     /**
@@ -14,7 +18,7 @@ trait PrintHelpTrait
      *
      * @var array<string, string|int>
      */
-    protected $print_help = [
+    protected array $printHelp = [
         'margin-left'         => 12,
         'column-1-min-length' => 24,
     ];
@@ -22,39 +26,40 @@ trait PrintHelpTrait
     /**
      * Print argument describe using style console.
      *
+     * @param Style $style
      * @return Style
      */
-    public function printCommands(Style $style)
+    public function printCommands(Style $style): Style
     {
-        $option_names =  array_keys($this->command_describes);
+        $optionNames =  array_keys($this->commandDescribes);
 
-        $min_length = $this->print_help['column-1-min-length'];
-        foreach ($option_names as $name) {
-            $arguments_lenght = 0;
-            if (isset($this->command_relation[$name])) {
-                $arguments        = implode(' ', $this->command_relation[$name]);
-                $arguments_lenght = \strlen($arguments);
+        $minLength = $this->printHelp['column-1-min-length'];
+        foreach ($optionNames as $name) {
+            $argumentsLength = 0;
+            if (isset($this->commandRelation[$name])) {
+                $arguments       = implode(' ', $this->commandRelation[$name]);
+                $argumentsLength = strlen($arguments);
             }
 
-            $length = \strlen($name) + $arguments_lenght;
-            if ($length > $min_length) {
-                $min_length = $length;
+            $length = strlen($name) + $argumentsLength;
+            if ($length > $minLength) {
+                $minLength = $length;
             }
         }
 
-        foreach ($this->command_describes as $option => $describe) {
+        foreach ($this->commandDescribes as $option => $describe) {
             $arguments = '';
-            if (isset($this->command_relation[$option])) {
-                $arguments = implode(' ', $this->command_relation[$option]);
+            if (isset($this->commandRelation[$option])) {
+                $arguments = implode(' ', $this->commandRelation[$option]);
                 $arguments = ' ' . $arguments;
             }
 
-            $style->repeat(' ', $this->print_help['margin-left']);
+            $style->repeat(' ', $this->printHelp['margin-left']);
 
             $style->push($option)->textGreen();
             $style->push($arguments)->textDim();
 
-            $range = $min_length - (\strlen($option) + \strlen($arguments));
+            $range = $minLength - (strlen($option) + strlen($arguments));
             $style->repeat(' ', $range + 8);
 
             $style->push($describe);
@@ -67,24 +72,25 @@ trait PrintHelpTrait
     /**
      * Print option describe using style console.
      *
+     * @param Style $style
      * @return Style
      */
-    public function printOptions(Style $style)
+    public function printOptions(Style $style): Style
     {
-        $option_names =  array_keys($this->option_describes);
+        $optionNames =  array_keys($this->optionDescribes);
 
-        $min_length = $this->print_help['column-1-min-length'];
-        foreach ($option_names as $name) {
-            $length = \strlen($name);
-            if ($length > $min_length) {
-                $min_length = $length;
+        $minLength = $this->printHelp['column-1-min-length'];
+        foreach ($optionNames as $name) {
+            $length = strlen($name);
+            if ($length > $minLength) {
+                $minLength = $length;
             }
         }
 
-        foreach ($this->option_describes as $option => $describe) {
-            $style->repeat(' ', $this->print_help['margin-left']);
+        foreach ($this->optionDescribes as $option => $describe) {
+            $style->repeat(' ', $this->printHelp['margin-left']);
 
-            $option_name = Str::fillEnd($option, ' ', $min_length + 8);
+            $option_name = Str::fillEnd($option, ' ', $minLength + 8);
             $style->push($option_name)->textDim();
 
             $style->push($describe);

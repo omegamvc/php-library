@@ -74,7 +74,7 @@ class HelpCommand extends Command
     public function main(): int
     {
         $has_visited      = [];
-        $this->print_help = [
+        $this->printHelp = [
             'margin-left'         => 8,
             'column-1-min-length' => 16,
         ];
@@ -95,19 +95,19 @@ class HelpCommand extends Command
 
                     if (isset($help['commands']) && $help['commands'] !== null) {
                         foreach ($help['commands'] as $command => $desc) {
-                            $this->command_describes[$command] = $desc;
+                            $this->commandDescribes[$command] = $desc;
                         }
                     }
 
                     if (isset($help['options']) && $help['options'] !== null) {
                         foreach ($help['options'] as $option => $desc) {
-                            $this->option_describes[$option] = $desc;
+                            $this->optionDescribes[$option] = $desc;
                         }
                     }
 
                     if (isset($help['relation']) && $help['relation'] != null) {
                         foreach ($help['relation'] as $option => $desc) {
-                            $this->command_relation[$option] = $desc;
+                            $this->commandRelation[$option] = $desc;
                         }
                     }
                 }
@@ -228,15 +228,15 @@ class HelpCommand extends Command
                 $help = app()->call([$class, 'printHelp']) ?? [];
 
                 if (isset($help['commands']) && $help['commands'] != null) {
-                    $this->command_describes = $help['commands'];
+                    $this->commandDescribes = $help['commands'];
                 }
 
                 if (isset($help['options']) && $help['options'] != null) {
-                    $this->option_describes = $help['options'];
+                    $this->optionDescribes = $help['options'];
                 }
 
                 if (isset($help['relation']) && $help['relation'] != null) {
-                    $this->command_relation = $help['relation'];
+                    $this->commandRelation = $help['relation'];
                 }
 
                 style('Avilabe command:')->newLines()->out();

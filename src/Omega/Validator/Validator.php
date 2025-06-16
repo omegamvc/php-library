@@ -170,7 +170,7 @@ class Validator
      *
      * @throws \Exception
      */
-    public function get_error(): array
+    public function getError(): array
     {
         if (!$this->has_run_validate) {
             $this->Rule->validate($this->fields, $this->valid_pool->get_pool());
@@ -191,7 +191,7 @@ class Validator
      */
     public function errors(): Collection
     {
-        return new Collection($this->get_error());
+        return new Collection($this->getError());
     }
 
     /**
@@ -200,7 +200,7 @@ class Validator
      * @param callable(ValidPool=): (ValidPool|mixed) $rule_validation Closure with param as ValidPool,
      *                                                                 if null return validate this currect validation
      */
-    public function is_valid($rule_validation = null): bool
+    public function isValid($rule_validation = null): bool
     {
         // load from property
         if ($rule_validation === null) {
@@ -230,7 +230,7 @@ class Validator
      */
     public function is_error($rule_validation = null): bool
     {
-        return !$this->is_valid($rule_validation);
+        return !$this->isValid($rule_validation);
     }
 
     /**
@@ -484,7 +484,7 @@ class Validator
      */
     public function passed(): bool
     {
-        return $this->is_valid() && $this->submitted();
+        return $this->isValid() && $this->submitted();
     }
 
     /**

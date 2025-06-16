@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Omega\Console\Traits;
 
-use Omega\Console\Style\Color;
 use Omega\Console\Style\Color\BackgroundColor;
 use Omega\Console\Style\Color\ForegroundColor;
 use Omega\Console\Style\Decorate;
