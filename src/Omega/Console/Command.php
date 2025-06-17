@@ -16,12 +16,17 @@ declare(strict_types=1);
 namespace Omega\Console;
 
 use ArrayAccess;
+use Exception;
 use Omega\Console\Traits\TerminalTrait;
 use Omega\Text\Str;
+use ReturnTypeWillChange;
 use function array_key_exists;
 use function array_merge;
 use function array_shift;
+use function count;
 use function explode;
+use function is_array;
+use function is_int;
 use function preg_match;
 use function preg_replace;
 use function str_split;
@@ -158,6 +163,7 @@ class Command implements ArrayAccess
                 $name      = preg_replace('/^(-{1,2})/', '', $keyValue[0]);
 
                 // alias check
+                /** @noinspection PhpUnusedLocalVariableInspection */
                 if (preg_match('/^-(?!-)([a-zA-Z]+)$/', $keyValue[0], $single_dash)) {
                     $alias[$name] = array_key_exists($name, $alias)
                         ? array_merge($alias[$name], str_split($name))
@@ -194,7 +200,7 @@ class Command implements ArrayAccess
         foreach ($alias as $key => $names) {
             foreach ($names as $name) {
                 if (array_key_exists($name, $options)) {
-                    if (\is_int($options[$name])) {
+                    if (is_int($options[$name])) {
                         $options[$name]++;
                     }
                     continue;
@@ -208,6 +214,9 @@ class Command implements ArrayAccess
 
     /**
      * Detect string is command or value.
+     *
+     * @param string $command
+     * @return bool
      */
     private function isCommandParam(string $command): bool
     {
@@ -216,6 +225,9 @@ class Command implements ArrayAccess
 
     /**
      * Remove quote single or double.
+     *
+     * @param string $value
+     * @return string
      */
     private function removeQuote(string $value): string
     {
@@ -226,10 +238,9 @@ class Command implements ArrayAccess
      * Get parse commandline parameters (name, value).
      *
      * @param string|string[]|bool|int|null $default Default if parameter not found
-     *
      * @return string|string[]|bool|int|null
      */
-    protected function option(string $name, $default = null)
+    protected function option(string $name, mixed $default = null): mixed
     {
         if (!array_key_exists($name, $this->optionMapper)) {
             return $default;
@@ -244,6 +255,9 @@ class Command implements ArrayAccess
 
     /**
      * Get exist option status.
+     *
+     * @param string $name
+     * @return bool
      */
     protected function hasOption(string $name): bool
     {
@@ -255,7 +269,7 @@ class Command implements ArrayAccess
      *
      * @return string[]
      */
-    protected function optionPosition()
+    protected function optionPosition(): array
     {
         return $this->optionMapper[''];
     }
@@ -264,39 +278,51 @@ class Command implements ArrayAccess
      * Get parse commandline parameters (name, value).
      *
      * @param string $name
-     *
      * @return string|bool|int|null
      */
-    public function __get($name)
+    public function __get(string $name): mixed
     {
         return $this->option($name);
     }
 
     /**
-     * @param mixed $offset — Check parse commandline parameters
+     * @param mixed $offset
+     * @return bool
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return array_key_exists($offset, $this->optionMapper);
     }
 
     /**
      * @param mixed $offset — Check parse commandline parameters
+     * @return mixed
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    #[ReturnTypeWillChange]
+    public function offsetGet(mixed $offset): mixed
     {
         return $this->option($offset);
     }
 
-    public function offsetSet($offset, $value): void
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     * @throws Exception
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        throw new \Exception('Command cant be modify');
+        throw new Exception('Command cant be modify');
     }
 
-    public function offsetUnset($offset): void
+    /**
+     * @param mixed $offset
+     * @return void
+     * @throws Exception
+     */
+    public function offsetUnset(mixed $offset): void
     {
-        throw new \Exception('Command cant be modify');
+        throw new Exception('Command cant be modify');
     }
 
     /**
