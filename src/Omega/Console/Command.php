@@ -82,11 +82,7 @@ class Command implements ArrayAccess
 {
     use TerminalTrait;
 
-    /**
-     * Create new scratch file from selection Raw command input (command name or arguments).
-     *
-     * @var string|array<int, string>
-     */
+    /** @var string|array<int, string> Create new scratch file from selection. */
     protected string|array $cmd;
 
     /** array<int, string> Raw option strings from the CLI (e.g., --flag, -o=value). */
