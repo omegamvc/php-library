@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Omega\Console;
 
+use Exception;
 use Omega\Console\Style\Alert;
 use Omega\Console\Style\Style;
 use Omega\Console\Traits\TerminalTrait;
@@ -23,7 +24,7 @@ use function constant;
 use function defined;
 use function function_exists;
 use function pcntl_signal;
-use function posix_getgid;
+use function posix_getpid;
 use function posix_kill;
 use function sapi_windows_set_ctrl_handler;
 
@@ -139,9 +140,10 @@ if (!function_exists('option')) {
      *
      * Prompts the user to choose between multiple options by key.
      *
-     * @param Style|string            $title   The prompt title.
+     * @param Style|string $title The prompt title.
      * @param array<string, callable> $options The available options.
      * @return mixed The result of the selected option's callback.
+     * @throws Exception
      */
     function option(Style|string $title, array $options): mixed
     {
@@ -155,9 +157,10 @@ if (!function_exists('select')) {
      *
      * Prompts the user to select one option from a visual list.
      *
-     * @param Style|string            $title   The prompt title.
+     * @param Style|string $title The prompt title.
      * @param array<string, callable> $options The selectable options.
      * @return mixed The result of the selected option's callback.
+     * @throws Exception
      */
     function select(Style|string $title, array $options): mixed
     {
@@ -169,9 +172,10 @@ if (!function_exists('text')) {
     /**
      * Prompt the user to input free text in the terminal.
      *
-     * @param Style|string $title    The prompt title.
-     * @param callable     $callable A callback to validate or process the input.
+     * @param Style|string $title The prompt title.
+     * @param callable $callable A callback to validate or process the input.
      * @return mixed The processed input result.
+     * @throws Exception
      */
     function text(Style|string $title, callable $callable): mixed
     {
@@ -238,9 +242,10 @@ if (!function_exists('exit_prompt')) {
      * On interruption, prompts the user whether to exit or continue.
      * Works on both Unix and Windows CLI environments.
      *
-     * @param Style|string            $title   The prompt title.
+     * @param Style|string $title The prompt title.
      * @param array<string, callable>|null $options Custom exit options, defaults to yes/no.
      * @return void
+     * @throws Exception
      */
     function exit_prompt(Style|string $title, ?array $options = null): void
     {
