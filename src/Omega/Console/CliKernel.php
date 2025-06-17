@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Console;
@@ -11,18 +22,39 @@ use Omega\Integrate\Bootstrap\ConfigProviders;
 use Omega\Integrate\Bootstrap\RegisterFacades;
 use Omega\Integrate\Bootstrap\RegisterProviders;
 
+use function array_fill;
+use function array_merge;
+use function arsort;
+use function explode;
+use function floor;
+use function is_int;
+use function max;
+use function min;
+use function strlen;
+use function strtolower;
+
+/**
+ * Class CliKernel
+ *
+ * Handles the CLI application lifecycle, including command resolution,
+ * argument parsing, provider bootstrapping, and similarity suggestions
+ * for unrecognized commands.
+ *
+ * @category  Omega
+ * @package   Console
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 class CliKernel
 {
-    /**
-     * Application Container.
-     */
-    protected Application $app;
+    /** @var int The exit code returned by the command execution. */
+    protected int $exitCode;
 
-    /** @var int concole exit status */
-    protected $exit_code;
-
-    /** @var array<int, class-string> Apllication bootstrap register. */
-    protected array $bootstrappers = [
+    /** @var array<int, class-string> The list of application service providers to bootstrap. */
+    protected array $providers = [
         ConfigProviders::class,
         RegisterFacades::class,
         RegisterProviders::class,
@@ -30,21 +62,22 @@ class CliKernel
     ];
 
     /**
-     * Set instance.
+     * Create a new CliKernel instance.
+     *
+     * @param Application $app The current application instance.
+     * @return void
      */
-    public function __construct(Application $app)
+    public function __construct(protected Application $app)
     {
-        $this->app = $app;
     }
 
     /**
-     * Handle input (arguments) karnel.
+     * Handle the given command-line arguments.
      *
-     * @param string|array<int, string> $arguments
-     *
-     * @return int Exit code
+     * @param string|array<int, string> $arguments CLI arguments.
+     * @return int Exit code.
      */
-    public function handle($arguments)
+    public function handle(array|string $arguments): int
     {
         // handle command empty
         $baseArgs = $arguments[1] ?? '--help';
@@ -61,13 +94,14 @@ class CliKernel
 
                 $call = $this->app->call($cmd->call());
 
-                return $this->exit_code = (is_int($call) ? $call : 0);
+                return $this->exitCode = (is_int($call) ? $call : 0);
             }
         }
 
         // did you mean
         $count   = 0;
         $similar = (new Style('Did you mean?'))->textLightYellow()->newLines();
+        /** @noinspection PhpRedundantOptionalArgumentInspection */
         foreach ($this->getSimilarity($baseArgs, $commands, 0.8) as $term => $score) {
             $similar->push('    > ')->push($term)->textYellow()->newLines();
             $count++;
@@ -79,36 +113,38 @@ class CliKernel
                 ->push('Command Not Found, run help command')->textRed()->newLines(2)
                 ->push('> ')->textDim()
                 ->push('php ')->textYellow()
-                ->push('cli ')
+                ->push('omega ')
                 ->push('--help')->textDim()
                 ->newLines()
                 ->out()
             ;
 
-            return $this->exit_code = 1;
+            return $this->exitCode = 1;
         }
 
         $similar->out();
 
-        return $this->exit_code = 1;
+        return $this->exitCode = 1;
     }
 
     /**
-     * Register bootstraper application.
+     * Bootstrap the application by loading the registered providers.
+     *
+     * @return void
      */
     public function bootstrap(): void
     {
-        $this->app->bootstrapWith($this->bootstrappers);
+        $this->app->bootstrapWith($this->providers);
     }
 
     /**
-     * Call command using know signature.
-     * The signature doset require php as prefix.
-     * For better parse use `handle` method istead.
+     * Call a command programmatically using its signature.
      *
-     * @param array<string, string|bool|int|null> $parameter
+     * Note: For parsing a full CLI string, prefer the `handle()` method.
      *
-     * @since v0.33
+     * @param string                              $signature Command signature (e.g. "make:controller HomeController").
+     * @param array<string, string|bool|int|null> $parameter Optional parameters to pass.
+     * @return int Exit code.
      */
     public function call(string $signature, array $parameter = []): int
     {
@@ -132,11 +168,13 @@ class CliKernel
     }
 
     /**
-     * Return similar from given array, compare with key.
+     * Suggest similar command names using string similarity.
      *
-     * @param string[] $commands
-     *
-     * @return array<string, float> Sorted from simalar
+     * @param string   $find      The command entered by the user.
+     * @param string[] $commands  A list of all known command patterns.
+     * @param float    $threshold Minimum similarity score (0.0–1.0).
+     * @return array<string, float> Sorted list of similar commands with their scores.
+     * @noinspection PhpSameParameterValueInspection
      */
     private function getSimilarity(string $find, array $commands, float $threshold = 0.8): array
     {
@@ -158,9 +196,11 @@ class CliKernel
     }
 
     /**
-     * Calculate the similarity between two strings.
+     * Compute the Jaro-Winkler similarity between two strings.
      *
-     * @return float Similarity score (between 0 and 1)
+     * @param string $find
+     * @param string $command
+     * @return float Similarity score (0.0–1.0).
      */
     private function jaroWinkler(string $find, string $command): float
     {
@@ -180,9 +220,11 @@ class CliKernel
     }
 
     /**
-     * Calculate the Jaro similarity between two strings.
+     * Compute the Jaro similarity between two strings.
      *
-     * @return float the Jaro similarity score (between 0 and 1)
+     * @param string $find
+     * @param string $command
+     * @return float Similarity score (0.0–1.0).
      */
     private function jaro(string $find, string $command): float
     {
@@ -242,19 +284,19 @@ class CliKernel
     }
 
     /**
-     * Get karne exit status code.
+     * Get the exit status code from the last executed command.
      *
-     * @return int Exit status code
+     * @return int Exit code.
      */
-    public function exit_code()
+    public function exitCode(): int
     {
-        return $this->exit_code;
+        return $this->exitCode;
     }
 
     /**
-     * Command route.
+     * Load the list of available CLI commands from configuration.
      *
-     * @return CommandMap[]
+     * @return CommandMap[] Array of registered command maps.
      */
     protected function commands(): array
     {
