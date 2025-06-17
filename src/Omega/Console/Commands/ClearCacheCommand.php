@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of Omega - Integrate\Console Package
+ * Part of Omega - Console Package
  * php version 8.3
  *
  * @link      https://omegamvc.github.io
@@ -34,6 +34,12 @@ use function Omega\Console\ok;
  * or one or more specific drivers by name. It also validates the provided
  * driver names and handles invalid input gracefully.
  *
+ * Example usage:
+ * ```
+ * php omega clear:cache               # Delete default data cache
+ * php omega clear:cache --all         # Delete al cache
+ * php omega clear:cache --drivers=xxx # Delete specific cache
+ * ```
  * @category   Omega
  * @package    Integrate
  * @subpackage Console

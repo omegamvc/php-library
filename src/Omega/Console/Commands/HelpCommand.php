@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Console\Commands;
@@ -12,20 +23,59 @@ use Omega\Integrate\Application;
 use Omega\Console\CommandMap;
 use Omega\Text\Str;
 
+use function array_merge;
+use function class_exists;
+use function explode;
+use function implode;
+use function in_array;
+use function method_exists;
 use function Omega\Console\info;
 use function Omega\Console\style;
 use function Omega\Console\warn;
+use function ucfirst;
 
+/**
+ * Class HelpCommand
+ *
+ * This class provides help-related functionalities for the console application.
+ * It handles displaying general usage instructions, listing registered commands,
+ * and showing help details for specific commands.
+ *
+ * Example usage:
+ * ```php
+ * php omega --help            # Show all help information
+ * php omega --list            # List all registered commands with handler classes
+ * php omega help make:command # Show help for a specific command
+ * ```
+ * @category   Omega
+ * @package    Integrate
+ * @subpackage Console
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ *
+ * @property string[] $classNamespace  A list of namespaces where command classes may reside.
+ * @property array<int, array<string, mixed>> $command  Command pattern registrations with respective handlers.
+ * @property string $banner  ASCII-art logo printed in the help output.
+ */
 class HelpCommand extends Command
 {
     use PrintHelpTrait;
 
     /**
-     * @var string[]
+     * Static registration of command patterns and associated callback handlers.
+     * Each item includes a command pattern and the function that handles it.
+     *
+     * Supported patterns:
+     * - `--help`, `-h` → shows general help (calls `main`)
+     * - `--list` → lists registered commands (calls `commandList`)
+     * - `help` → shows help for a specific command (calls `commandHelp`)
+     *
+     * @var array<int, array{pattern: string|string[], fn: array{class-string, string}}>}
      */
-    protected array $class_namespace = [
-        // register namesapce commands
-    ];
+    protected array $classNamespace = [];
 
     /**
      * Register command.
@@ -36,23 +86,31 @@ class HelpCommand extends Command
         [
             'pattern' => ['-h', '--help'],
             'fn'      => [self::class, 'main'],
-        ], [
+        ],
+        [
             'pattern' => '--list',
             'fn'      => [self::class, 'commandList'],
-        ], [
+        ],
+        [
             'pattern' => 'help',
-            'fn'      => [self::class, 'commandhelp'],
+            'fn'      => [self::class, 'commandHelp'],
         ],
     ];
 
     /**
-     * @return array<string, array<string, string|string[]>>
+     * Print help metadata to be consumed by the core help handler.
+     *
+     * @return array{
+     *     commands: array<string, string>,
+     *     options: array<string, string>,
+     *     relation: array<string, string[]>
+     * }
      */
-    public function printHelp()
+    public function printHelp(): array
     {
         return [
             'commands'  => [
-                'help' => 'Get help for avilable command',
+                'help' => 'Get help for available command',
             ],
             'options'   => [],
             'relation'  => [
@@ -61,19 +119,26 @@ class HelpCommand extends Command
         ];
     }
 
+    /** @var string ASCII logo banner to print at the top of help output. */
     protected string $banner = '
-     _              _ _
- ___| |_ ___    ___| |_|
-| . |   | . |  |  _| | |
-|  _|_|_|  _|  |___|_|_|
-|_|     |_|             ';
+  ___  __  __ _____ ____    _
+ / _ \|  \/  | ____/ ___|  / \
+| | | | |\/| |  _|| |  _  / _ \
+| |_| | |  | | |__| |_| |/ ___ \
+ \___/|_|  |_|_____\____/_/   \_\
+
+';
 
     /**
-     * Use for print --help.
+     * Handles the `--help` and `-h` flags.
+     * Prints general help output, including usage instructions, available flags,
+     * commands, and options registered by all loaded command classes.
+     *
+     * @return int Returns 0 on success.
      */
     public function main(): int
     {
-        $has_visited      = [];
+        $hasVisited      = [];
         $this->printHelp = [
             'margin-left'         => 8,
             'column-1-min-length' => 16,
@@ -81,8 +146,8 @@ class HelpCommand extends Command
 
         foreach ($this->commandMaps() as $command) {
             $class = $command->class();
-            if (!in_array($class, $has_visited)) {
-                $has_visited[] = $class;
+            if (!in_array($class, $hasVisited)) {
+                $hasVisited[] = $class;
 
                 if (class_exists($class)) {
                     $class = new $class([], $command->defaultOption());
@@ -93,12 +158,14 @@ class HelpCommand extends Command
 
                     $help = app()->call([$class, 'printHelp']) ?? [];
 
+                    /** @noinspection PhpConditionAlreadyCheckedInspection */
                     if (isset($help['commands']) && $help['commands'] !== null) {
                         foreach ($help['commands'] as $command => $desc) {
                             $this->commandDescribes[$command] = $desc;
                         }
                     }
 
+                    /** @noinspection PhpConditionAlreadyCheckedInspection */
                     if (isset($help['options']) && $help['options'] !== null) {
                         foreach ($help['options'] as $option => $desc) {
                             $this->optionDescribes[$option] = $desc;
@@ -121,14 +188,14 @@ class HelpCommand extends Command
             ->push('Usage:')
             ->newLines(2)->tabs()
             ->push('php')->textGreen()
-            ->push(' oemga [flag]')
+            ->push(' omega [flag]')
             ->newLines()->tabs()
             ->push('php')->textGreen()
             ->push(' omega [command] ')
             ->push('[option]')->textDim()
             ->newLines(2)
 
-            ->push('Avilable flag:')
+            ->push('Available flag:')
             ->newLines(2)->tabs()
             ->push('--help')->textDim()
             ->tabs(3)
@@ -140,10 +207,10 @@ class HelpCommand extends Command
             ->newLines(2)
         ;
 
-        $printer->push('Avilabe command:')->newLines(2);
+        $printer->push('Available command:')->newLines(2);
         $printer = $this->printCommands($printer)->newLines();
 
-        $printer->push('Avilabe options:')->newLines();
+        $printer->push('Available options:')->newLines();
         $printer = $this->printOptions($printer);
 
         $printer->out();
@@ -151,6 +218,17 @@ class HelpCommand extends Command
         return 0;
     }
 
+    /**
+     * Handles the `--list` flag.
+     * Lists all registered commands with the associated class and method.
+     * Useful for debugging or CLI introspection.
+     *
+     * Example output:
+     *   make:controller   App\Console\MakeCommand .... makeController
+     *   db:seed           App\Console\DBCommand .... seedDatabase
+     *
+     * @return int Returns 0 on success.
+     */
     public function commandList(): int
     {
         style('List of all command registered:')->out();
@@ -189,6 +267,13 @@ class HelpCommand extends Command
         return 0;
     }
 
+    /**
+     * Handles the `help <command>` pattern.
+     * Resolves the command name, searches known namespaces, and prints
+     * the specific help metadata defined in the target class's `printHelp()` method.
+     *
+     * @return int Returns 0 if help found, 1 if command not found or invalid.
+     */
     public function commandHelp(): int
     {
         if (!isset($this->option[0])) {
@@ -213,7 +298,7 @@ class HelpCommand extends Command
         $className .= 'Command';
         $className  = ucfirst($className);
         $namespaces = array_merge(
-            $this->class_namespace,
+            $this->classNamespace,
             [
                 'App\\Commands\\',
                 'Omega\\Console\\Commands\\',
@@ -239,10 +324,10 @@ class HelpCommand extends Command
                     $this->commandRelation = $help['relation'];
                 }
 
-                style('Avilabe command:')->newLines()->out();
+                style('Available command:')->newLines()->out();
                 $this->printCommands(new Style())->out();
 
-                style('Avilable options:')->newLines()->out();
+                style('Available options:')->newLines()->out();
                 $this->printOptions(new Style())->out();
 
                 return 0;
@@ -255,11 +340,11 @@ class HelpCommand extends Command
     }
 
     /**
-     * Transform commandsmap array to CommandMap.
+     * Loads and returns all registered command mappings from the application config.
      *
-     * @return CommandMap[]
+     * @return CommandMap[] An array of CommandMap instances representing all known commands.
      */
-    private function commandMaps()
+    private function commandMaps(): array
     {
         return Util::loadCommandFromConfig(Application::getIntance());
     }

@@ -12,7 +12,7 @@ class ConfigProviders
     public function bootstrap(Application $app): void
     {
         $config_path = $app->configPath();
-        $config      =  $app->defaultConfigs();
+        $config      = $app->defaultConfigs();
         $has_cache   = false;
         if (file_exists($file = $app->getApplicationCachePath() . '.php')) {
             $config    = array_merge($config, require $file);

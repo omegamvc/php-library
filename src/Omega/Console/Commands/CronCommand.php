@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of Omega - Integrate\Console Package
+ * Part of Omega - Console Package
  * php version 8.3
  *
  * @link      https://omegamvc.github.io
@@ -32,13 +32,17 @@ use function strlen;
  * Console command for managing scheduled Cron jobs.
  *
  * This command provides three primary operations:
- * - `cron`: Executes all scheduled cron tasks once.
- * - `cron:list`: Displays a list of registered scheduled events.
- * - `cron:work`: Simulates an always-running cron job in the terminal.
  *
  * It leverages the Omega Cron scheduling system and integrates with
  * the terminal UI via the Style component. Useful for debugging, monitoring,
  * and simulating cron behavior in a CLI environment.
+ *
+ * Example usage:
+ * ```php
+ * php omega cron      # Executes all scheduled cron tasks once.
+ * php omega cron:list # Displays a list of registered scheduled events.
+ * php omega cron:work # Simulates an always-running cron job in the terminal.
+ * ```
  *
  * @category   Omega
  * @package    Integrate
@@ -66,10 +70,12 @@ class CronCommand extends Command
         [
             'pattern' => 'cron',
             'fn'      => [self::class, 'main'],
-        ], [
+        ],
+        [
             'pattern' => 'cron:list',
             'fn'      => [self::class, 'list'],
-        ], [
+        ],
+        [
             'pattern' => 'cron:work',
             'fn'      => [self::class, 'work'],
         ],
