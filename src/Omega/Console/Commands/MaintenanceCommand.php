@@ -57,8 +57,8 @@ use function unlink;
  * a warning is shown and the command exits with a non-zero status code.
  *
  * @category   Omega
- * @package    Integrate
- * @subpackage Console
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
