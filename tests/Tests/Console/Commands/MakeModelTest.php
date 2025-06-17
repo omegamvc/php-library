@@ -73,7 +73,7 @@ class MakeModelTest extends CommandTestHelper
     {
         $make_model = new MakeCommand($this->argv('omega make:model User2'));
         ob_start();
-        $exit = $make_model->make_model();
+        $exit = $make_model->makeModel();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -94,7 +94,7 @@ class MakeModelTest extends CommandTestHelper
     {
         $make_model = new MakeCommand($this->argv('omega make:model User --table-name=users --force'));
         ob_start();
-        $exit = $make_model->make_model();
+        $exit = $make_model->makeModel();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -115,7 +115,7 @@ class MakeModelTest extends CommandTestHelper
     {
         $make_model = new MakeCommand($this->argv('omega make:model User2 --table-name users'));
         ob_start();
-        $exit = $make_model->make_model();
+        $exit = $make_model->makeModel();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -136,7 +136,7 @@ class MakeModelTest extends CommandTestHelper
     {
         $make_model = new MakeCommand($this->argv('omega make:model Asset'));
         ob_start();
-        $exit = $make_model->make_model();
+        $exit = $make_model->makeModel();
         ob_get_clean();
 
         $this->assertFails($exit);

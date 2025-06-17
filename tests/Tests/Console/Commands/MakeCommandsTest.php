@@ -113,7 +113,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $makeCommand = new MakeCommand($this->argv('omega make:controller Index'));
         ob_start();
-        $exit = $makeCommand->make_controller();
+        $exit = $makeCommand->makeController();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -135,7 +135,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $makeCommand = new MakeCommand($this->argv('omega make:controller Asset'));
         ob_start();
-        $exit = $makeCommand->make_controller();
+        $exit = $makeCommand->makeController();
         ob_get_clean();
 
         $this->assertFails($exit);
@@ -150,7 +150,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $makeCommand = new MakeCommand($this->argv('omega make:view welcome'));
         ob_start();
-        $exit = $makeCommand->make_view();
+        $exit = $makeCommand->makeView();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -171,7 +171,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $makeCommand = new MakeCommand($this->argv('omega make:view asset'));
         ob_start();
-        $exit = $makeCommand->make_view();
+        $exit = $makeCommand->makeView();
         ob_get_clean();
 
         $this->assertFails($exit);
@@ -186,7 +186,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $make_service = new MakeCommand($this->argv('omega make:service Application'));
         ob_start();
-        $exit = $make_service->make_services();
+        $exit = $make_service->makeServices();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -207,7 +207,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $make_service = new MakeCommand($this->argv('omega make:service Asset'));
         ob_start();
-        $exit = $make_service->make_services();
+        $exit = $make_service->makeServices();
         ob_get_clean();
 
         $this->assertFails($exit);
@@ -222,7 +222,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $make_command = new MakeCommand($this->argv('omega make:command Cache'));
         ob_start();
-        $exit = $make_command->make_command();
+        $exit = $make_command->makeCommand();
         ob_get_clean();
 
         $this->assertSuccess($exit);
@@ -243,7 +243,7 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $make_command = new MakeCommand($this->argv('omega make:command Asset'));
         ob_start();
-        $exit = $make_command->make_command();
+        $exit = $make_command->makeCommand();
         ob_get_clean();
 
         $this->assertFails($exit);
@@ -258,14 +258,14 @@ class MakeCommandsTest extends CommandTestHelper
     {
         $make_command = new MakeCommand($this->argv('omega make:migration user'));
         ob_start();
-        $exit = $make_command->make_migration();
+        $exit = $make_command->makeMigration();
         ob_get_clean();
 
         $this->assertSuccess($exit);
 
         $make_command = new MakeCommand($this->argv('omega make:migration guest --update'));
         ob_start();
-        $exit = $make_command->make_migration();
+        $exit = $make_command->makeMigration();
         ob_get_clean();
 
         $this->assertSuccess($exit);
