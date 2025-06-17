@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Console Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Console;
@@ -8,10 +19,18 @@ use Omega\Console\Traits\TerminalTrait;
 use Omega\Text\Str;
 
 /**
- * Add costumize terminal style by adding trits:
+ * Add customize terminal style by adding traits:
  * - TraitCommand (optional).
  *
- * @property string $_ Get argument name
+ * @category  Omega
+ * @package   Console
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ *
+ * @property bool|int|string|string[]|null $_
  * @property bool|int|string|string[]|null $name
  * @property bool|int|string|string[]|null $nick
  * @property bool|int|string|string[]|null $whois
@@ -33,10 +52,11 @@ use Omega\Text\Str;
  * @property bool|int|string|string[]|null $v
  * @property bool|int|string|string[]|null $last
  *
- * @implements \ArrayAccess<string, string|bool|int|null>
  * @method echoTextRed()
  * @method echoTextYellow()
  * @method echoTextGreen()
+ *
+ * @implements \ArrayAccess<string, string|bool|int|null>
  */
 class Command implements \ArrayAccess
 {
