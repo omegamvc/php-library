@@ -15,8 +15,16 @@ declare(strict_types=1);
 
 namespace Omega\Console;
 
+use ArrayAccess;
 use Omega\Console\Traits\TerminalTrait;
 use Omega\Text\Str;
+use function array_key_exists;
+use function array_merge;
+use function array_shift;
+use function explode;
+use function preg_match;
+use function preg_replace;
+use function str_split;
 
 /**
  * Add customize terminal style by adding traits:
@@ -56,9 +64,9 @@ use Omega\Text\Str;
  * @method echoTextYellow()
  * @method echoTextGreen()
  *
- * @implements \ArrayAccess<string, string|bool|int|null>
+ * @implements ArrayAccess<string, string|bool|int|null>
  */
-class Command implements \ArrayAccess
+class Command implements ArrayAccess
 {
     use TerminalTrait;
 
@@ -67,68 +75,67 @@ class Command implements \ArrayAccess
      *
      * @var string|array<int, string>
      */
-    protected $CMD;
+    protected string|array $cmd;
 
     /**
      * Commandline input.
      *
      * @var array<int, string>
      */
-    protected $OPTION;
+    protected array $option;
 
     /**
      * Base dir.
      *
      * @var string
      */
-    protected $BASE_DIR;
+    protected string $baseDir;
 
     /**
      * Option object mapper.
      *
      * @var array<string, string|string[]|bool|int|null>
      */
-    protected $option_mapper;
+    protected array $optionMapper;
 
     /**
      * Option describe for print.
      *
      * @var array<string, string>
      */
-    protected $commandDescribes = [];
+    protected array $commandDescribes = [];
 
     /**
      * Option describe for print.
      *
      * @var array<string, string>
      */
-    protected $optionDescribes = [];
+    protected array $optionDescribes = [];
 
     /**
      * Relation between Option and Argument.
      *
      * @var array<string, array<int, string>>
      */
-    protected $commandRelation = [];
+    protected array $commandRelation = [];
 
     /**
      * Parse commandline.
      *
      * @param array<int, string>                  $argv
-     * @param array<string, string|bool|int|null> $default_option
-     *
+     * @param array<string, string|bool|int|null> $defaultOption
      * @return void
      */
-    public function __construct(array $argv, $default_option = [])
+    public function __construct(array $argv, array $defaultOption = [])
     {
         array_shift($argv);
 
-        $this->CMD           = array_shift($argv) ?? '';
-        $this->OPTION        = $argv;
-        $this->option_mapper = $default_option;
+        $this->cmd          = array_shift($argv) ?? '';
+        $this->option       = $argv;
+        $this->optionMapper = $defaultOption;
 
-        foreach ($this->option_mapper($argv) as $key => $value) {
-            $this->option_mapper[$key] = $value;
+        foreach ($this->optionMapper($argv) as $key => $value) {
+            $this->optionMapper[$key] = $value;
         }
     }
 
@@ -136,59 +143,58 @@ class Command implements \ArrayAccess
      * parse option to readable array option.
      *
      * @param array<int, string|bool|int|null> $argv Option to parse
-     *
      * @return array<string, string|bool|int|null>
      */
-    private function option_mapper(array $argv): array
+    private function optionMapper(array $argv): array
     {
         $options      = [];
         $options['_'] = $options['name'] = $argv[0] ?? '';
-        $last_option  = null;
+        $lastOption   = null;
         $alias        = [];
 
         foreach ($argv as $key => $option) {
-            if ($this->isCommmadParam($option)) {
-                $key_value = explode('=', $option);
-                $name      = preg_replace('/^(-{1,2})/', '', $key_value[0]);
+            if ($this->isCommandParam($option)) {
+                $keyValue = explode('=', $option);
+                $name      = preg_replace('/^(-{1,2})/', '', $keyValue[0]);
 
                 // alias check
-                if (preg_match('/^-(?!-)([a-zA-Z]+)$/', $key_value[0], $single_dash)) {
+                if (preg_match('/^-(?!-)([a-zA-Z]+)$/', $keyValue[0], $single_dash)) {
                     $alias[$name] = array_key_exists($name, $alias)
                         ? array_merge($alias[$name], str_split($name))
                         : str_split($name);
                 }
 
                 // param have value
-                if (isset($key_value[1])) {
-                    $options[$name] = $this->removeQuote($key_value[1]);
+                if (isset($keyValue[1])) {
+                    $options[$name] = $this->removeQuote($keyValue[1]);
                     continue;
                 }
 
                 // check value in next param
-                $next_key = $key + 1;
+                $nextKey = $key + 1;
 
-                if (!isset($argv[$next_key])) {
+                if (!isset($argv[$nextKey])) {
                     $options[$name] = true;
                     continue;
                 }
 
-                $next           = $argv[$next_key];
-                if ($this->isCommmadParam($next)) {
+                $next = $argv[$nextKey];
+                if ($this->isCommandParam($next)) {
                     $options[$name] = true;
                 }
 
-                $last_option = $name;
+                $lastOption = $name;
                 continue;
             }
 
-            $options[$last_option][] = $this->removeQuote($option);
+            $options[$lastOption][] = $this->removeQuote($option);
         }
 
         // re-group alias
         foreach ($alias as $key => $names) {
             foreach ($names as $name) {
                 if (array_key_exists($name, $options)) {
-                    if (is_int($options[$name])) {
+                    if (\is_int($options[$name])) {
                         $options[$name]++;
                     }
                     continue;
@@ -203,7 +209,7 @@ class Command implements \ArrayAccess
     /**
      * Detect string is command or value.
      */
-    private function isCommmadParam(string $command): bool
+    private function isCommandParam(string $command): bool
     {
         return Str::startsWith($command, '-') || Str::startsWith($command, '--');
     }
@@ -225,10 +231,10 @@ class Command implements \ArrayAccess
      */
     protected function option(string $name, $default = null)
     {
-        if (!array_key_exists($name, $this->option_mapper)) {
+        if (!array_key_exists($name, $this->optionMapper)) {
             return $default;
         }
-        $option = $this->option_mapper[$name];
+        $option = $this->optionMapper[$name];
         if (is_array($option) && 1 === count($option)) {
             return $option[0];
         }
@@ -241,7 +247,7 @@ class Command implements \ArrayAccess
      */
     protected function hasOption(string $name): bool
     {
-        return array_key_exists($name, $this->option_mapper);
+        return array_key_exists($name, $this->optionMapper);
     }
 
     /**
@@ -251,7 +257,7 @@ class Command implements \ArrayAccess
      */
     protected function optionPosition()
     {
-        return $this->option_mapper[''];
+        return $this->optionMapper[''];
     }
 
     /**
@@ -271,7 +277,7 @@ class Command implements \ArrayAccess
      */
     public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->option_mapper);
+        return array_key_exists($offset, $this->optionMapper);
     }
 
     /**

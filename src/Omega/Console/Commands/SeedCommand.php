@@ -126,7 +126,7 @@ class SeedCommand extends Command
 
     public function make(): int
     {
-        $class = $this->OPTION[0] ?? null;
+        $class = $this->option[0] ?? null;
 
         if (null === $class) {
             warn('command make:seed require class name')->out(false);

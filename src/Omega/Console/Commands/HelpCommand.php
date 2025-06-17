@@ -191,7 +191,7 @@ class HelpCommand extends Command
 
     public function commandHelp(): int
     {
-        if (!isset($this->OPTION[0])) {
+        if (!isset($this->option[0])) {
             style('')
                 ->tap(info('To see help command, place provide command_name'))
                 ->textYellow()
@@ -204,7 +204,7 @@ class HelpCommand extends Command
             return 1;
         }
 
-        $className = $this->OPTION[0];
+        $className = $this->option[0];
         if (Str::contains(':', $className)) {
             $className = explode(':', $className);
             $className = $className[0];
@@ -249,7 +249,7 @@ class HelpCommand extends Command
             }
         }
 
-        warn("Help for `{$this->OPTION[0]}` command not found")->out(false);
+        warn("Help for `{$this->option[0]}` command not found")->out(false);
 
         return 1;
     }
