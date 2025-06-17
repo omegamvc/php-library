@@ -32,6 +32,13 @@ use function preg_replace;
 use function str_split;
 
 /**
+ * Command parser and option handler for command-line input.
+ *
+ * This class parses CLI arguments into a structured array of commands and options,
+ * providing convenient access through both property and array syntax.
+ *
+ * Implements read-only ArrayAccess to access parsed options.
+ *
  * Add customize terminal style by adding traits:
  * - TraitCommand (optional).
  *
@@ -76,59 +83,35 @@ class Command implements ArrayAccess
     use TerminalTrait;
 
     /**
-     * Commandline input.
+     * Create new scratch file from selection Raw command input (command name or arguments).
      *
      * @var string|array<int, string>
      */
     protected string|array $cmd;
 
-    /**
-     * Commandline input.
-     *
-     * @var array<int, string>
-     */
+    /** array<int, string> Raw option strings from the CLI (e.g., --flag, -o=value). */
     protected array $option;
 
-    /**
-     * Base dir.
-     *
-     * @var string
-     */
+    /** @var string Base working directory. */
     protected string $baseDir;
 
-    /**
-     * Option object mapper.
-     *
-     * @var array<string, string|string[]|bool|int|null>
-     */
+    /** @var array<string, string|string[]|bool|int|null> Parsed options mapped as key-value pairs. */
     protected array $optionMapper;
 
-    /**
-     * Option describe for print.
-     *
-     * @var array<string, string>
-     */
+    /** @var array<string, string> Command descriptions for help output. */
     protected array $commandDescribes = [];
 
-    /**
-     * Option describe for print.
-     *
-     * @var array<string, string>
-     */
+    /** @var array<string, string> Option descriptions for help output. */
     protected array $optionDescribes = [];
 
-    /**
-     * Relation between Option and Argument.
-     *
-     * @var array<string, array<int, string>>
-     */
+    /** @var array<string, array<int, string>> Relationship between command names and their arguments. */
     protected array $commandRelation = [];
 
     /**
-     * Parse commandline.
+     * Create a new Command instance and parse CLI arguments.
      *
-     * @param array<int, string>                  $argv
-     * @param array<string, string|bool|int|null> $defaultOption
+     * @param array<int, string>                  $argv         Command-line arguments
+     * @param array<string, string|bool|int|null> $defaultOption Default option values
      * @return void
      */
     public function __construct(array $argv, array $defaultOption = [])
@@ -145,10 +128,12 @@ class Command implements ArrayAccess
     }
 
     /**
-     * parse option to readable array option.
+     * Parse CLI options into a structured associative array.
      *
-     * @param array<int, string|bool|int|null> $argv Option to parse
-     * @return array<string, string|bool|int|null>
+     * Supports --key=value, --key value, and short aliases like -abc.
+     *
+     * @param array<int, string|bool|int|null> $argv CLI arguments
+     * @return array<string, string|bool|int|null> Parsed options
      */
     private function optionMapper(array $argv): array
     {
@@ -164,7 +149,7 @@ class Command implements ArrayAccess
 
                 // alias check
                 /** @noinspection PhpUnusedLocalVariableInspection */
-                if (preg_match('/^-(?!-)([a-zA-Z]+)$/', $keyValue[0], $single_dash)) {
+                if (preg_match('/^-(?!-)([a-zA-Z]+)$/', $keyValue[0], $singleDash)) {
                     $alias[$name] = array_key_exists($name, $alias)
                         ? array_merge($alias[$name], str_split($name))
                         : str_split($name);
@@ -213,10 +198,10 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Detect string is command or value.
+     * Determine if the string is a command-line flag (starts with - or --).
      *
-     * @param string $command
-     * @return bool
+     * @param string $command CLI string
+     * @return bool True if the string is a flag
      */
     private function isCommandParam(string $command): bool
     {
@@ -224,10 +209,10 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Remove quote single or double.
+     * Remove surrounding quotes (single or double) from a string.
      *
-     * @param string $value
-     * @return string
+     * @param string $value Input string
+     * @return string Unquoted string
      */
     private function removeQuote(string $value): string
     {
@@ -235,10 +220,13 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Get parse commandline parameters (name, value).
+     * Retrieve the value of a parsed option by name.
      *
-     * @param string|string[]|bool|int|null $default Default if parameter not found
-     * @return string|string[]|bool|int|null
+     * Returns default if the option is not set.
+     *
+     * @param string                              $name    Option name
+     * @param string|string[]|bool|int|null       $default Default value
+     * @return string|string[]|bool|int|null      Option value
      */
     protected function option(string $name, mixed $default = null): mixed
     {
@@ -254,10 +242,10 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Get exist option status.
+     * Check if a specific option was provided.
      *
-     * @param string $name
-     * @return bool
+     * @param string $name Option name
+     * @return bool True if the option exists
      */
     protected function hasOption(string $name): bool
     {
@@ -265,9 +253,9 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Get all option array positional.
+     * Get positional arguments (non-named values).
      *
-     * @return string[]
+     * @return string[] Positional parameters
      */
     protected function optionPosition(): array
     {
@@ -275,10 +263,10 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Get parse commandline parameters (name, value).
+     * Magic getter for options via property access.
      *
-     * @param string $name
-     * @return string|bool|int|null
+     * @param string $name Option name
+     * @return string|bool|int|null Option value
      */
     public function __get(string $name): mixed
     {
@@ -286,7 +274,9 @@ class Command implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
+     * Check if an option exists (ArrayAccess).
+     *
+     * @param mixed $offset Option name
      * @return bool
      */
     public function offsetExists(mixed $offset): bool
@@ -295,8 +285,10 @@ class Command implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset — Check parse commandline parameters
-     * @return mixed
+     * Get the value of an option (ArrayAccess).
+     *
+     * @param mixed $offset Option name
+     * @return mixed Option value
      */
     #[ReturnTypeWillChange]
     public function offsetGet(mixed $offset): mixed
@@ -305,9 +297,10 @@ class Command implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
-     * @param mixed $value
-     * @return void
+     * Setting options is not allowed. Always throws an exception.
+     *
+     * @param mixed $offset Option name
+     * @param mixed $value  Value to set
      * @throws Exception
      */
     public function offsetSet(mixed $offset, mixed $value): void
@@ -316,8 +309,9 @@ class Command implements ArrayAccess
     }
 
     /**
-     * @param mixed $offset
-     * @return void
+     * Unsetting options is not allowed. Always throws an exception.
+     *
+     * @param mixed $offset Option name
      * @throws Exception
      */
     public function offsetUnset(mixed $offset): void
@@ -326,12 +320,13 @@ class Command implements ArrayAccess
     }
 
     /**
-     * Default class to run some code.
+     * Default execution method.
+     *
+     * Override this in subclasses to implement the command's behavior.
      *
      * @return void
      */
     public function main()
     {
-        // print welcome screen or what ever you want
     }
 }
