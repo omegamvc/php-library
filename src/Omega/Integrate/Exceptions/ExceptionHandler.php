@@ -8,7 +8,7 @@ use Omega\Container\Container;
 use Omega\Http\Exceptions;
 use Omega\Http\Request;
 use Omega\Http\Response;
-use Omega\Integrate\Http\Exception\HttpException;
+use Omega\Http\Exceptions\HttpException;
 use Omega\View\Templator;
 use Omega\View\TemplatorFinder;
 

@@ -37,7 +37,7 @@ class HeaderCollection extends Collection
     public function setRaw(string $header): self
     {
         if (false === Str::contains($header, ':')) {
-            throw new \Exception("Invalid header structur {$header}.");
+            throw new \Exception("Invalid header structure {$header}.");
         }
 
         [$header_name, $header_val] = \explode(':', $header, 2);

@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Omega\Http\Exceptions;
 
 use Omega\Http\Response;
+use RuntimeException;
 
-class HttpResponse extends \RuntimeException
+class HttpResponse extends RuntimeException
 {
     protected Response $response;
 

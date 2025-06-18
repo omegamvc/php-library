@@ -22,15 +22,17 @@ class HandleExceptions
 
         error_reporting(E_ALL);
 
+        // @todo: Sistemare la configurazione e sostituire dev con testing
         /* @phpstan-ignore-next-line */
-        if ($app->environment() !== 'testing') {
+        if ($app->environment() !== 'dev') {
             set_error_handler([$this, 'handleError']);
             set_exception_handler([$this, 'handleException']);
         }
 
         register_shutdown_function([$this, 'handleShutdown']);
 
-        if ('testing' !== $app->environment()) {
+        // @todo: Sistemare la configurazione e sostituire dev con testing
+        if ($app->environment() !== 'dev') {
             ini_set('display_errors', 'Off');
         }
     }

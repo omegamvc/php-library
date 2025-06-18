@@ -8,7 +8,7 @@ use ArrayAccess;
 use IteratorAggregate;
 use Omega\Collection\Collection;
 use Omega\Collection\CollectionImmutable;
-use Omega\File\UploadFile;
+use Omega\Http\Upload\UploadFile;
 use Omega\Macroable\MacroableTrait;
 use Omega\Text\Str;
 use Omega\Validator\Validator;
@@ -17,6 +17,7 @@ use Omega\Validator\Validator;
  * @method Validator    validate(?\Closure $rule = null, ?\Closure $filter = null)
  * @method UploadFile upload(array $file_name)
  *
+ * @property string|null $query_1
  * @implements ArrayAccess<string, string>
  * @implements IteratorAggregate<string, string>
  */

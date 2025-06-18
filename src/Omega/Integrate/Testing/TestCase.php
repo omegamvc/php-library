@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use Omega\Http\Request;
 use Omega\Http\Response;
 use Omega\Integrate\Application;
-use Omega\Integrate\Http\HttpKernel;
+use Omega\Http\HttpKernel;
 use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Support\Facades\Facade;
 use Omega\Integrate\Testing\Traits\ResponseStatusTrait;
