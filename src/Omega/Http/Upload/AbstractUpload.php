@@ -1,255 +1,193 @@
 <?php
 
+/**
+ * Part of Omega - Http Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Http\Upload;
 
+use function copy;
+use function file_exists;
+use function in_array;
+use function mkdir;
+use function move_uploaded_file;
+use function uniqid;
+use function unlink;
+
 /**
- * This class use for upload file to server using move_uploaded_file() function,
- * make with easy use and manifest, every one can use and modify this class to improve performance.
+ * AbstractUpload
  *
- * @author sonypradana@gmail.com
+ * An abstract class for handling file uploads using PHP's native `move_uploaded_file()` function.
+ * Designed to simplify and standardize file upload handling in the Omega framework, this class provides
+ * common properties and mechanisms for processing both single and multiple file uploads.
+ *
+ * Subclasses should implement the actual upload logic based on their specific requirements.
+ *
+ * @category   Omega
+ * @package    Http
+ * @subpackage Upload
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
  */
-abstract class AbstractUpload
+abstract class AbstractUpload implements UploadInterface
 {
-    /**
-     * Cath files form upload file.
-     *
-     * @var array<string, array<int, string>|string>
-     */
+    /** @var array<string, array<int, string>|string> Captured uploaded files from the global $_FILES array. */
     protected array $files;
 
-    /**
-     *  File upload status.
-     *
-     * @var bool
-     */
+    /** @var bool Indicates whether the upload was successful. */
     protected bool $success = false;
 
-    /**
-     * File has execute to upload.
-     *
-     * @var bool
-     */
-    protected bool $_isset = false;
+    /** @var bool Indicates whether the upload process has been executed. */
+    protected bool $isset = false;
+
+    /** @var bool Indicates if the class is running in test mode. */
+    protected bool $test = false;
+
+    /** @var bool True if handling multiple file uploads, false for single file uploads. */
+    protected bool $isMulti = false;
+
+    /** @var string[] The uploaded file names. */
+    protected array $fileName;
+
+    /** @var string[] The MIME types of the uploaded files. */
+    protected array $fileType;
+
+    /** @var string[] Temporary locations of the uploaded files. */
+    protected array $fileTmp;
+
+    /** @var int[] Upload error codes as defined by the PHP upload system. */
+    protected array $fileError;
+
+    /** @var int[] Sizes of the uploaded files in bytes. */
+    protected array $fileSize;
+
+    /** @var string[] File extensions of the uploaded files. */
+    protected array $fileExtension;
+
+    /** @var string The base name (without extension) of the target file. */
+    protected string $uploadName;
+
+    /** @var string The directory path where files should be saved. */
+    protected string $uploadLocation = '/';
+
+    /** @var array<int, string> Allowed file extensions for upload. */
+    protected array $uploadTypes = ['jpg', 'jpeg', 'png'];
+
+    /** @var array<int, string> Allowed MIME types for upload. */
+    protected array $uploadMime = ['image/jpg', 'image/jpeg', 'image/png'];
+
+    /** @var int Maximum allowed file size in bytes. */
+    protected int $uploadSizeMax = 50000;
+
+    /** @var string Error message set during the upload process, if any. */
+    protected string $errorMessage = '';
 
     /**
-     * Detect test mode.
+     * Constructs the upload handler instance and prepares internal structures.
      *
-     * @var bool
-     */
-    protected bool $_test = false;
-
-    /**
-     * Detect single or multi upload files.
-     *
-     * @var bool True if multi file upload
-     */
-    protected bool $_is_multi = false;
-
-    // property file --------------------------------------------
-
-    /** @var string[] */
-    protected array $file_name;
-    /** @var string[] Original file category */
-    protected array $file_type;
-    /** @var string[] Original file temp location */
-    protected array $file_tmp;
-    /** @var int[] Original file error status code */
-    protected array $file_error;
-    /** @var int[] Original file size in byte */
-    protected array $file_size;
-    /** @var string[] Original file extension */
-    protected array $file_extension;
-
-    // property upload ------------------------------------------
-
-    /** @var string Upload file name (without extension) */
-    protected string $upload_name;
-    /** @var string Upload file to save location */
-    protected string $upload_location = '/';
-    /** @var array<int, string> Upload allow file extension */
-    protected array $upload_types    = ['jpg', 'jpeg', 'png'];
-    /** @var array<int, string> Upload allow file mime type */
-    protected array $upload_mime     = ['image/jpg', 'image/jpeg', 'image/png'];
-    /** @var int Upload maximals file size */
-    protected int $upload_size_max = 50000;
-
-    /**
-     * Provide error message.
-     *
-     * @var string
-     */
-    protected string $_error_message = '';
-
-    // setter ------------------------------------------------
-
-    /**
-     * Set file name (without extension).
-     * File name will convert to allow string url.
-     *
-     * @param string $file_name File name (without extension)
-     */
-    abstract public function setFileName(string $file_name): self;
-
-    /**
-     * File to save/upload location (server folder),
-     * Warning:: not creat new folder if location not exist.
-     *
-     * @param string $folder_location Upload file to save location
-     */
-    abstract public function setFolderLocation(string $folder_location): self;
-
-    /**
-     * List allow file extension to upload.
-     *
-     * @param array<int, string> $extensions list extension file
-     */
-    abstract public function setFileTypes(array $extensions): self;
-
-    /**
-     * List allow file mime type to upload.
-     *
-     * @param array<int, string> $mimes list mime type file
-     */
-    abstract public function setMimeTypes(array $mimes): self;
-
-    /**
-     * Maximum file size to upload (in byte).
-     *
-     * @param int $byte maximum file size upload
-     */
-    abstract public function setMaxFileSize(int $byte): self;
-
-    /**
-     * If true, upload determinate using `copy` instance of `move_uploaded_file`.
-     *
-     * @param bool $mark_upload_test true use copy file
-     */
-    abstract public function markTest(bool $mark_upload_test): self;
-
-    // getter --------------------------------------------------------------
-
-    /**
-     * File Upload status.
-     *
-     * @return bool True on file upload success
-     */
-    public function success(): bool
-    {
-        return $this->success;
-    }
-
-    /**
-     * Error message file upload status.
-     *
-     * @return string Give url file location
-     */
-    public function getError(): string
-    {
-        return $this->_error_message;
-    }
-
-    /**
-     * Get uploaded file types.
-     *
-     * @return array<int, string>
-     */
-    public function getFileTypes(): array
-    {
-        return $this->upload_types;
-    }
-
-    /**
-     * Creat New file upload to server.
-     *
-     * @param array<string, string|int|array<string>|array<int>> $files Super global FILE (single array)
+     * @param array<string, string|int|array<string>|array<int>> $files The `$_FILES` array for a single input field.
+     * @return void
      */
     public function __construct(array $files)
     {
-        // random files name by default
-        $this->upload_name = uniqid('uploaded_'); // files name without extension
+        $this->uploadName = uniqid('uploaded_'); // files name without extension
 
         $this->files = $files;
     }
 
     /**
-     * Helper to validate file upload base on configure
-     * - check file error
-     * - check extension / mime (optional)
-     * - check maximum size.
+     * Validates the uploaded files based on:
+     * - file error status,
+     * - file extension,
+     * - MIME type,
+     * - file size.
      *
-     * also return error message
+     * If a validation error occurs, an appropriate error message is set.
      *
-     * @return bool True on error found not found
+     * @return bool True if the files passed all validation checks; false otherwise.
      */
     protected function validate(): bool
     {
         // check file error
-        foreach ($this->file_error as $error) {
-            $file_error = $error === 4;
-            if ($file_error) {
-                $this->_error_message = 'no file upload';
+        foreach ($this->fileError as $error) {
+            $fileError = $error === 4;
+            if ($fileError) {
+                $this->errorMessage = 'no file upload';
 
                 return false;
             }
         }
 
         // check file type (upload_type must set)
-        foreach ($this->file_extension as $extension) {
-            $extensionError = !in_array($extension, $this->upload_types);
+        foreach ($this->fileExtension as $extension) {
+            $extensionError = !in_array($extension, $this->uploadTypes);
             if ($extensionError) {
-                $this->_error_message = 'file type not support';
+                $this->errorMessage = 'file type not support';
 
                 return false;
             }
         }
 
         // check mime type (upload_mime must set)
-        foreach ($this->file_type as $type) {
-            $mime_error = !in_array($type, $this->upload_mime);
-            if ($mime_error) {
-                $this->_error_message = 'file type not support';
+        foreach ($this->fileType as $type) {
+            $mimeError = !in_array($type, $this->uploadMime);
+            if ($mimeError) {
+                $this->errorMessage = 'file type not support';
 
                 return false;
             }
         }
 
         // check file size
-        foreach ($this->file_size as $size) {
-            $is_size_error = $size > $this->upload_size_max;
-            if ($is_size_error) {
-                $this->_error_message = 'file size too large';
+        foreach ($this->fileSize as $size) {
+            $isSizeError = $size > $this->uploadSizeMax;
+            if ($isSizeError) {
+                $this->errorMessage = 'file size too large';
 
                 return false;
             }
         }
 
-        $this->_error_message = 'success';
+        $this->errorMessage = 'success';
 
         return true;
     }
 
     /**
-     * Upload file to server using move_uploaded_file.
+     * Uploads files to the server using `move_uploaded_file()` or `copy()` in test mode.
      *
-     * @return string[] File location on success upload file, sting empty when unsuccess upload
+     * This method validates the uploaded files before attempting to store them.
+     * The resulting file paths are returned on success.
+     *
+     * @return array<int, string> List of destination paths for successfully uploaded files.
      */
     protected function stream(): array
     {
-        // isset property, enable when data has been validate
-        $this->_isset = true;
+        // isset property, enable when data has been validated
+        $this->isset  = true;
         $destinations = [];
 
         if (!$this->validate()) {
             return $destinations;
         }
 
-        if ($this->_test) {
-            foreach ($this->file_extension as $key => $extension) {
-                $suffix         = $this->_is_multi ? $key : '';
-                $destination    =  $this->upload_location . $this->upload_name . $suffix . '.' . $extension;
-                $this->success = copy($this->file_tmp[$key], $destination);
+        if ($this->test) {
+            foreach ($this->fileExtension as $key => $extension) {
+                $suffix        = $this->isMulti ? $key : '';
+                $destination   =  $this->uploadLocation . $this->uploadName . $suffix . '.' . $extension;
+                $this->success = copy($this->fileTmp[$key], $destination);
 
                 $destinations[] = $destination;
             }
@@ -257,11 +195,11 @@ abstract class AbstractUpload
             return $destinations;
         }
 
-        if ($this->_test === false) {
-            foreach ($this->file_extension as $key => $extension) {
-                $suffix         = $this->_is_multi ? $key : '';
-                $destination    =  $this->upload_location . $this->upload_name . $suffix . '.' . $extension;
-                $this->success = move_uploaded_file($this->file_tmp[$key], $destination);
+        if ($this->test === false) {
+            foreach ($this->fileExtension as $key => $extension) {
+                $suffix        = $this->isMulti ? $key : '';
+                $destination   =  $this->uploadLocation . $this->uploadName . $suffix . '.' . $extension;
+                $this->success = move_uploaded_file($this->fileTmp[$key], $destination);
 
                 $destinations[] = $destination;
             }
@@ -271,9 +209,7 @@ abstract class AbstractUpload
     }
 
     /**
-     * Helper to delete file if needed.
-     *
-     * @return bool True on success deleted file
+     * {@inheritdoc}
      */
     public function delete(string $url): bool
     {
@@ -281,12 +217,64 @@ abstract class AbstractUpload
     }
 
     /**
-     * Helper to creat new folder if needed.
-     *
-     * @return bool True on success created folder
+     * {@inheritdoc}
      */
-    public function creatFolder(string $path): bool
+    public function createFolder(string $path): bool
     {
         return !file_exists($path) && mkdir($path, 0777, true);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function success(): bool
+    {
+        return $this->success;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getError(): string
+    {
+        return $this->errorMessage;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFileTypes(): array
+    {
+        return $this->uploadTypes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function setFileName(string $fileName): self;
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function setFolderLocation(string $folderLocation): self;
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function setFileTypes(array $extensions): self;
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function setMimeTypes(array $mimes): self;
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function setMaxFileSize(int $byte): self;
+
+    /**
+     * {@inheritdoc}
+     */
+    abstract public function markTest(bool $markUploadTest): self;
 }

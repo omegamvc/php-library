@@ -1,9 +1,22 @@
 <?php
 
+/**
+ * Part of Omega - Http Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 declare(strict_types=1);
 
 namespace Omega\Http;
 
+use DI\DependencyException;
+use DI\NotFoundException;
+use Exception;
 use Omega\Http\Middleware\MaintenanceMiddleware;
 use Omega\Integrate\Application;
 use Omega\Integrate\Bootstrap\BootProviders;
@@ -13,24 +26,57 @@ use Omega\Integrate\Bootstrap\RegisterFacades;
 use Omega\Integrate\Bootstrap\RegisterProviders;
 use Omega\Integrate\Exceptions\ExceptionHandler;
 use Omega\Router\Router;
+use Throwable;
 
+use function array_merge;
+use function array_reduce;
+use function is_array;
+use function is_string;
+use function method_exists;
+
+/**
+ * Core HTTP Kernel responsible for handling HTTP requests and sending responses.
+ *
+ * This class bootstraps the application, resolves middleware pipelines,
+ * dispatches the appropriate controller or callback, and handles exceptions.
+ *
+ * @category  Omega
+ * @package   Http
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 class HttpKernel
 {
     /**
-     * Application Container.
+     * Global HTTP middleware stack.
+     *
+     * These middleware are applied to every request.
+     *
+     * @var array<int, class-string>
      */
-    protected Application $app;
-
-    /** @var array<int, class-string> Global middleware */
-    protected $middleware = [
+    protected array $middleware = [
         MaintenanceMiddleware::class,
     ];
 
-    /** @var array<int, class-string> Middleware has register */
-    protected $middleware_used = [];
+    /**
+     * Tracks middleware that have been registered during the request lifecycle.
+     *
+     * @var array<int, class-string>
+     */
+    protected array $middlewareUsed = [];
 
-    /** @var array<int, class-string> Apllication bootstrap register. */
-    protected array $bootstrappers = [
+    /**
+     * List of service providers used to bootstrap the application.
+     *
+     * These providers handle configuration, exception handling,
+     * facades, and other boot-time responsibilities.
+     *
+     * @var array<int, class-string>
+     */
+    protected array $providers = [
         ConfigProviders::class,
         HandleExceptions::class,
         RegisterFacades::class,
@@ -39,21 +85,27 @@ class HttpKernel
     ];
 
     /**
-     * Set instance.
+     * Create a new HTTP kernel instance.
+     *
+     * @param Application $app The application container instance.
      */
-    public function __construct(Application $app)
+    public function __construct(protected Application $app)
     {
-        $this->app = $app;
     }
 
     /**
-     * Handle http request.
+     * Handle an incoming HTTP request and return the corresponding response.
      *
-     * @param Request $request Incoming request
+     * This method bootstraps the application, resolves middleware,
+     * invokes the matched route/controller, and catches/report exceptions.
      *
-     * @return Response Respone handle
+     * @param Request $request The incoming HTTP request.
+     * @return Response The final HTTP response.
+     * @throws DependencyException
+     * @throws NotFoundException
+     * @throws Throwable
      */
-    public function handle(Request $request)
+    public function handle(Request $request): Response
     {
         $this->app->set('request', $request);
 
@@ -65,11 +117,11 @@ class HttpKernel
             $pipeline = array_reduce(
                 array_merge($this->middleware, $dispatcher['middleware']),
                 fn ($next, $middleware) => fn ($req) => $this->app->call([$middleware, 'handle'], ['request' => $req, 'next' => $next]),
-                fn ()                   => $this->responesType($dispatcher['callable'], $dispatcher['parameters'])
+                fn ()                   => $this->responseType($dispatcher['callable'], $dispatcher['parameters'])
             );
 
             $response = $pipeline($request);
-        } catch (\Throwable $th) {
+        } catch (Throwable $th) {
             $handler = $this->app->get(ExceptionHandler::class);
 
             $handler->report($th);
@@ -80,15 +132,25 @@ class HttpKernel
     }
 
     /**
-     * Register bootstraper application.
+     * Bootstrap the application using the configured service providers.
+     *
+     * This method ensures all registered providers are loaded and booted.
+     *
+     * @return void
      */
     public function bootstrap(): void
     {
-        $this->app->bootstrapWith($this->bootstrappers);
+        $this->app->bootstrapWith($this->providers);
     }
 
     /**
-     * Terminate Requesr and Response.
+     * Perform any final tasks after the response has been sent.
+     *
+     * This includes running middleware `terminate()` methods and shutting down the app.
+     *
+     * @param Request $request The original request.
+     * @param Response $response The final response sent to the client.
+     * @return void
      */
     public function terminate(Request $request, Response $response): void
     {
@@ -103,12 +165,16 @@ class HttpKernel
     }
 
     /**
-     * @param callable|mixed[]|string $callable   function to call
-     * @param mixed[]                 $parameters parameters to use
+     * Normalize controller or callback output into a Response object.
      *
-     * @throws \Exception
+     * Accepts string, array, or Response object; throws if invalid type.
+     *
+     * @param callable|array|string $callable The resolved route/controller.
+     * @param array $parameters The parameters to pass to the callable.
+     * @return Response A proper Response instance.
+     * @throws Exception If the result is not a valid response type.
      */
-    private function responesType($callable, $parameters): Response
+    private function responseType(callable|array|string $callable, array $parameters): Response
     {
         $content = $this->app->call($callable, $parameters);
         if ($content instanceof Response) {
@@ -123,11 +189,17 @@ class HttpKernel
             return new Response($content);
         }
 
-        throw new \Exception('Content must return as respone|string|array');
+        throw new Exception('Content must return as response|string|array');
     }
 
     /**
-     * @return array<string, mixed>
+     * Resolve the route dispatcher, returning the callable, parameters, and middleware.
+     *
+     * @param Request $request The incoming HTTP request.
+     * @return array<string, mixed> Dispatcher data including:
+     *     - 'callable': The route callback/controller
+     *     - 'parameters': Parameters to pass
+     *     - 'middleware': Middleware to apply
      */
     protected function dispatcher(Request $request): array
     {
@@ -135,11 +207,12 @@ class HttpKernel
     }
 
     /**
-     * Dispatch to get requets middleware.
+     * Retrieve route-specific middleware for the current request.
      *
-     * @return array<int, class-string>|null
+     * @param Request $request The incoming HTTP request.
+     * @return array<int, class-string>|null An array of middleware class names, or null if none found.
      */
-    protected function dispatcherMiddleware(Request $request)
+    protected function dispatcherMiddleware(Request $request): ?array
     {
         return Router::current()['middleware'] ?? [];
     }

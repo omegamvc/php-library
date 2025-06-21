@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Omega\Integrate;
 
-final class PackageManifest
+class PackageManifest
 {
     /**
      * Cached package manifest.

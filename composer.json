@@ -15,6 +15,7 @@
     ],
     "require": {
         "php": "^8.3",
+        "ext-http": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
         "ext-pcntl": "*",
@@ -35,7 +36,7 @@
         "files": [
             "src/Omega/Collection/helper.php",
             "src/Omega/Console/helper.php",
-            "src/Omega/Integrate/helper.php",
+            "src/Omega/Support/helper.php",
             "src/Omega/Text/helper.php",
             "src/Omega/Time/helper.php",
             "src/Omega/Validator/helper.php"

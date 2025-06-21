@@ -15,12 +15,14 @@ declare(strict_types=1);
 
 namespace Omega\Http\Exceptions;
 
-use RuntimeException;
+use Throwable;
 
 /**
- * Class FileNotUploadedException
+ * Interface HttpExceptionInterface
  *
- * Thrown when an expected file upload operation has failed or no file was uploaded.
+ * Base interface for all HTTP-related exceptions within the framework.
+ * All custom HTTP exceptions should implement this interface to ensure
+ * consistent exception handling across the HTTP component.
  *
  * @category   Omega
  * @package    Http
@@ -31,15 +33,6 @@ use RuntimeException;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version    2.0.0
  */
-class FileNotUploadedException extends RuntimeException implements HttpExceptionInterface
+interface HttpExceptionInterface extends Throwable
 {
-    /**
-     * Creates a new exception instance.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        parent::__construct('File not uploaded `%s`');
-    }
 }

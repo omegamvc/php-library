@@ -39,7 +39,7 @@ class TestCase extends BaseTestCase
         $data     = $this->app->call($call, $params);
         $response = new Response($data);
         if (array_key_exists('code', $data)) {
-            $response->setResponeCode((int) $data['code']);
+            $response->setResponseCode((int) $data['code']);
         }
         if (array_key_exists('headers', $data)) {
             $response->setHeaders($data['headers']);

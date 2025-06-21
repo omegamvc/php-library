@@ -24,7 +24,7 @@ class TestJsonResponse extends TestResponse implements \ArrayAccess
         $this->response      = $response;
         $this->response_data = (array) $response->getContent();
         if (!is_array($response->getContent())) {
-            throw new \Exception('Respone body is not Array.');
+            throw new \Exception('Response body is not Array.');
         }
     }
 
