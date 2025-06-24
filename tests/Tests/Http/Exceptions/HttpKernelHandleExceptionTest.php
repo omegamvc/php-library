@@ -23,7 +23,7 @@ use Omega\Http\Request;
 use Omega\Http\Response;
 use Omega\Application\Application;
 use Omega\Integrate\Exceptions\ExceptionHandler;
-use Omega\Integrate\PackageManifest;
+use Omega\Support\PackageManifest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 use Throwable;
@@ -91,9 +91,9 @@ class HttpKernelHandleExceptionTest extends TestCase
 
         // overwrite PackageManifest has been set in Application before.
         $this->app->set(PackageManifest::class, fn () => new PackageManifest(
-            base_path: dirname(__DIR__, 2) . '/fixtures/http/app/',
-            application_cache_path: dirname(__DIR__, 2) . '/fixtures/http/app/bootstrap/cache/',
-            vendor_path: '/app/package/'
+            basePath: dirname(__DIR__, 2) . '/fixtures/http/app/',
+            applicationCachePath: dirname(__DIR__, 2) . '/fixtures/http/app/bootstrap/cache/',
+            vendorPath: '/app/package/'
         ));
 
         $this->app->set(

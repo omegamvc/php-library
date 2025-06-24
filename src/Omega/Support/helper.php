@@ -20,7 +20,7 @@ use Omega\Http\RedirectResponse;
 use Omega\Http\Response;
 use Omega\Application\Application;
 use Omega\Integrate\Exceptions\ApplicationNotAvailableException;
-use Omega\Integrate\Vite;
+use Omega\Support\Vite;
 use Omega\Router\Router;
 
 /**
@@ -51,6 +51,7 @@ use Omega\Router\Router;
  * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
  * @version   2.0.0
  */
+
 if (!function_exists('app_path')) {
     /**
      * Get the full application path based on the configuration.

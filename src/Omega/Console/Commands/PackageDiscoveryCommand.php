@@ -18,7 +18,7 @@ namespace Omega\Console\Commands;
 use Omega\Console\Command;
 use Omega\Console\Style\Style;
 use Omega\Application\Application;
-use Omega\Integrate\PackageManifest;
+use Omega\Support\PackageManifest;
 
 use Throwable;
 use function array_keys;

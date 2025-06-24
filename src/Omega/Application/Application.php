@@ -22,9 +22,9 @@ use Omega\Container\Container;
 use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Http\Exceptions\HttpException;
 use Omega\Http\Request;
-use Omega\Integrate\PackageManifest;
+use Omega\Support\PackageManifest;
 use Omega\Integrate\Providers\IntegrateServiceProvider;
-use Omega\Integrate\Vite;
+use Omega\Support\Vite;
 use Omega\Support\Singleton\SingletonTrait;
 use Omega\View\Templator;
 

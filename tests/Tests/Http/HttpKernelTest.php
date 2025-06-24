@@ -22,10 +22,11 @@ use Omega\Http\HttpKernel;
 use Omega\Http\Request;
 use Omega\Http\Response;
 use Omega\Application\Application;
-use Omega\Integrate\PackageManifest;
+use Omega\Support\PackageManifest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+use Throwable;
 use function dirname;
 
 /**
@@ -77,9 +78,9 @@ class HttpKernelTest extends TestCase
 
         // overwrite PackageManifest has been set in Application before.
         $this->app->set(PackageManifest::class, fn () => new PackageManifest(
-            base_path: dirname(__DIR__) . '/fixtures/http/app2/',
-            application_cache_path: dirname(__DIR__) . '/fixtures/http/app2/bootstrap/cache/',
-            vendor_path: '/fixtures/http/app2/package/'
+            basePath: dirname(__DIR__) . '/fixtures/http/app2/',
+            applicationCachePath: dirname(__DIR__) . '/fixtures/http/app2/bootstrap/cache/',
+            vendorPath: '/fixtures/http/app2/package/'
         ));
 
         $this->app->set(
@@ -163,7 +164,8 @@ class HttpKernelTest extends TestCase
      *
      * @return void
      * @throws DependencyException
-     * @throws NotFoundException
+     * @throws NotFoundException|
+     * @throws Throwable
      */
     public function testItCanRedirectByMiddleware(): void
     {
