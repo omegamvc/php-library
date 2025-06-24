@@ -18,7 +18,7 @@ use DI\NotFoundException;
 use Omega\Collection\CollectionImmutable;
 use Omega\Http\RedirectResponse;
 use Omega\Http\Response;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Integrate\Exceptions\ApplicationNotAvailableException;
 use Omega\Integrate\Vite;
 use Omega\Router\Router;
@@ -57,12 +57,14 @@ if (!function_exists('app_path')) {
      *
      * @param string $folder_name Subfolder name within the application path
      * @return string The full path to the specified application folder
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
-    function app_path(string $folder_name): string
+    function app_path(string $folder_name = ''): string
     {
-        $path = app()->appPath();
+        return app()->getAppPath() . $folder_name;
 
-        return $path . DIRECTORY_SEPARATOR . $folder_name;
+//        return $path . DIRECTORY_SEPARATOR . $folder_name;
     }
 }
 
@@ -72,10 +74,27 @@ if (!function_exists('model_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the models path
      * @return string The full path to the model directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function model_path(string $suffix_path = ''): string
     {
-        return app()->modelPath() . $suffix_path;
+        return app()->getModelPath() . $suffix_path;
+    }
+}
+
+if (!function_exists('public_path')) {
+    /**
+     * Get the full path to the application's public directory.
+     *
+     * @param string $suffix_path Optional suffix to append to the public path
+     * @return string The full path to the public directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
+     */
+    function public_path(string $suffix_path = ''): string
+    {
+        return app()->getPublicPath() . $suffix_path;
     }
 }
 
@@ -88,10 +107,12 @@ if (!function_exists('view_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the view path
      * @return string The full path to the views directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function view_path(string $suffix_path = ''): string
     {
-        return app()->viewPath() . $suffix_path;
+        return app()->getViewPath() . $suffix_path;
     }
 }
 
@@ -100,10 +121,12 @@ if (!function_exists('view_paths')) {
      * Get all configured view paths for the application.
      *
      * @return string[] Array of all view paths configured in the application
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function view_paths(): array
     {
-        return app()->view_paths();
+        return app()->getViewPaths();
     }
 }
 
@@ -113,10 +136,12 @@ if (!function_exists('controllers_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the controllers path
      * @return string The full path to the controllers directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function controllers_path(string $suffix_path = ''): string
     {
-        return app()->controllerPath() . $suffix_path;
+        return app()->getControllerPath() . $suffix_path;
     }
 }
 
@@ -126,10 +151,12 @@ if (!function_exists('services_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the services path
      * @return string The full path to the services directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function services_path(string $suffix_path = ''): string
     {
-        return app()->servicesPath() . $suffix_path;
+        return app()->getServicesPath() . $suffix_path;
     }
 }
 
@@ -139,10 +166,12 @@ if (!function_exists('component_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the components path
      * @return string The full path to the components directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function component_path(string $suffix_path = ''): string
     {
-        return app()->componentPath() . $suffix_path;
+        return app()->getComponentPath() . $suffix_path;
     }
 }
 
@@ -152,10 +181,12 @@ if (!function_exists('commands_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the commands path
      * @return string The full path to the commands directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function commands_path(string $suffix_path = ''): string
     {
-        return app()->commandPath() . $suffix_path;
+        return app()->getCommandPath() . $suffix_path;
     }
 }
 
@@ -165,10 +196,12 @@ if (!function_exists('storage_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the storage path
      * @return string The full path to the storage directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function storage_path(string $suffix_path = ''): string
     {
-        return app()->storagePath() . $suffix_path;
+        return app()->getStoragePath() . $suffix_path;
     }
 }
 
@@ -178,12 +211,13 @@ if (!function_exists('cache_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the cache path
      * @return string The full path to the cache directory with optional suffix
-     *
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      * @deprecated Since version 0.32, use compiled_view_path() instead.
      */
     function cache_path(string $suffix_path = ''): string
     {
-        return app()->cachePath() . $suffix_path;
+        return app()->getCachePath() . $suffix_path;
     }
 }
 
@@ -192,10 +226,12 @@ if (!function_exists('compiled_view_path')) {
      * Get the path to the compiled views' directory.
      *
      * @return string The compiled views path
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function compiled_view_path(): string
     {
-        return app()->compiledViewPath();
+        return app()->getCompiledViewPath();
     }
 }
 
@@ -205,10 +241,12 @@ if (!function_exists('config_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the config path
      * @return string The full path to the config directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function config_path(string $suffix_path = ''): string
     {
-        return app()->configPath() . $suffix_path;
+        return app()->getConfigPath() . $suffix_path;
     }
 }
 
@@ -218,10 +256,12 @@ if (!function_exists('middleware_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the middleware path
      * @return string The full path to the middleware directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function middleware_path(string $suffix_path = ''): string
     {
-        return app()->middlewarePath() . $suffix_path;
+        return app()->getMiddlewarePath() . $suffix_path;
     }
 }
 
@@ -231,10 +271,12 @@ if (!function_exists('provider_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the provider path
      * @return string The full path to the providers directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function provider_path(string $suffix_path = ''): string
     {
-        return app()->providerPath() . $suffix_path;
+        return app()->getProviderPath() . $suffix_path;
     }
 }
 
@@ -244,10 +286,12 @@ if (!function_exists('migration_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the migration path
      * @return string The full path to the migrations directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function migration_path(string $suffix_path = ''): string
     {
-        return app()->migrationPath() . $suffix_path;
+        return app()->getMigrationPath() . $suffix_path;
     }
 }
 
@@ -257,10 +301,12 @@ if (!function_exists('seeder_path')) {
      *
      * @param string $suffix_path Optional suffix to append to the seeder path
      * @return string The full path to the seeders directory with optional suffix
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function seeder_path(string $suffix_path = ''): string
     {
-        return app()->seederPath() . $suffix_path;
+        return app()->getSeederPath() . $suffix_path;
     }
 }
 
@@ -270,10 +316,12 @@ if (!function_exists('base_path')) {
      *
      * @param string $insert_path Optional string to append at the end of the base path
      * @return string The base path with optional appended string
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function base_path(string $insert_path = ''): string
     {
-        return app()->basePath() . $insert_path;
+        return app()->getBasePath() . $insert_path;
     }
 }
 
@@ -282,10 +330,12 @@ if (!function_exists('app_env')) {
      * Get the current application environment mode.
      *
      * @return string The environment name (e.g., "production", "development")
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function app_env(): string
     {
-        return app()->environment();
+        return app()->getEnvironment();
     }
 }
 
@@ -294,6 +344,8 @@ if (!function_exists('is_production')) {
      * Determine if the application is running in production mode.
      *
      * @return bool True if in production mode, false otherwise
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function is_production(): bool
     {
@@ -306,6 +358,8 @@ if (!function_exists('is_dev')) {
      * Determine if the application is running in development mode.
      *
      * @return bool True if in development mode, false otherwise
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function is_dev(): bool
     {
@@ -322,7 +376,7 @@ if (!function_exists('app')) {
      */
     function app(): Application
     {
-        $app = Application::getIntance();
+        $app = Application::getInstance();
 
         if (null === $app) {
             throw new ApplicationNotAvailableException();

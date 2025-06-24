@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Facades;
 
 use Omega\Collection\Collection;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Support\Facades\Facade;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

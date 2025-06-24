@@ -21,7 +21,7 @@ use DI\NotFoundException;
 use Omega\Http\HttpKernel;
 use Omega\Http\Request;
 use Omega\Http\Response;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Integrate\PackageManifest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

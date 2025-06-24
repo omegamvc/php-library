@@ -20,7 +20,7 @@ use Omega\Http\Exceptions\HttpException;
 use Omega\Http\Middleware\MaintenanceMiddleware;
 use Omega\Http\Request;
 use Omega\Http\Response;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

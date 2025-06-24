@@ -17,7 +17,7 @@ namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\SeedCommand;
 use Omega\Database\MyPDO;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Support\Facades\DB;
 use Omega\Support\Facades\PDO as FacadesPDO;
 use Omega\Support\Facades\Schema;

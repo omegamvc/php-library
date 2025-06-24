@@ -153,7 +153,7 @@ class MaintenanceCommand extends Command
             return 1;
         }
 
-        ok('Success, your apllication now live.')->out();
+        ok('Success, your application now live.')->out();
 
         return 0;
     }

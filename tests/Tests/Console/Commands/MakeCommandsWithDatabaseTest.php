@@ -18,7 +18,7 @@ namespace Tests\Console\Commands;
 use Omega\Console\Commands\MakeCommand;
 use Omega\Database\MyPDO;
 use Omega\Database\MyQuery;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Support\Facades\PDO;
 use Omega\Support\Facades\Schema;
 use Omega\Text\Str;

@@ -19,7 +19,7 @@ use Omega\Console\Command;
 use Omega\Console\Style\Style;
 use Omega\Console\Traits\PrintHelpTrait;
 use Omega\Console\Util;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Console\CommandMap;
 use Omega\Text\Str;
 
@@ -346,6 +346,6 @@ class HelpCommand extends Command
      */
     private function commandMaps(): array
     {
-        return Util::loadCommandFromConfig(Application::getIntance());
+        return Util::loadCommandFromConfig(Application::getInstance());
     }
 }

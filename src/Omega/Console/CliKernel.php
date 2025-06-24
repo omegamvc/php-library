@@ -15,12 +15,12 @@ declare(strict_types=1);
 
 namespace Omega\Console;
 
+use Omega\Application\Application;
 use Omega\Console\Style\Style;
-use Omega\Integrate\Application;
-use Omega\Integrate\Bootstrap\BootProviders;
-use Omega\Integrate\Bootstrap\ConfigProviders;
-use Omega\Integrate\Bootstrap\RegisterFacades;
-use Omega\Integrate\Bootstrap\RegisterProviders;
+use Omega\Support\Bootstrap\RegisterFacades;
+use Omega\Support\Bootstrap\RegisterProviders;
+use Omega\Support\Bootstrap\BootProviders;
+use Omega\Support\Bootstrap\ConfigProviders;
 
 use function array_fill;
 use function array_merge;

@@ -18,7 +18,7 @@ namespace Tests\Console\Commands;
 use Omega\Console\Commands\MigrationCommand;
 use Omega\Database\MyPDO;
 use Omega\Database\MySchema\Table\Create;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Support\Facades\Facade;
 use Omega\Support\Facades\Schema;
 use Omega\Text\Str;

@@ -17,10 +17,10 @@ namespace Omega\Console\Commands;
 
 use DI\DependencyException;
 use DI\NotFoundException;
-use Omega\Console\Command;
-use Omega\Integrate\Application;
-use Omega\Integrate\Bootstrap\ConfigProviders;
+use Omega\Application\Application;
 use Omega\Config\ConfigRepository;
+use Omega\Console\Command;
+use Omega\Support\Bootstrap\ConfigProviders;
 
 use function file_exists;
 use function file_put_contents;
@@ -97,7 +97,7 @@ class ConfigCommand extends Command
      */
     public function main(): int
     {
-        $app = Application::getIntance();
+        $app = Application::getInstance();
         (new ConfigProviders())->bootstrap($app);
 
         $this->clear();
@@ -122,7 +122,7 @@ class ConfigCommand extends Command
      */
     public function clear(): int
     {
-        if (file_exists($file = Application::getIntance()->getApplicationCachePath() . 'config.php')) {
+        if (file_exists($file = Application::getInstance()->getApplicationCachePath() . 'config.php')) {
             @unlink($file);
             ok('Clear config file has successfully.')->out();
 

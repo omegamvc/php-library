@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Omega\Console;
 
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Config\ConfigRepository;
 
 /**

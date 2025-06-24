@@ -18,7 +18,7 @@ namespace Tests\Console\Commands;
 use DI\DependencyException;
 use DI\NotFoundException;
 use Omega\Console\Commands\ConfigCommand;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

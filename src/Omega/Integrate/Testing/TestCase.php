@@ -7,7 +7,7 @@ namespace Omega\Integrate\Testing;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use Omega\Http\Request;
 use Omega\Http\Response;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Http\HttpKernel;
 use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Support\Facades\Facade;

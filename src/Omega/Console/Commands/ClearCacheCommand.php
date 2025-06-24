@@ -18,7 +18,7 @@ namespace Omega\Console\Commands;
 use Omega\Cache\AbstractCache;
 use Omega\Console\Command;
 use Omega\Console\Traits\CommandTrait;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 
 use function array_keys;
 use function is_array;
@@ -112,7 +112,7 @@ class ClearCacheCommand extends Command
      */
     public function clear(Application $app): int
     {
-        if (false === $app->has('cache')) {
+        if ($app->has('cache') === false) {
             fail('Cache is not set yet.')->out();
             return 1;
         }

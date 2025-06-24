@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Console\Commands;
 
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Text\Str;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\Attributes\CoversNothing;
@@ -71,7 +71,7 @@ class CommandTestHelper extends TestCase
         $this->app = new Application('');
 
         $this->app->setViewPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
-        $this->app->setContollerPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
+        $this->app->setControllerPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
         $this->app->setServicesPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
         $this->app->setModelPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
         $this->app->setCommandPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);

@@ -17,7 +17,7 @@ namespace Tests\Console\Commands;
 
 use Omega\Config\ConfigRepository;
 use Omega\Console\Commands\ViewCommand;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\View\Templator;
 use Omega\View\TemplatorFinder;
 use PHPUnit\Framework\Attributes\CoversClass;

@@ -17,7 +17,7 @@ namespace Omega\Console\Commands;
 
 use Omega\Console\Command;
 use Omega\Console\Style\Style;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Integrate\PackageManifest;
 
 use Throwable;

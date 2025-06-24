@@ -18,7 +18,7 @@ namespace Tests\Console\Commands;
 use Omega\Cache\Cache;
 use Omega\Cache\Storage\ArrayStorage;
 use Omega\Console\Commands\ClearCacheCommand;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

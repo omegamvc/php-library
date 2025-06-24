@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\PackageDiscoveryCommand;
-use Omega\Integrate\Application;
+use Omega\Application\Application;
 use Omega\Integrate\PackageManifest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
@@ -74,7 +74,7 @@ class PackageDiscoveryCommandTest extends TestCase
 
         // overwrite PackageManifest has been set in Application before.
         $app->set(PackageManifest::class, fn () => new PackageManifest(
-            base_path: $app->basePath(),
+            base_path: $app->getBasePath(),
             application_cache_path: $app->getApplicationCachePath(),
             vendor_path: '/package/'
         ));
