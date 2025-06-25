@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Time Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Time;
@@ -14,8 +25,37 @@ use PHPUnit\Framework\TestCase;
 
 use function date;
 use function date_default_timezone_set;
+use function strtotime;
 use function time;
 
+/**
+ * Class TimeTravelTest
+ *
+ * This test suite verifies the functionality of the Omega\Time\Now class,
+ * which provides an enhanced interface for accessing and manipulating time-related
+ * data such as year, month, day, hour, and timezone-aware age calculation.
+ *
+ * Covered features include:
+ * - Correct initialization with the current system time
+ * - Custom date/time manipulation and formatting
+ * - Accurate age calculation (including leap years and edge cases)
+ * - Proper timezone handling
+ * - Dynamic property access via getter/setter methods
+ * - Exception handling for invalid or inaccessible properties
+ *
+ * This test also covers the custom exceptions:
+ * - PropertyNotExistException
+ * - PropertyNotSettableException
+ *
+ * @category   Omega
+ * @package    Tests
+ * @subpackage Time
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
 #[CoversClass(Now::class)]
 #[CoversClass(PropertyNotExistException::class)]
 #[CoversClass(PropertyNotSettableException::class)]
