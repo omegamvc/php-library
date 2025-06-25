@@ -21,7 +21,7 @@ use Omega\Application\Application;
 use Omega\Http\Middleware\MaintenanceMiddleware;
 use Omega\Support\Bootstrap\RegisterFacades;
 use Omega\Support\Bootstrap\RegisterProviders;
-use Omega\Integrate\Exceptions\ExceptionHandler;
+use Omega\Exceptions\ExceptionHandler;
 use Omega\Router\Router;
 use Omega\Support\Bootstrap\BootProviders;
 use Omega\Support\Bootstrap\ConfigProviders;

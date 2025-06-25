@@ -452,7 +452,7 @@ class CollectionTest extends TestCase
                 'email' => 'taylor@laravel.com',
             ], [
                 'name'  => 'giovannini',
-                'email' => 'giovannini@savanna.com',
+                'email' => 'giovannini@omegamvc.com',
             ],
         ]);
 
@@ -460,7 +460,7 @@ class CollectionTest extends TestCase
 
         $this->assertEquals([
             'taylor'  => 'taylor@laravel.com',
-            'giovannini' => 'giovannini@savanna.com',
+            'giovannini' => 'giovannini@omegamvc.com',
         ], $assocBy->toArray());
     }
 

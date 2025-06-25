@@ -19,7 +19,7 @@ use Omega\Collection\CollectionImmutable;
 use Omega\Http\RedirectResponse;
 use Omega\Http\Response;
 use Omega\Application\Application;
-use Omega\Integrate\Exceptions\ApplicationNotAvailableException;
+use Omega\Exceptions\ApplicationNotAvailableException;
 use Omega\Support\Vite;
 use Omega\Router\Router;
 
@@ -457,7 +457,7 @@ if (!function_exists('redirect_route')) {
         $route      = Router::redirect($route_name);
         $valueIndex = 0;
         $url        = preg_replace_callback(
-            "/:\w+/",
+            "/\(:\w+\)/",
             function ($matches) use ($parameter, &$valueIndex) {
                 if (!array_key_exists($matches[0], Router::$patterns)) {
                     throw new Exception('parameter not matches with any pattern.');

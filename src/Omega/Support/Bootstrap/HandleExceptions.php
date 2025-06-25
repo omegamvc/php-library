@@ -17,7 +17,7 @@ namespace Omega\Support\Bootstrap;
 
 use ErrorException;
 use Omega\Application\Application;
-use Omega\Integrate\Exceptions\ExceptionHandler;
+use Omega\Exceptions\ExceptionHandler;
 use Throwable;
 
 use function error_get_last;

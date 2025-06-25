@@ -18,6 +18,7 @@
         "ext-http": "*",
         "ext-intl": "*",
         "ext-mbstring": "*",
+        "ext-openssl": "*",
         "ext-pcntl": "*",
         "ext-posix": "*",
         "ext-readline": "*",

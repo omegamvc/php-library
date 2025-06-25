@@ -21,7 +21,7 @@ abstract class AbstractDatabase extends TestCase
     protected function createConnection(): void
     {
         $this->env = [
-            'host'           => '127.0.0.1',
+            'host'           => 'localhost',
             'user'           => 'root',
             'password'       => 'vb65ty4',
             'database_name'  => 'testing_db',

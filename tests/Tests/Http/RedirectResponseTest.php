@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Http;
 
 use Omega\Http\RedirectResponse;
-use Omega\Integrate\Testing\TestResponse;
+use Omega\Testing\TestResponse;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 

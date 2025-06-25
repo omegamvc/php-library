@@ -23,9 +23,9 @@ use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Http\Exceptions\HttpException;
 use Omega\Http\Request;
 use Omega\Support\PackageManifest;
-use Omega\Integrate\Providers\IntegrateServiceProvider;
-use Omega\Support\Vite;
+use Omega\Support\RequestMacroServiceProvider;
 use Omega\Support\Singleton\SingletonTrait;
+use Omega\Support\Vite;
 use Omega\View\Templator;
 
 use function array_map;
@@ -113,7 +113,7 @@ class Application extends Container implements ApplicationInterface
         $this->setBaseBinding();
 
         // register base provider
-        $this->register(IntegrateServiceProvider::class);
+        $this->register(RequestMacroServiceProvider::class);
 
         // register container alias
         $this->registerAlias();

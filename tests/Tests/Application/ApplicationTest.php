@@ -22,7 +22,7 @@ use PHPUnit\Framework\TestCase;
 use Omega\Http\Request;
 use Omega\Application\Application;
 use Omega\Config\ConfigRepository;
-use Omega\Integrate\Exceptions\ApplicationNotAvailableException;
+use Omega\Exceptions\ApplicationNotAvailableException;
 use Omega\Http\Exceptions\HttpException;
 
 use Tests\Support\Bootstrap\TestBootstrapProvider;

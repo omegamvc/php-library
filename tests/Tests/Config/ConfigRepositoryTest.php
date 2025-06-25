@@ -49,7 +49,7 @@ class ConfigRepositoryTest extends TestCase
             'envi'  => 'test',
             'num'   => 1,
             'allow' => true,
-            'array' => ['savanna', 'php'],
+            'array' => ['omegamvc', 'php'],
         ];
 
         $config = new ConfigRepository($env);
@@ -62,7 +62,7 @@ class ConfigRepositoryTest extends TestCase
         $this->assertTrue($config->has('num'));
         // push
         $config->push('array', 'library');
-        $this->assertEquals(['savanna', 'php', 'library'], (fn () => $this->{'config'}['array'])->call($config));
+        $this->assertEquals(['omegamvc', 'php', 'library'], (fn () => $this->{'config'}['array'])->call($config));
     }
 
     /**

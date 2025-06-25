@@ -18,7 +18,7 @@ namespace Tests\Support\Bootstrap;
 use ErrorException;
 use Omega\Application\Application;
 use Omega\Http\Request;
-use Omega\Integrate\Exceptions\ExceptionHandler;
+use Omega\Exceptions\ExceptionHandler;
 use Omega\Support\Bootstrap\HandleExceptions;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

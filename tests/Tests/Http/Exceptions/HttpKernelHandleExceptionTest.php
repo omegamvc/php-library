@@ -22,7 +22,7 @@ use Omega\Http\HttpKernel;
 use Omega\Http\Request;
 use Omega\Http\Response;
 use Omega\Application\Application;
-use Omega\Integrate\Exceptions\ExceptionHandler;
+use Omega\Exceptions\ExceptionHandler;
 use Omega\Support\PackageManifest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;

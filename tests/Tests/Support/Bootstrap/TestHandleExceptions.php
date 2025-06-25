@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Support\Bootstrap;
 
-use Omega\Integrate\Exceptions\ExceptionHandler;
+use Omega\Exceptions\ExceptionHandler;
 use PHPUnit\Framework\Assert;
 use Throwable;
 

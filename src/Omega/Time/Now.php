@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Omega\Time;
 
-use Omega\Time\Exceptions\PropertyNotExist;
-use Omega\Time\Exceptions\PropertyNotSetAble;
+use Omega\Time\Exceptions\PropertyNotExistException;
+use Omega\Time\Exceptions\PropertyNotSettableException;
 use Omega\Time\Traits\DateTimeFormatTrait;
 
 /**
@@ -21,6 +21,7 @@ use Omega\Time\Traits\DateTimeFormatTrait;
  * @property string $shortDay
  * @property string $timeZone
  * @property int    $age
+ * @property mixed  $notExistProperty
  */
 class Now
 {
@@ -87,7 +88,7 @@ class Now
             return $this->{$name};
         }
 
-        throw new PropertyNotExist($name);
+        throw new PropertyNotExistException($name);
     }
 
     /**
@@ -104,7 +105,7 @@ class Now
             return;
         }
 
-        throw new PropertyNotSetAble($name);
+        throw new PropertyNotSettableException($name);
     }
 
     /**

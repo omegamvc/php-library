@@ -28,6 +28,7 @@ use Tests\Database\AbstractDatabase;
 use function ob_get_clean;
 use function ob_start;
 
+require_once dirname(__DIR__, 2) . '/Database/AbstractDatabase.php';
 /**
  * Test suite for the MigrationCommand class and related database migration features.
  *

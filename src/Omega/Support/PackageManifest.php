@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Support Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Support;
@@ -19,6 +30,14 @@ use const PHP_EOL;
  * Handles reading, caching, and building a manifest of packages and their configuration
  * from the Composer-installed packages. This class is used to retrieve information such
  * as service providers declared in each package's extra section under the "savanna" key.
+ *
+ * @category  Omega
+ * @package   Support
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
  */
 class PackageManifest
 {
@@ -132,8 +151,8 @@ class PackageManifest
         }
 
         foreach ($packages as $package) {
-            if (isset($package['extra']['savanna'])) {
-                $provider[$package['name']] = $package['extra']['savanna'];
+            if (isset($package['extra']['omegamvc'])) {
+                $provider[$package['name']] = $package['extra']['omegamvc'];
             }
         }
 
