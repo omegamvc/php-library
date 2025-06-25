@@ -28,7 +28,7 @@ use function file_put_contents;
 use function glob;
 use function is_dir;
 use function microtime;
-use function now;
+use function Omega\Time\now;
 use function scandir;
 use function unlink;
 

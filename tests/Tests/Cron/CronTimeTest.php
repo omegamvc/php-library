@@ -22,6 +22,8 @@ use Omega\Time\Now;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+use function Omega\Time\now;
+
 /**
  * Test suite for verifying the behavior of scheduled tasks using time-based constraints.
  *

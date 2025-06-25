@@ -27,7 +27,7 @@ use function dirname;
 use function is_dir;
 use function is_file;
 use function microtime;
-use function now;
+use function Omega\Time\now;
 use function ob_get_clean;
 use function ob_start;
 use function rmdir;

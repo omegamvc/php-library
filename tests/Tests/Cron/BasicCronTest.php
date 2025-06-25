@@ -21,6 +21,8 @@ use Omega\Cron\ScheduleTime;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
+use function Omega\Time\now;
+
 /**
  * Unit tests for the basic scheduling functionality of the Schedule class.
  *

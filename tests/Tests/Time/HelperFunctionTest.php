@@ -18,7 +18,7 @@ namespace Tests\Time;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
-use function now;
+use function Omega\Time\now;
 use function time;
 
 /**
