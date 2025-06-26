@@ -32,9 +32,9 @@ use function ob_start;
  * including clearing the default cache driver, all drivers, specific drivers,
  * and handling cases when the cache is not properly configured.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

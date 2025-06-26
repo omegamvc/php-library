@@ -37,9 +37,9 @@ use PHPUnit\Framework\TestCase;
  * The tests cover the interaction between the middleware and the
  * application configuration, request/response handling, and HTTP exceptions.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Http\Middleware
+ * @category   Omega\Tests
+ * @package    Http
+ * @subpackage Middleware
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

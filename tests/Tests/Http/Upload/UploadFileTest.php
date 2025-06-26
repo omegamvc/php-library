@@ -39,9 +39,9 @@ use function unlink;
  * It also verifies that exceptions such as FolderNotExistsException are properly thrown.
  * The tests are run in "test mode" to avoid actual move_uploaded_file calls.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Http\Middleware
+ * @category   Omega\Tests
+ * @package    Htto
+ * @subpackage Middleware
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

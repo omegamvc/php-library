@@ -34,16 +34,15 @@ use function explode;
  * It also provides helper methods to simplify command execution
  * assertions and argument parsing during tests.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @internal
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
- *
- * @internal
  */
 #[CoversNothing]
 class CommandTestHelper extends TestCase

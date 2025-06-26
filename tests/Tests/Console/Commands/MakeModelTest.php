@@ -35,9 +35,9 @@ use function unlink;
  * It verifies file creation, content structure, and command success/failure states.
  * The generated files are stored in the fixtures directory and cleaned up after each test.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

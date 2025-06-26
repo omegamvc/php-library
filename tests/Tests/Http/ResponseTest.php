@@ -33,14 +33,13 @@ use function ob_start;
  * and protocol version management in HTTP responses.
  * and handling errors when the callable is invalid.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Http
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Http
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(Request::class)]
 #[CoversClass(Response::class)]
@@ -149,10 +148,10 @@ class ResponseTest extends TestCase
         $this->assertEquals('test', $get_header);
     }
 
-    /** 
+    /**
      * Test it can set header using set header.
-     * 
-     * @return void 
+     *
+     * @return void
      */
     public function testItCanSetHeaderUsingSetHeaders(): void
     {
@@ -166,7 +165,7 @@ class ResponseTest extends TestCase
 
     /**
      * Test it can set header using header.
-     * 
+     *
      * @return void
      */
     public function testItCanSetHeaderUsingHeader(): void

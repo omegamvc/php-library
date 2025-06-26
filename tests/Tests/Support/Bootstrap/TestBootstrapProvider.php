@@ -24,9 +24,9 @@ use Omega\Application\Application;
  * its class and method name when invoked, allowing verification
  * that the bootstrap mechanism is correctly triggered.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

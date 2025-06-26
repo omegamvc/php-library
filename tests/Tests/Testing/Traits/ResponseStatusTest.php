@@ -30,9 +30,9 @@ use Omega\Testing\TestResponse;
  * Bad Request (400), Unauthorized (401), Forbidden (403), Not Found (404), and Method Not Allowed (405),
  * ensuring that the corresponding assertion methods behave as expected.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Testing
+ * @category   Omega\Tests
+ * @package    Testing
+ * @subpackage Traits
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

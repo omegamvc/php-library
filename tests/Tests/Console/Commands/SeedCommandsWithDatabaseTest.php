@@ -37,9 +37,9 @@ use function ob_start;
  * chaining of seeders, and real data insertion into the database.
  * It relies on a temporary SQLite database initialized via AbstractDatabase.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

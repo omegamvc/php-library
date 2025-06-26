@@ -35,9 +35,9 @@ use function ob_start;
  * This test also indirectly covers the application container binding logic,
  * view path and cache path configuration, and interaction with the Templator system.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

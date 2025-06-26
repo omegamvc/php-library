@@ -25,9 +25,9 @@ use Omega\Support\Facades\Facade;
  * through a static interface during testing. It allows checking
  * behavior of macroable or extended Collection functionalities.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

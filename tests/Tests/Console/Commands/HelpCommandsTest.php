@@ -33,9 +33,9 @@ use function ob_start;
  * Assertions include expected output, success or failure exit codes,
  * and correct formatting of help messages.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

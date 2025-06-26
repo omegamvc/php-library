@@ -36,9 +36,9 @@ use PHPUnit\Framework\TestCase;
  * These tests provide confidence in the security and correctness of the hashing mechanisms used
  * within the application.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Security
+ * @category   Omega\Tests
+ * @package    Security
+ * @subpackage Hashing
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

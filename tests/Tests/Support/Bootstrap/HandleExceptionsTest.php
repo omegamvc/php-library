@@ -46,9 +46,9 @@ use const E_USER_DEPRECATED;
  *
  * NOTE: The shutdown test is currently skipped as it's difficult to simulate fatal errors reliably in unit tests.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

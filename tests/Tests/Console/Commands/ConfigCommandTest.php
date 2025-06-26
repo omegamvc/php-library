@@ -42,9 +42,9 @@ use function unlink;
  * Each test uses a mock application path under `assets/app1/` to simulate
  * real CLI behavior without affecting the actual system state.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

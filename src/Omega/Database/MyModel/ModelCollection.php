@@ -27,7 +27,7 @@ class ModelCollection extends Collection
     }
 
     /**
-     * Get value of primery key from first collumn/record.
+     * Get value of primary key from first collumn/record.
      *
      * @return mixed[]
      *
@@ -35,12 +35,12 @@ class ModelCollection extends Collection
      */
     public function getPrimaryKey()
     {
-        $primeryKeys = [];
+        $primaryKeys = [];
         foreach ($this->collection as $model) {
-            $primeryKeys[] = $model->getPrimaryKey();
+            $primaryKeys[] = $model->getPrimaryKey();
         }
 
-        return $primeryKeys;
+        return $primaryKeys;
     }
 
     /**
@@ -60,7 +60,7 @@ class ModelCollection extends Collection
     }
 
     /**
-     * Update using query using model primery key.
+     * Update using query using model primary key.
      *
      * @param array<array-key, mixed> $values
      */
@@ -77,7 +77,7 @@ class ModelCollection extends Collection
     }
 
     /**
-     * Delete using query using model primery key.
+     * Delete using query using model primary key.
      */
     public function delete(): bool
     {

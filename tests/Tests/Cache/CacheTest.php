@@ -31,14 +31,13 @@ use PHPUnit\Framework\TestCase;
  * The test cases confirm that cache operations such as set and get work as expected
  * when using different underlying storage implementations.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Cache
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Cache
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(Cache::class)]
 #[CoversClass(ArrayStorage::class)]

@@ -41,9 +41,9 @@ require_once dirname(__DIR__, 2) . '/Database/AbstractDatabase.php';
  * as it depends on preloaded fixtures and environment setup.
  * Also covers the core routing behavior through the Router class.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

@@ -25,9 +25,9 @@ use Throwable;
  * This class overrides the report method to assert a specific
  * exception message, allowing validation of error flows in tests.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

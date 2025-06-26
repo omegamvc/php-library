@@ -30,14 +30,13 @@ use PHPUnit\Framework\TestCase;
  * It verifies content retrieval, string presence assertions, and HTTP status code checks,
  * ensuring that responses returned by the application under test meet expected criteria.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Testing
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Testing
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(Response::class)]
 #[CoversClass(TestResponse::class)]

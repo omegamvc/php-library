@@ -37,9 +37,9 @@ use function unlink;
  * Each test ensures that FileStorage complies with expected cache interface behavior,
  * providing reliable, file-based caching capabilities for the Omega framework.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Cache\Storage
+ * @category   Omega\Tests
+ * @package    Cache
+ * @subpackage Storage
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

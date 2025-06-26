@@ -23,9 +23,9 @@ use Omega\Container\Provider\AbstractServiceProvider;
  * This class extends the abstract base service provider
  * and is used to register dummy services in test environments.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of Omega - Tests\Facades Package
+ * Part of Omega - Tests\Support Package
  * php version 8.3
  *
  * @link      https://omegamvc.github.io
@@ -13,14 +13,14 @@
 
 declare(strict_types=1);
 
-namespace Tests\Facades;
+namespace Tests\Support\Facades;
 
 use Omega\Collection\Collection;
 use Omega\Application\Application;
 use Omega\Support\Facades\Facade;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-use Tests\Facades\Sample\FacadesTestClass;
+use Tests\Support\Facades\Sample\FacadesTestClass;
 use Throwable;
 
 /**
@@ -32,8 +32,8 @@ use Throwable;
  * - Verifying static calls proxy correctly to the underlying service.
  * - Ensuring an exception is thrown when the Facade is used without an Application instance.
  *
- * @category   Omega
- * @package    Tests
+ * @category   Omega\Tests
+ * @package    Support
  * @subpackage Facades
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>

@@ -32,14 +32,13 @@ use function Omega\Time\now;
  * - Multiple schedules can be added and flushed
  * - All scheduled tasks are properly wrapped in ScheduleTime instances
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Cron
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Cron
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(Schedule::class)]
 #[CoversClass(ScheduleTime::class)]

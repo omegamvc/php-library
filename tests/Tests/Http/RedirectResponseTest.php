@@ -27,14 +27,13 @@ use PHPUnit\Framework\TestCase;
  * with the expected status code and location header, and that its
  * content is properly rendered and testable using the TestResponse utility.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Http
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Http
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(RedirectResponse::class)]
 #[CoversClass(TestResponse::class)]

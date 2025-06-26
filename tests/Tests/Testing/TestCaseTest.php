@@ -32,14 +32,13 @@ use function dirname;
  * It validates that the base setup functions as expected, providing a reliable foundation
  * for all application-level tests that depend on the framework's kernel and container.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Testing
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Testing
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(Application::class)]
 #[CoversClass(HttpKernel::class)]

@@ -30,9 +30,9 @@ use function ob_start;
  * This class contains unit tests for the CronCommand functionality,
  * including main execution, listing registered commands, and facade integration.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

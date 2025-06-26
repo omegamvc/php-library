@@ -32,13 +32,13 @@ use Throwable;
  * These tests ensure the correctness and robustness of terminal color formatting
  * logic used throughout the application.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Style
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Style
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
 #[CoversClass(Colors::class)]

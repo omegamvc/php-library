@@ -32,9 +32,9 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  *
  * Example use case: listing available test-related commands for the "unit" test group.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

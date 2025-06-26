@@ -37,9 +37,9 @@ use function dirname;
  * In this case, a Collection instance is registered in the container and validated
  * through the corresponding facade (`TestCollectionFacade`) to confirm proper linkage.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

@@ -24,9 +24,9 @@ use Omega\Container\Provider\AbstractServiceProvider;
  * that implements a `boot` method. It is used to validate service bootstrapping
  * behaviors without performing any real logic.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

@@ -17,7 +17,7 @@ abstract class MyModel
     protected $_GROUP_FILTER = [];
 
     /**
-     * Primery filter.
+     * Primary filter.
      *
      * @var string[]
      */
@@ -239,7 +239,7 @@ abstract class MyModel
     // main function
 
     /**
-     * menggabungkan primery filter array dengan groups filter, tanpa merubah isi groups class.
+     * menggabungkan primary filter array dengan groups filter, tanpa merubah isi groups class.
      * karean query di-runing dalam bentuk group filter.
      *
      * @return array<int, array<string, array<string, array<string, string>>|bool>> New Groups array

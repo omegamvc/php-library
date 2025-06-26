@@ -30,9 +30,9 @@ use function time;
  * implementation. It verifies behaviors such as setting, getting, deleting,
  * expiration, increment/decrement, and utility methods like remember().
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Cache\Storage
+ * @category   Omega\Tests
+ * @package    Cache
+ * @subpackage Storage
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

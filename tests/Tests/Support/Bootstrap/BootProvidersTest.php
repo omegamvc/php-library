@@ -31,9 +31,9 @@ use function dirname;
  * when the BootProviders class is invoked during the bootstrap phase.
  * It verifies the transition from an unbooted to a booted state.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Support\Bootstrap
+ * @category   Omega\Tests
+ * @package    Support
+ * @subpackage Bootstrap
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

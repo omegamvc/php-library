@@ -40,9 +40,9 @@ use function dirname;
  * and overrides the dispatcher logic to throw a controlled HttpException.
  * The response is then validated for expected content and status code.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Http\Exceptions
+ * @category   Omega\Tests
+ * @package    Http
+ * @subpackage Exceptions
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

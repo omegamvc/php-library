@@ -31,14 +31,13 @@ use function Omega\Time\now;
  * Each test ensures that the schedule triggers the task only when the current time matches the defined condition.
  * A mock logger is used to test message interpolation during task execution.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Cron
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Cron
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(Schedule::class)]
 #[CoversClass(ScheduleTime::class)]

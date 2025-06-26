@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Part of Omega - Tests\Facades Package
+ * Part of Omega - Tests\Support Package
  * php version 8.3
  *
  * @link      https://omegamvc.github.io
@@ -13,7 +13,7 @@
 
 declare(strict_types=1);
 
-namespace Tests\Facades\Sample;
+namespace Tests\Support\Facades\Sample;
 
 use Omega\Collection\Collection;
 use Omega\Support\Facades\Facade;
@@ -28,9 +28,9 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * This class is used solely for testing purposes in FacadeTest to verify
  * the facade behavior and static method forwarding.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Facades\Sample
+ * @category   Omega\Tests
+ * @package    Facades
+ * @subpackage Sample
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

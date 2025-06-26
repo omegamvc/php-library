@@ -28,14 +28,13 @@ use PHPUnit\Framework\TestCase;
  * It ensures that macros can be registered, retrieved, and that exceptions
  * are properly thrown when invoking unregistered macros.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Macroable
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Macroable
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversClass(MacroableTraitStub::class)]
 class MacroableTest extends TestCase

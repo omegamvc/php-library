@@ -32,9 +32,9 @@ use PHPUnit\Framework\TestCase;
  * - Custom hash drivers (like Bcrypt) can be registered and used properly.
  * - Hashes are not reversible and comply with the expected algorithm format.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Security
+ * @category   Omega\Tests
+ * @package    Security
+ * @subpackage Hashing
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

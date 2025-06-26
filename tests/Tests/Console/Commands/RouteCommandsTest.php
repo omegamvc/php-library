@@ -22,7 +22,6 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use function ob_get_clean;
 use function ob_start;
 
-
 /**
  * Unit test for the RouteCommand feature.
  *
@@ -32,9 +31,9 @@ use function ob_start;
  *
  * Also covers the core routing behavior through the Router class.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Console\Commands
+ * @category   Omega\Tests
+ * @package    Console
+ * @subpackage Commands
  * @link       https://omegamvc.github.io
  * @author     Adriano Giovannini <agisoftt@gmail.com>
  * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini

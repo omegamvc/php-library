@@ -25,14 +25,13 @@ use PHPUnit\Framework\Attributes\CoversNothing;
  * This class provides a simple implementation of a termination handler
  * that outputs the request URL and response content when the kernel terminates.
  *
- * @category   Omega
- * @package    Tests
- * @subpackage Http
- * @link       https://omegamvc.github.io
- * @author     Adriano Giovannini <agisoftt@gmail.com>
- * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
- * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
- * @version    2.0.0
+ * @category  Omega\Tests
+ * @package   Http
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version   2.0.0
  */
 #[CoversNothing]
 class TestKernelTerminate
