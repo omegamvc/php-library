@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\Model;
 
-use Omega\Database\MyModel\Model;
+use Omega\Database\Model\Model;
 
 /**
  * Profile model.

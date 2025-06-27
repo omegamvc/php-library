@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Omega\Database\MyModel;
+namespace Omega\Database\Model;
 
 use Omega\Database\MyPDO;
 use Omega\Database\MyQuery;

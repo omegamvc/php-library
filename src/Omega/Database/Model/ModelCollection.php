@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Omega\Database\MyModel;
+namespace Omega\Database\Model;
 
 use Omega\Collection\Collection;
 use Omega\Database\MyQuery\Delete;

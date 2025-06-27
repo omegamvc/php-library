@@ -189,7 +189,7 @@ class CreateTest extends AbstractDatabaseQuery
         $schema->primaryKey('PersonID');
 
         $this->assertEquals(
-            "CREATE TABLE testing_db.test ( PersonID int UNSIGNED DEFAULT 1, LastName varchar(255) DEFAULT '-', sufix varchar(15) DEFAULT NULL, PRIMARY KEY (PersonID) )",
+            "CREATE TABLE testing_db.test ( PersonID int UNSIGNED DEFAULT 1, LastName varchar(255) DEFAULT '-', suffix varchar(15) DEFAULT NULL, PRIMARY KEY (PersonID) )",
             $schema->__toString()
         );
     }

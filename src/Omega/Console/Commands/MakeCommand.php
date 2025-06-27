@@ -230,7 +230,7 @@ class MakeCommand extends Command
         $class->tabIndent(' ');
         $class->setEndWithNewLine();
         $class->namespace('App\\Models');
-        $class->uses(['Omega\Database\MyModel\Model']);
+        $class->uses(['Omega\Database\Model\MyModel\Model']);
         $class->extend('Model');
 
         $primaryKey = 'id';

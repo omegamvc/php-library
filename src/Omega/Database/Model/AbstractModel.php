@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Omega\Database;
+namespace Omega\Database\Model;
 
+use Omega\Database\MyPDO;
 use Omega\Database\MyQuery\Join\AbstractJoin;
 use Omega\Database\MyQuery\Select;
 
-abstract class MyModel
+abstract class AbstractModel implements ModelInterface
 {
     /**
      * Kumpulan array filter.
@@ -114,7 +115,7 @@ abstract class MyModel
      *
      * @return $this
      */
-    public function order(string $column_name, int $order_using = MyModel::ORDER_ASC)
+    public function order(string $column_name, int $order_using = AbstractModel::ORDER_ASC)
     {
         $order             = $order_using == 0 ? 'ASC' : 'DESC';
         $this->_SORT_ORDER = "$column_name $order";

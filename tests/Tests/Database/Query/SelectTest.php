@@ -386,12 +386,12 @@ class SelectTest extends AbstractDatabaseQuery
         ;
 
         $this->assertEquals(
-            'SELECT * FROM test GROUP BY culumn_1',
+            'SELECT * FROM test GROUP BY column_1',
             $select->__toString()
         );
 
         $this->assertEquals(
-            'SELECT * FROM test GROUP BY culumn_1, column_2',
+            'SELECT * FROM test GROUP BY column_1, column_2',
             $select_multi->__toString()
         );
     }
