@@ -1,16 +1,57 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
 use Omega\Database\MyQuery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
+/**
+ * Unit test suite for UPDATE query generation using the MyQuery query builder.
+ *
+ * This class ensures that various forms of SQL UPDATE statements are correctly
+ * built and rendered by the MyQuery component, including their bound value representation.
+ *
+ * Covered features include:
+ * - Basic `UPDATE ... SET` syntax
+ * - Conditional clauses using BETWEEN, IN, LIKE, and comparison operators
+ * - Complex WHERE expressions (including manual conditions)
+ * - Logical concatenation (AND vs OR) via strict mode toggle
+ *
+ * Each test validates both the parameterized query (`__toString`) and the bound
+ * value SQL string (`queryBind`) to ensure correctness of the query generation logic.
+ *
+ * @category   Omega\Tests
+ * @package    Database
+ * @subpackage Schema
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(MyQuery::class)]
 class UpdateTest extends AbstractDatabaseQuery
 {
-    /** @test */
-    public function testItCanUpdateBetween()
+    /**
+     * Test it con update between.
+     *
+     * @return void
+     */
+    public function testItCanUpdateBetween(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()
@@ -29,8 +70,12 @@ class UpdateTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanUpdateCompare()
+    /**
+     * Test it can update compare.
+     *
+     * @return void
+     */
+    public function testItCanUpdateCompare(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()
@@ -49,8 +94,12 @@ class UpdateTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanUpdateEqual()
+    /**
+     * Test it can update equal.
+     *
+     * @return void
+     */
+    public function testItCanUpdateEqual(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()
@@ -69,8 +118,12 @@ class UpdateTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanUpdateIn()
+    /**
+     * Test it can update in.
+     *
+     * @return void
+     */
+    public function testItCanUpdateIn(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()
@@ -89,8 +142,12 @@ class UpdateTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanUpdateLike()
+    /**
+     * Test it can update like.
+     *
+     * @return void
+     */
+    public function testItCanUpdateLike(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()
@@ -109,8 +166,12 @@ class UpdateTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanUpdateWhere()
+    /**
+     * Test it can update where.
+     *
+     * @return void
+     */
+    public function testItCanUpdateWhere(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()
@@ -121,17 +182,21 @@ class UpdateTest extends AbstractDatabaseQuery
         $this->assertEquals(
             'UPDATE test SET a = :bind_a WHERE a < :a OR b > :b',
             $update->__toString(),
-            'update with where statment is like'
+            'update with where statement is like'
         );
 
         $this->assertEquals(
             "UPDATE test SET a = 'b' WHERE a < 1 OR b > 2",
             $update->queryBind(),
-            'update with where statment is like'
+            'update with where statement is like'
         );
     }
 
-    /** @test */
+    /**
+     * Test it correct update with strict off.
+     *
+     * @return void
+     */
     public function testItCorrectUpdateWithStrictOff(): void
     {
         $update = MyQuery::from('test', $this->pdo)

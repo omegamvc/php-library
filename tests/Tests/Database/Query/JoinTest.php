@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Database\Query;
@@ -12,12 +23,44 @@ use Omega\Database\MyQuery\Join\InnerJoin;
 use Omega\Database\MyQuery\Join\LeftJoin;
 use Omega\Database\MyQuery\Join\RightJoin;
 use Omega\Database\MyQuery\Select;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
+/**
+ * Test suite for validating SQL JOIN clause generation using the MyQuery builder.
+ *
+ * This class verifies the correct generation of SQL queries involving various types of JOINs,
+ * including INNER, LEFT, RIGHT, FULL OUTER, and CROSS JOINs. It also ensures support for
+ * multiple joins, joins with WHERE conditions, subqueries, and JOIN usage in DELETE and UPDATE clauses.
+ *
+ * Each test case validates both the raw SQL with bound parameters and the final string with
+ * values injected via `queryBind()`.
+ *
+ * @category   Omega\Tests
+ * @package    Database
+ * @subpackage Schema
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(MyQuery::class)]
+#[CoversClass(InnerQuery::class)]
+#[CoversClass(CrossJoin::class)]
+#[CoversClass(FullJoin::class)]
+#[CoversClass(InnerJoin::class)]
+#[CoversClass(LeftJoin::class)]
+#[CoversClass(RightJoin::class)]
+#[CoversClass(Select::class)]
 class JoinTest extends AbstractDatabaseQuery
 {
-    /** @test */
-    public function testItCanGenerateInnerJoin()
+    /**
+     * Test it can generate inner join
+     *
+     * @return void
+     */
+    public function testItCanGenerateInnerJoin(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -35,8 +78,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateLeftJoin()
+    /**
+     * Test it can generate left join
+     *
+     * @return void
+     */
+    public function testItCanGenerateLeftJoin(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -54,8 +101,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateRightJoin()
+    /**
+     * Test it can generate right join
+     *
+     * @return void
+     */
+    public function testItCanGenerateRightJoin(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -73,8 +124,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateFullJoin()
+    /**
+     * Test it can generate full join
+     *
+     * @return void
+     */
+    public function testItCanGenerateFullJoin(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -92,8 +147,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateCrossJoin()
+    /**
+     * Test it can generate cross join.
+     *
+     * @return void
+     */
+    public function testItCanGenerateCrossJoin(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -111,8 +170,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanJoinMultyple()
+    /**
+     * Test it can join multiple.
+     *
+     * @return void
+     */
+    public function testItCanJoinMultiple(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -131,8 +194,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanJoinWithCondition()
+    /**
+     * Test it can join with condition.
+     *
+     * @return void
+     */
+    public function testItCanJoinWithCondition(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -151,8 +218,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateInnerJoinWithSubQuery()
+    /**
+     * Test it can generate inner join with sub query.
+     *
+     * @return void
+     */
+    public function testItCanGenerateInnerJoinWithSubQuery(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->select()
@@ -178,8 +249,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateInnerJoinInDeleteClausa()
+    /**
+     * Test it can generate inner join in delete clause.
+     *
+     * @return void
+     */
+    public function testItCanGenerateInnerJoinInDeleteClause(): void
     {
         $join = MyQuery::from('base_table', $this->pdo)
             ->delete()
@@ -199,8 +274,12 @@ class JoinTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateInnerJoinInUpdateClausa()
+    /**
+     * Test it can generate inner join in update clause.
+     *
+     * @return void
+     */
+    public function testItCanGenerateInnerJoinInUpdateClause(): void
     {
         $update = MyQuery::from('test', $this->pdo)
             ->update()

@@ -1,15 +1,54 @@
 <?php
 
+/**
+ * Part of Omega - Tests\Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
 use Omega\Database\MyQuery;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
+/**
+ * Unit test for the REPLACE query builder feature in the MyQuery class.
+ *
+ * This test suite verifies that REPLACE statements are properly generated
+ * with different input methods, including:
+ * - Single value inserts
+ * - Bulk value inserts using `values()` and `value()`
+ * - Multiple row inserts using `rows()`
+ *
+ * It ensures both the SQL with parameter placeholders (`__toString()`)
+ * and the bound parameter interpolation (`queryBind()`) return the expected
+ * REPLACE INTO SQL string.
+ *
+ * @category   Omega\Tests
+ * @package    Database
+ * @subpackage Schema
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(MyQuery::class)]
 class ReplaceTest extends AbstractDatabaseQuery
 {
-    /** @test */
+    /**
+     * Test it correct insert.
+     *
+     * @return void
+     */
     public function testItCorrectInsert(): void
     {
         $insert = MyQuery::from('test', $this->pdo)
@@ -28,7 +67,11 @@ class ReplaceTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it correct insert values.
+     *
+     * @return void
+     */
     public function testItCorrectInsertValues(): void
     {
         $insert = MyQuery::from('test', $this->pdo)
@@ -51,8 +94,12 @@ class ReplaceTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCorrectInsertQueryMultyValues(): void
+    /**
+     * Test it correct insert query multi values.
+     *
+     * @return void
+     */
+    public function testItCorrectInsertQueryMultiValues(): void
     {
         $insert = MyQuery::from('test', $this->pdo)
             ->replace()
@@ -75,8 +122,12 @@ class ReplaceTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCorrectInsertQueryMultyRaws(): void
+    /**
+     * Test it correct insert query multi raws.
+     *
+     * @return void
+     */
+    public function testItCorrectInsertQueryMultiRaws(): void
     {
         $insert = MyQuery::from('test', $this->pdo)
             ->replace()

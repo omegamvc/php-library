@@ -1,4 +1,15 @@
-<?php
+<?php /** @noinspection PhpRedundantOptionalArgumentInspection */
+
+/**
+ * Part of Omega - Tests\Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 
 declare(strict_types=1);
 
@@ -7,11 +18,44 @@ namespace Tests\Database\Query;
 use Omega\Database\MyQuery;
 use Omega\Database\MyQuery\InnerQuery;
 use Omega\Database\MyQuery\Select;
+use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
+/**
+ * Unit test suite for SELECT query generation using the MyQuery query builder.
+ *
+ * This class tests the full range of SELECT clause capabilities provided by
+ * the MyQuery class, ensuring that generated SQL statements and their bound
+ * representations are syntactically and semantically correct.
+ *
+ * Covered features include:
+ * - Simple and complex WHERE conditions (equal, between, in, like, compare)
+ * - Multi-column and grouped selects
+ * - EXISTS and NOT EXISTS subqueries
+ * - Subqueries as data sources (via InnerQuery)
+ * - LIMIT, OFFSET, and ORDER clauses, including null-aware ordering
+ * - Strict mode (AND vs OR concatenation)
+ * - Grouping and multi-ordering capabilities
+ *
+ * @category   Omega\Tests
+ * @package    Database
+ * @subpackage Schema
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
+ * @version    2.0.0
+ */
+#[CoversClass(MyQuery::class)]
+#[CoversClass(InnerQuery::class)]
+#[CoversClass(Select::class)]
 class SelectTest extends AbstractDatabaseQuery
 {
-    /** @test */
+    /**
+     * Test it can select between.
+     *
+     * @return void
+     */
     public function testItCanSelectBetween()
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -30,7 +74,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can select compare.
+     *
+     * @return void
+     */
     public function testItCanSelectCompare()
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -49,7 +97,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can select equal.
+     *
+     * @return void
+     */
     public function testItCanSelectEqual()
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -68,7 +120,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can select in.
+     *
+     * @return void
+     */
     public function testItCanSelectIn()
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -87,7 +143,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can select like.
+     *
+     * @return void
+     */
     public function testItCanSelectLike()
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -106,7 +166,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can select where.
+     *
+     * @return void
+     */
     public function testItCanSelectWhere()
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -117,18 +181,22 @@ class SelectTest extends AbstractDatabaseQuery
         $this->assertEquals(
             'SELECT * FROM test WHERE a < :a OR b > :b',
             $select->__toString(),
-            'select with where statment is like'
+            'select with where statement is like'
         );
 
         $this->assertEquals(
             'SELECT * FROM test WHERE a < 1 OR b > 2',
             $select->queryBind(),
-            'select with where statment is like'
+            'select with where statement is like'
         );
     }
 
-    /** @test */
-    public function testItCorrectSelectMultyColumn(): void
+    /**
+     * Test it correct select multi-column.
+     *
+     * @return void
+     */
+    public function testItCorrectSelectMultiColumn(): void
     {
         $select = MyQuery::from('test', $this->pdo)
             ->select(['column_1', 'column_2', 'column_3'])
@@ -139,17 +207,21 @@ class SelectTest extends AbstractDatabaseQuery
         $this->assertEquals(
             'SELECT column_1, column_2, column_3 FROM test WHERE ( (test.column_1 = :column_1) AND (test.column_2 = :column_2) AND (test.column_3 = :column_3) )',
             $select->__toString(),
-            'select statment must have 3 selected query'
+            'select statement must have 3 selected query'
         );
 
         $this->assertEquals(
             "SELECT column_1, column_2, column_3 FROM test WHERE ( (test.column_1 = 123) AND (test.column_2 = 'abc') AND (test.column_3 = true) )",
             $select->queryBind(),
-            'select statment must have 3 selected query'
+            'select statement must have 3 selected query'
         );
     }
 
-    /** @test */
+    /**
+     * Test it correct select with strict off.
+     *
+     * @return void
+     */
     public function testItCorrectSelectWithStrictOff(): void
     {
         $select = MyQuery::from('test', $this->pdo)
@@ -161,18 +233,22 @@ class SelectTest extends AbstractDatabaseQuery
         $this->assertEquals(
             'SELECT column_1, column_2, column_3 FROM test WHERE ( (test.column_1 = :column_1) OR (test.column_2 = :column_2) )',
             $select,
-            'select statment must have using or statment'
+            'select statement must have using or statement'
         );
 
         $this->assertEquals(
             "SELECT column_1, column_2, column_3 FROM test WHERE ( (test.column_1 = 123) OR (test.column_2 = 'abc') )",
             $select->queryBind(),
-            'select statment must have using or statment'
+            'select statement must have using or statement'
         );
     }
 
-    /** @test */
-    public function testItCanGenerateWhereExisQuery(): void
+    /**
+     * Test it can generate where exist query.
+     *
+     * @return void
+     */
+    public function testItCanGenerateWhereExistQuery(): void
     {
         $select = MyQuery::from('base_1', $this->pdo)
             ->select()
@@ -198,8 +274,12 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanGenerateWhereNotExisQuery(): void
+    /**
+     * Test it can generate where not exist query.
+     *
+     * @return void
+     */
+    public function testItCanGenerateWhereNotExistQuery(): void
     {
         $select = MyQuery::from('base_1', $this->pdo)
             ->select()
@@ -225,7 +305,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can generate select with where query.
+     *
+     * @return void
+     */
     public function testItCanGenerateSelectWithWhereQuery(): void
     {
         $select = MyQuery::from('base_1', $this->pdo)
@@ -253,7 +337,11 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can generate select with sub query.
+     *
+     * @return void
+     */
     public function testItCanGenerateSelectWithSubQuery(): void
     {
         $select = MyQuery::from(
@@ -281,16 +369,20 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
+    /**
+     * Test it can select with group by.
+     *
+     * @return void
+     */
     public function testItCanSelectWithGroupBy(): void
     {
         $select = MyQuery::from('test', $this->pdo)
             ->select()
-            ->groupBy('culumn_1')
+            ->groupBy('column_1')
         ;
-        $select_multy = MyQuery::from('test', $this->pdo)
+        $select_multi = MyQuery::from('test', $this->pdo)
             ->select()
-            ->groupBy('culumn_1', 'column_2')
+            ->groupBy('column_1', 'column_2')
         ;
 
         $this->assertEquals(
@@ -300,12 +392,16 @@ class SelectTest extends AbstractDatabaseQuery
 
         $this->assertEquals(
             'SELECT * FROM test GROUP BY culumn_1, column_2',
-            $select_multy->__toString()
+            $select_multi->__toString()
         );
     }
 
-    /** @test */
-    public function testItCanGenerateMultyOrder(): void
+    /**
+     * Test it can generate multi order.
+     *
+     * @return void
+     */
+    public function testItCanGenerateMultiOrder(): void
     {
         $select = MyQuery::from('base_1', $this->pdo)
             ->select()
@@ -320,8 +416,12 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanSelectWithOrderIfNotNull()
+    /**
+     * Test it can select with order if not null.
+     *
+     * @return void
+     */
+    public function testItCanSelectWithOrderIfNotNull(): void
     {
         $select = MyQuery::from('test', $this->pdo)
             ->select()
@@ -333,8 +433,12 @@ class SelectTest extends AbstractDatabaseQuery
         );
     }
 
-    /** @test */
-    public function testItCanSelectWithOrderIfNull()
+    /**
+     * Test it can select with order if null.
+     *
+     * @return void
+     */
+    public function testItCanSelectWithOrderIfNull(): void
     {
         $select = MyQuery::from('test', $this->pdo)
             ->select()
