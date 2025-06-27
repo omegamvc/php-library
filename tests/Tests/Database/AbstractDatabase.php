@@ -44,8 +44,8 @@ abstract class AbstractDatabase extends TestCase
     /** @var MyPDO PDO wrapper instance used for executing queries. */
     protected MyPDO $pdo;
 
-    /** @var MySchema\MyPDO Schema-aware PDO wrapper for schema operations. */
-    protected MySchema\MyPDO $pdo_schema;
+    /** @var MySchema\SchemaConnection Schema-aware PDO wrapper for schema operations. */
+    protected MySchema\SchemaConnection $pdo_schema;
 
     /** @var MySchema Schema builder and manager instance. */
     protected MySchema $schema;
@@ -66,7 +66,7 @@ abstract class AbstractDatabase extends TestCase
             'database_name'  => 'testing_db',
         ];
 
-        $this->pdo_schema = new MySchema\MyPDO($this->env);
+        $this->pdo_schema = new MySchema\SchemaConnection($this->env);
         $this->schema     = new MySchema($this->pdo_schema);
 
         // building the database

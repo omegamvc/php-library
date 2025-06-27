@@ -7,10 +7,10 @@ namespace Omega\Database\MySchema;
 /** Proxy for drop database and table */
 class Drop
 {
-    /** @var MyPDO */
+    /** @var SchemaConnection */
     private $pdo;
 
-    public function __construct(MyPDO $pdo)
+    public function __construct(SchemaConnection $pdo)
     {
         $this->pdo = $pdo;
     }

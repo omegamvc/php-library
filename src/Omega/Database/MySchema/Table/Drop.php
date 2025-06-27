@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Omega\Database\MySchema\Table;
 
-use Omega\Database\MySchema\MyPDO;
+use Omega\Database\MySchema\SchemaConnection;
 use Omega\Database\MySchema\Query;
 use Omega\Database\MySchema\Traits\ConditionTrait;
 
@@ -15,7 +15,7 @@ class Drop extends Query
     /** @var string */
     private $table_name;
 
-    public function __construct(string $database_name, string $table_name, MyPDO $pdo)
+    public function __construct(string $database_name, string $table_name, SchemaConnection $pdo)
     {
         $this->table_name    = $database_name . '.' . $table_name;
         $this->pdo           = $pdo;

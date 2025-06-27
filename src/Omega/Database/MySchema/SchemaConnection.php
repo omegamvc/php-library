@@ -6,7 +6,7 @@ namespace Omega\Database\MySchema;
 
 use Omega\Database\MyPDO as BasePDO;
 
-class MyPDO extends BasePDO
+class SchemaConnection extends BasePDO
 {
     /**
      * @param array<string, string> $configs

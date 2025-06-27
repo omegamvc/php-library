@@ -6,7 +6,7 @@ namespace Omega\Database;
 
 use Omega\Database\MySchema\Create;
 use Omega\Database\MySchema\Drop;
-use Omega\Database\MySchema\MyPDO;
+use Omega\Database\MySchema\SchemaConnection;
 use Omega\Database\MySchema\Table\Alter;
 use Omega\Database\MySchema\Table\Create as CreateTable;
 use Omega\Database\MySchema\Table\Raw;
@@ -14,10 +14,10 @@ use Omega\Database\MySchema\Table\Truncate;
 
 class MySchema
 {
-    /** @var MyPDO PDO property */
+    /** @var SchemaConnection PDO property */
     private $pdo;
 
-    public function __construct(MyPDO $pdo)
+    public function __construct(SchemaConnection $pdo)
     {
         $this->pdo = $pdo;
     }
