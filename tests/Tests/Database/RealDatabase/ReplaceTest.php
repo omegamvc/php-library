@@ -15,13 +15,13 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 use Tests\Database\Traits\UserTrait;
 
 /**
- * Test suite for REPLACE operations using the MyQuery class.
+ * Test suite for REPLACE operations using the Query class.
  *
  * This class verifies that the query builder can correctly perform REPLACE statements,
  * which either insert new records or overwrite existing ones based on primary or unique keys.
@@ -43,7 +43,7 @@ use Tests\Database\Traits\UserTrait;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class ReplaceTest extends AbstractDatabase
 {
     use UserTrait;
@@ -89,7 +89,7 @@ class ReplaceTest extends AbstractDatabase
      */
     public function testItCanReplaceOnNewData(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->replace()
             ->values([
                 'user'      => 'adriano',
@@ -108,7 +108,7 @@ class ReplaceTest extends AbstractDatabase
      */
     public function testItCanReplaceOnExistData(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->values([
                 'user'      => 'adriano',
@@ -117,7 +117,7 @@ class ReplaceTest extends AbstractDatabase
             ])
             ->execute();
 
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->replace()
             ->values([
                 'user'      => 'adriano',
@@ -136,7 +136,7 @@ class ReplaceTest extends AbstractDatabase
      */
     public function testItCanUpdateInsertUsingOneQuery(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->values([
                 'user'      => 'adriano',
@@ -145,7 +145,7 @@ class ReplaceTest extends AbstractDatabase
             ])
             ->execute();
 
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->replace()
             ->rows([
                 [

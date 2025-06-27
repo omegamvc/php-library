@@ -15,13 +15,13 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
 /**
  * Test suite for verifying the correct behavior of LIMIT and OFFSET clauses
- * in SELECT queries using the MyQuery builder.
+ * in SELECT queries using the Query builder.
  *
  * This class ensures that the query builder handles different edge cases for LIMIT and OFFSET,
  * including negative values, combinations with ORDER BY, and different forms of limit syntax.
@@ -36,7 +36,7 @@ use Tests\Database\AbstractDatabaseQuery;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class LimitTest extends AbstractDatabaseQuery
 {
     /**
@@ -46,11 +46,11 @@ class LimitTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectQueryWithLimitOrder(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(1, 10)
-            ->order('column_1', MyQuery::ORDER_ASC);
+            ->order('column_1', Query::ORDER_ASC);
 
         $this->assertEquals(
             'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 1, 10',
@@ -72,11 +72,11 @@ class LimitTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectQueryWithLimitEndOrderWIthLimitEndLessThatZero(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(2, -1)
-            ->order('column_1', MyQuery::ORDER_ASC);
+            ->order('column_1', Query::ORDER_ASC);
 
         $this->assertEquals(
             'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 2, 0',
@@ -98,11 +98,11 @@ class LimitTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectQueryWithLimitStartLessThanZero(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(-1, 2)
-            ->order('column_1', MyQuery::ORDER_ASC);
+            ->order('column_1', Query::ORDER_ASC);
 
         $this->assertEquals(
             'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 2',
@@ -122,12 +122,12 @@ class LimitTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectQueryWithLimitAndOffset(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limitStart(1)
             ->offset(10)
-            ->order('column_1', MyQuery::ORDER_ASC);
+            ->order('column_1', Query::ORDER_ASC);
 
         $this->assertEquals(
             'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC LIMIT 1 OFFSET 10',
@@ -147,11 +147,11 @@ class LimitTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectQueryWithLimitStartAndLimitEndLessThanZero(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
             ->limit(-1, -1)
-            ->order('column_1', MyQuery::ORDER_ASC);
+            ->order('column_1', Query::ORDER_ASC);
 
         $this->assertEquals(
             'SELECT * FROM test WHERE (test.column_1 BETWEEN :b_start AND :b_end) ORDER BY test.column_1 ASC',

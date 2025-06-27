@@ -24,8 +24,8 @@ use Omega\Console\Command;
 use Omega\Console\Prompt;
 use Omega\Console\Style\Style;
 use Omega\Console\Traits\PrintHelpTrait;
-use Omega\Database\MyQuery;
-use Omega\Database\MySchema\Table\Create;
+use Omega\Database\Query\Query;
+use Omega\Database\Schema\Table\Create;
 use Omega\Support\Facades\DB;
 use Omega\Support\Facades\PDO;
 use Omega\Support\Facades\Schema;
@@ -681,7 +681,7 @@ class MigrationCommand extends Command
      */
     public function tableShow(string $table): int
     {
-        $table = (new MyQuery(PDO::instance()))->table($table)->info();
+        $table = (new Query(PDO::instance()))->table($table)->info();
         $print = new Style("\n");
         $width = $this->getWidth(40, 60);
 

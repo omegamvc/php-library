@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\SeedCommand;
-use Omega\Database\MyPDO;
+use Omega\Database\Connection;
 use Omega\Application\Application;
 use Omega\Support\Facades\DB;
 use Omega\Support\Facades\PDO as FacadesPDO;
@@ -48,7 +48,7 @@ use function ob_start;
  */
 #[CoversClass(Application::class)]
 #[CoversClass(DB::class)]
-#[CoversClass(MyPDO::class)]
+#[CoversClass(Connection::class)]
 #[CoversClass(FacadesPDO::class)]
 #[CoversClass(Schema::class)]
 #[CoversClass(SeedCommand::class)]
@@ -81,8 +81,8 @@ class SeedCommandsWithDatabaseTest extends AbstractDatabase
         new Schema($this->app);
         new FacadesPDO($this->app);
         new DB($this->app);
-        $this->app->set(MyPDO::class, $this->pdo);
-        $this->app->set('MySchema', $this->schema);
+        $this->app->set(Connection::class, $this->pdo);
+        $this->app->set('Schema', $this->schema);
         $this->app->set('dsn.sql', $this->env);
     }
 

@@ -15,15 +15,15 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
 /**
- * Unit test suite for UPDATE query generation using the MyQuery query builder.
+ * Unit test suite for UPDATE query generation using the Query query builder.
  *
  * This class ensures that various forms of SQL UPDATE statements are correctly
- * built and rendered by the MyQuery component, including their bound value representation.
+ * built and rendered by the Query component, including their bound value representation.
  *
  * Covered features include:
  * - Basic `UPDATE ... SET` syntax
@@ -43,7 +43,7 @@ use Tests\Database\AbstractDatabaseQuery;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class UpdateTest extends AbstractDatabaseQuery
 {
     /**
@@ -53,7 +53,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCanUpdateBetween(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->between('column_1', 1, 100)
@@ -77,7 +77,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCanUpdateCompare(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->compare('column_1', '=', 100)
@@ -101,7 +101,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCanUpdateEqual(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->equal('column_1', 100)
@@ -125,7 +125,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCanUpdateIn(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->in('column_1', [1, 2])
@@ -149,7 +149,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCanUpdateLike(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->like('column_1', 'test')
@@ -173,7 +173,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCanUpdateWhere(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->where('a < :a OR b > :b', [[':a', 1], [':b', 2]])
@@ -199,7 +199,7 @@ class UpdateTest extends AbstractDatabaseQuery
      */
     public function testItCorrectUpdateWithStrictOff(): void
     {
-        $update = MyQuery::from('test', $this->pdo)
+        $update = Query::from('test', $this->pdo)
             ->update()
             ->value('a', 'b')
             ->equal('column_1', 123)

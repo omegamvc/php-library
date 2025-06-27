@@ -15,19 +15,19 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
 /**
- * Test suite for validating SQL INSERT query generation using the MyQuery builder.
+ * Test suite for validating SQL INSERT query generation using the Query builder.
  *
  * This class ensures that various INSERT statement features are correctly generated,
  * including single and multiple value inserts, merging values through method chaining,
  * bulk insert with multiple rows, and support for "ON DUPLICATE KEY UPDATE" clauses.
  * It verifies both the generated SQL with placeholders and the fully bound query string.
 /**
- * Test suite for validating SQL INSERT query generation using the MyQuery builder.
+ * Test suite for validating SQL INSERT query generation using the Query builder.
  *
  * This class ensures that various INSERT statement features are correctly generated,
  * including single and multiple value inserts, merging values through method chaining,
@@ -43,7 +43,7 @@ use Tests\Database\AbstractDatabaseQuery;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class InsertTest extends AbstractDatabaseQuery
 {
     /**
@@ -53,7 +53,7 @@ class InsertTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsert(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->insert()
             ->value('a', 1)
         ;
@@ -76,7 +76,7 @@ class InsertTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertValues(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->insert()
             ->values([
                 'a' => 'b',
@@ -103,7 +103,7 @@ class InsertTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertQueryMultiValues(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->insert()
             ->values([
                 'a' => 'b',
@@ -131,7 +131,7 @@ class InsertTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertQueryMultiRaws(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->insert()
             ->rows([
                 [
@@ -163,7 +163,7 @@ class InsertTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertOnDuplicateKeyUpdate(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->insert()
             ->value('a', 1)
             ->on('a')

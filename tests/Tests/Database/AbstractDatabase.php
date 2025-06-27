@@ -15,9 +15,10 @@ declare(strict_types=1);
 
 namespace Tests\Database;
 
-use Omega\Database\MyPDO;
-use Omega\Database\MyQuery\Insert;
-use Omega\Database\MySchema;
+use Omega\Database\Connection;
+use Omega\Database\Query\Insert;
+use Omega\Database\Schema\Schema;
+use Omega\Database\Schema\SchemaConnection;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 
@@ -41,14 +42,14 @@ abstract class AbstractDatabase extends TestCase
     /** @var array<string, string> Environment configuration for the database connection. */
     protected array $env;
 
-    /** @var MyPDO PDO wrapper instance used for executing queries. */
-    protected MyPDO $pdo;
+    /** @var Connection PDO wrapper instance used for executing queries. */
+    protected Connection $pdo;
 
-    /** @var MySchema\SchemaConnection Schema-aware PDO wrapper for schema operations. */
-    protected MySchema\SchemaConnection $pdo_schema;
+    /** @var SchemaConnection Schema-aware PDO wrapper for schema operations. */
+    protected SchemaConnection $pdo_schema;
 
-    /** @var MySchema Schema builder and manager instance. */
-    protected MySchema $schema;
+    /** @var Schema Schema builder and manager instance. */
+    protected Schema $schema;
 
     /**
      * Initialize the database connection and prepare schema.
@@ -66,13 +67,13 @@ abstract class AbstractDatabase extends TestCase
             'database_name'  => 'testing_db',
         ];
 
-        $this->pdo_schema = new MySchema\SchemaConnection($this->env);
-        $this->schema     = new MySchema($this->pdo_schema);
+        $this->pdo_schema = new SchemaConnection($this->env);
+        $this->schema     = new Schema($this->pdo_schema);
 
         // building the database
         $this->schema->create()->database('testing_db')->ifNotExists()->execute();
 
-        $this->pdo        = new MyPDO($this->env);
+        $this->pdo        = new Connection($this->env);
     }
 
     /**

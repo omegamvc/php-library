@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 use Tests\Database\Traits\UserTrait;
 
 /**
- * Test suite for INSERT operations using the MyQuery class.
+ * Test suite for INSERT operations using the Query class.
  *
  * This class verifies that data can be correctly inserted into the database
  * using different modes and options, including:
@@ -31,7 +31,7 @@ use Tests\Database\Traits\UserTrait;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class InsertTest extends AbstractDatabase
 {
     use UserTrait;
@@ -77,7 +77,7 @@ class InsertTest extends AbstractDatabase
      */
     public function testItCanInsertData()
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->values([
                 'user'      => 'adriano',
@@ -96,7 +96,7 @@ class InsertTest extends AbstractDatabase
      */
     public function testItCanInsertMultiRaw(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->rows([
                 [
@@ -122,7 +122,7 @@ class InsertTest extends AbstractDatabase
      */
     public function testItCanReplaceOnExistData(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->values([
                 'user'      => 'adriano',
@@ -131,7 +131,7 @@ class InsertTest extends AbstractDatabase
             ])
             ->execute();
 
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->values([
                 'user'      => 'adriano',
@@ -151,7 +151,7 @@ class InsertTest extends AbstractDatabase
      */
     public function testItCanUpdateInsertUsingOneQuery(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->values([
                 'user'      => 'adriano',
@@ -160,7 +160,7 @@ class InsertTest extends AbstractDatabase
             ])
             ->execute();
 
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->insert()
             ->rows([
                 [

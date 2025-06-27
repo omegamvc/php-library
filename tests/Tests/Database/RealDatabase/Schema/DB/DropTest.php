@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase\Schema\DB;
 
-use Omega\Database\MySchema\DB\Drop;
+use Omega\Database\Schema\DB\Drop;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 

@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase\Schema\Table;
 
-use Omega\Database\MySchema\Table\Truncate;
+use Omega\Database\Schema\Table\Truncate;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 use Tests\Database\Traits\UserTrait;

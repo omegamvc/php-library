@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query\Schema\Table;
 
-use Omega\Database\MySchema\Table\Alter;
+use Omega\Database\Schema\Table\Alter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 

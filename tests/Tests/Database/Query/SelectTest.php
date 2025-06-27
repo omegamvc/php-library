@@ -15,17 +15,17 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
-use Omega\Database\MyQuery;
-use Omega\Database\MyQuery\InnerQuery;
-use Omega\Database\MyQuery\Select;
+use Omega\Database\Query\Query;
+use Omega\Database\Query\InnerQuery;
+use Omega\Database\Query\Select;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
 /**
- * Unit test suite for SELECT query generation using the MyQuery query builder.
+ * Unit test suite for SELECT query generation using the Query query builder.
  *
  * This class tests the full range of SELECT clause capabilities provided by
- * the MyQuery class, ensuring that generated SQL statements and their bound
+ * the Query class, ensuring that generated SQL statements and their bound
  * representations are syntactically and semantically correct.
  *
  * Covered features include:
@@ -46,7 +46,7 @@ use Tests\Database\AbstractDatabaseQuery;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 #[CoversClass(InnerQuery::class)]
 #[CoversClass(Select::class)]
 class SelectTest extends AbstractDatabaseQuery
@@ -58,7 +58,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectBetween()
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->between('column_1', 1, 100)
         ;
@@ -81,7 +81,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectCompare()
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->compare('column_1', '=', 100)
         ;
@@ -104,7 +104,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectEqual()
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->equal('column_1', 100)
         ;
@@ -127,7 +127,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectIn()
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->in('column_1', [1, 2])
         ;
@@ -150,7 +150,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectLike()
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->like('column_1', 'test')
         ;
@@ -173,7 +173,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectWhere()
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->where('a < :a OR b > :b', [[':a', 1], [':b', 2]])
         ;
@@ -198,7 +198,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectMultiColumn(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select(['column_1', 'column_2', 'column_3'])
             ->equal('column_1', 123)
             ->equal('column_2', 'abc')
@@ -224,7 +224,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCorrectSelectWithStrictOff(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select(['column_1', 'column_2', 'column_3'])
             ->equal('column_1', 123)
             ->equal('column_2', 'abc')
@@ -250,7 +250,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanGenerateWhereExistQuery(): void
     {
-        $select = MyQuery::from('base_1', $this->pdo)
+        $select = Query::from('base_1', $this->pdo)
             ->select()
             ->whereExist(
                 (new Select('base_2', ['*'], $this->pdo))
@@ -258,7 +258,7 @@ class SelectTest extends AbstractDatabaseQuery
                     ->where('base_1.id = base_2.id')
             )
             ->limit(1, 10)
-            ->order('id', MyQuery::ORDER_ASC)
+            ->order('id', Query::ORDER_ASC)
         ;
 
         $this->assertEquals(
@@ -281,7 +281,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanGenerateWhereNotExistQuery(): void
     {
-        $select = MyQuery::from('base_1', $this->pdo)
+        $select = Query::from('base_1', $this->pdo)
             ->select()
             ->whereNotExist(
                 (new Select('base_2', ['*'], $this->pdo))
@@ -289,7 +289,7 @@ class SelectTest extends AbstractDatabaseQuery
                     ->where('base_1.id = base_2.id')
             )
             ->limit(1, 10)
-            ->order('id', MyQuery::ORDER_ASC)
+            ->order('id', Query::ORDER_ASC)
         ;
 
         $this->assertEquals(
@@ -312,7 +312,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanGenerateSelectWithWhereQuery(): void
     {
-        $select = MyQuery::from('base_1', $this->pdo)
+        $select = Query::from('base_1', $this->pdo)
             ->select()
             ->whereClause(
                 'user =',
@@ -321,7 +321,7 @@ class SelectTest extends AbstractDatabaseQuery
                     ->where('base_1.id = base_2.id')
             )
             ->limit(1, 10)
-            ->order('id', MyQuery::ORDER_ASC)
+            ->order('id', Query::ORDER_ASC)
         ;
 
         $this->assertEquals(
@@ -344,7 +344,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanGenerateSelectWithSubQuery(): void
     {
-        $select = MyQuery::from(
+        $select = Query::from(
             new InnerQuery(
                 (new Select('base_2', ['id'], $this->pdo))
                     ->in('test', ['success']), 'user'
@@ -353,7 +353,7 @@ class SelectTest extends AbstractDatabaseQuery
         )
             ->select(['user.id as id'])
             ->limit(1, 10)
-            ->order('id', MyQuery::ORDER_ASC)
+            ->order('id', Query::ORDER_ASC)
         ;
 
         $this->assertEquals(
@@ -376,11 +376,11 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectWithGroupBy(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->groupBy('column_1')
         ;
-        $select_multi = MyQuery::from('test', $this->pdo)
+        $select_multi = Query::from('test', $this->pdo)
             ->select()
             ->groupBy('column_1', 'column_2')
         ;
@@ -403,10 +403,10 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanGenerateMultiOrder(): void
     {
-        $select = MyQuery::from('base_1', $this->pdo)
+        $select = Query::from('base_1', $this->pdo)
             ->select()
-            ->order('id', MyQuery::ORDER_ASC)
-            ->order('name', MyQuery::ORDER_DESC)
+            ->order('id', Query::ORDER_ASC)
+            ->order('name', Query::ORDER_DESC)
         ;
 
         $this->assertEquals(
@@ -423,7 +423,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectWithOrderIfNotNull(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->orderIfNotNull('column_1');
 
@@ -440,7 +440,7 @@ class SelectTest extends AbstractDatabaseQuery
      */
     public function testItCanSelectWithOrderIfNull(): void
     {
-        $select = MyQuery::from('test', $this->pdo)
+        $select = Query::from('test', $this->pdo)
             ->select()
             ->orderIfNull('column_1');
 

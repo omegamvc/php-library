@@ -15,13 +15,13 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 use Tests\Database\Traits\UserTrait;
 
 /**
- * Test suite for the DELETE functionality of the MyQuery class.
+ * Test suite for the DELETE functionality of the Query class.
  *
  * This class verifies that the query builder can correctly generate and execute
  * DELETE statements using various filtering methods such as:
@@ -44,7 +44,7 @@ use Tests\Database\Traits\UserTrait;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class DeleteTest extends AbstractDatabase
 {
     use UserTrait;
@@ -90,7 +90,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDelete(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->execute()
         ;
@@ -105,7 +105,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithBetween(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->between('stat', 0, 100)
             ->execute()
@@ -121,7 +121,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithCompare(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->compare('user', '=', 'taylor')
             ->execute()
@@ -137,7 +137,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithEqual(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->equal('user', 'taylor')
             ->execute()
@@ -153,7 +153,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithIn(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->in('user', ['taylor'])
             ->execute()
@@ -169,7 +169,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithLike(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->like('user', 'tay%')
             ->execute()
@@ -185,7 +185,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithWhere(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->where('user = :user', [
                 [':user', 'taylor'],
@@ -203,7 +203,7 @@ class DeleteTest extends AbstractDatabase
      */
     public function testItCanDeleteWithMultiCondition(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->delete()
             ->compare('stat', '>', 1)
             ->where('user = :user', [

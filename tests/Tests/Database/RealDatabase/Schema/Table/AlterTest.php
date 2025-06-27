@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase\Schema\Table;
 
-use Omega\Database\MySchema\Table\Alter;
+use Omega\Database\Schema\Table\Alter;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 
@@ -132,7 +132,6 @@ class AlterTest extends AbstractDatabase
      * Test it can execute query using rename column.
      *
      * @return void
-     * @group not-for-mysql5.7
      */
     public function testItCanExecuteQueryUsingRenameColumn(): void
     {

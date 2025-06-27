@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Database\Model;
 
 use Exception;
-use Omega\Database\MyQuery\Insert;
+use Omega\Database\Query\Insert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 

@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase\Schema\Table;
 
-use Omega\Database\MySchema\Table\Raw;
+use Omega\Database\Schema\Table\Raw;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 

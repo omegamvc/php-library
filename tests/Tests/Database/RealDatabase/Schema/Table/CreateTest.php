@@ -16,7 +16,7 @@ declare(strict_types=1);
 namespace Tests\Database\RealDatabase\Schema\Table;
 
 use Exception;
-use Omega\Database\MySchema\Table\Create;
+use Omega\Database\Schema\Table\Create;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 

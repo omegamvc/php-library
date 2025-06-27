@@ -15,13 +15,13 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 use Tests\Database\Traits\UserTrait;
 
 /**
- * Test suite for UPDATE operations using the MyQuery class.
+ * Test suite for UPDATE operations using the Query class.
  *
  * This class verifies the ability of the query builder to construct and execute
  * UPDATE statements under various conditions and constraints.
@@ -43,7 +43,7 @@ use Tests\Database\Traits\UserTrait;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class UpdateTest extends AbstractDatabase
 {
     use UserTrait;
@@ -89,7 +89,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdate(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->execute()
@@ -105,7 +105,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithBetween()
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->between('stat', 0, 100)
@@ -122,7 +122,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithCompare(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->compare('user', '=', 'taylor')
@@ -139,7 +139,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithEqual(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->equal('user', 'taylor')
@@ -156,7 +156,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithIn(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->in('user', ['taylor'])
@@ -173,7 +173,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithLike(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->like('user', 'tay%')
@@ -190,7 +190,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithWhere(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->where('user = :user', [
@@ -209,7 +209,7 @@ class UpdateTest extends AbstractDatabase
      */
     public function testItCanUpdateWithMultiCondition(): void
     {
-        MyQuery::from('users', $this->pdo)
+        Query::from('users', $this->pdo)
             ->update()
             ->value('stat', 0)
             ->compare('stat', '>', 1)

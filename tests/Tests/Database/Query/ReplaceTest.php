@@ -15,12 +15,12 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
 /**
- * Unit test for the REPLACE query builder feature in the MyQuery class.
+ * Unit test for the REPLACE query builder feature in the Query class.
  *
  * This test suite verifies that REPLACE statements are properly generated
  * with different input methods, including:
@@ -41,7 +41,7 @@ use Tests\Database\AbstractDatabaseQuery;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class ReplaceTest extends AbstractDatabaseQuery
 {
     /**
@@ -51,7 +51,7 @@ class ReplaceTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsert(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->replace()
             ->value('a', 1)
         ;
@@ -74,7 +74,7 @@ class ReplaceTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertValues(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->replace()
             ->values([
                 'a' => 'b',
@@ -101,7 +101,7 @@ class ReplaceTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertQueryMultiValues(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->replace()
             ->values([
                 'a' => 'b',
@@ -129,7 +129,7 @@ class ReplaceTest extends AbstractDatabaseQuery
      */
     public function testItCorrectInsertQueryMultiRaws(): void
     {
-        $insert = MyQuery::from('test', $this->pdo)
+        $insert = Query::from('test', $this->pdo)
             ->replace()
             ->rows([
                 [

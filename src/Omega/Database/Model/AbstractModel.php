@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Omega\Database\Model;
 
-use Omega\Database\MyPDO;
-use Omega\Database\MyQuery\Join\AbstractJoin;
-use Omega\Database\MyQuery\Select;
+use Omega\Database\Connection;
+use Omega\Database\Query\Join\AbstractJoin;
+use Omega\Database\Query\Select;
 
 abstract class AbstractModel implements ModelInterface
 {
@@ -62,7 +62,7 @@ abstract class AbstractModel implements ModelInterface
     public const ORDER_ASC  = 0;
     public const ORDER_DESC = 1;
 
-    /** @var MyPDO */
+    /** @var Connection */
     protected $PDO;
 
     // setter
@@ -415,9 +415,9 @@ abstract class AbstractModel implements ModelInterface
     /**
      * Create new instance from static.
      *
-     * @param MyPDO $pdo PDO DI
+     * @param Connection $pdo PDO DI
      */
-    public static function call(?MyPDO $pdo = null): self
+    public static function call(?Connection $pdo = null): self
     {
         /* @phpstan-ignore-next-line */
         return new static($pdo);

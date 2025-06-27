@@ -17,8 +17,8 @@ namespace Tests\Database\Model;
 
 use Exception;
 use Omega\Database\Model\Model;
-use Omega\Database\MyQuery;
-use Omega\Database\MyQuery\Insert;
+use Omega\Database\Query\Query;
+use Omega\Database\Query\Insert;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 
@@ -42,7 +42,7 @@ use const PASSWORD_DEFAULT;
  * @version    2.0.0
  */
 #[CoversClass(Model::class)]
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 #[CoversClass(Insert::class)]
 class BaseMultiModelTest extends AbstractDatabase
 {
@@ -555,7 +555,7 @@ class BaseMultiModelTest extends AbstractDatabase
      */
     public function testItCanFindAll(): void
     {
-        $users   = MyQuery::from('users', $this->pdo)->select()->get()->toArray();
+        $users   = Query::from('users', $this->pdo)->select()->get()->toArray();
         $models  = User::all($this->pdo);
 
         $map = array_map(fn (Model $model) => $model->toArray()[0], $models->toArray());

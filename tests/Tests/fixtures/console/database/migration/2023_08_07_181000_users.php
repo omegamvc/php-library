@@ -1,6 +1,6 @@
 <?php
 
-use Omega\Database\MySchema\Table\Create;
+use Omega\Database\Schema\Table\Create;
 use Omega\Support\Facades\Schema;
 
 return [

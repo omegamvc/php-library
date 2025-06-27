@@ -15,13 +15,13 @@ declare(strict_types=1);
 
 namespace Omega\Support\Facades;
 
-use Omega\Database\MyQuery\Table;
+use Omega\Database\Query\Table;
 
 /**
  * Facade for the database query builder.
  *
  * Provides static access to the application's query builder layer,
- * allowing the creation and execution of fluent SQL queries via the MyQuery engine.
+ * allowing the creation and execution of fluent SQL queries via the Query engine.
  *
  * This facade is typically used for interacting directly with database tables
  * in a chainable and expressive way.
@@ -46,13 +46,13 @@ class DB extends Facade
     /**
      * Get the service accessor key for the database query service.
      *
-     * This key is used by the base Facade class to resolve the MyQuery instance
+     * This key is used by the base Facade class to resolve the Query instance
      * from the application container.
      *
      * @return string The query builder service accessor key.
      */
     protected static function getAccessor(): string
     {
-        return 'MyQuery';
+        return 'Query';
     }
 }

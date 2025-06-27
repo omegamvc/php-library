@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Omega\Database\Seeder;
 
-use Omega\Database\MyPDO;
-use Omega\Database\MyQuery\Insert;
+use Omega\Database\Connection;
+use Omega\Database\Query\Insert;
 
 abstract class Seeder
 {
-    protected MyPDO $pdo;
+    protected Connection $pdo;
 
-    public function __construct(MyPDO $pdo)
+    public function __construct(Connection $pdo)
     {
         $this->pdo =  $pdo;
     }

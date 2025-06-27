@@ -33,8 +33,8 @@ use function sprintf;
  *
  * Example:
  * ```php
- * $container['MyService'] = fn() => new MyService();
- * $container->alias(MyService::class, 'service');
+ * $container['Service'] = fn() => new Service();
+ * $container->alias(Service::class, 'service');
  * $service = $container['service'];
  * ```
  *

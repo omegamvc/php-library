@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MigrationCommand;
-use Omega\Database\MyPDO;
-use Omega\Database\MySchema\Table\Create;
+use Omega\Database\Connection;
+use Omega\Database\Schema\Table\Create;
 use Omega\Application\Application;
 use Omega\Support\Facades\Facade;
 use Omega\Support\Facades\Schema;
@@ -54,7 +54,7 @@ require_once dirname(__DIR__, 2) . '/Database/AbstractDatabase.php';
 #[CoversClass(Create::class)]
 #[CoversClass(Facade::class)]
 #[CoversClass(MigrationCommand::class)]
-#[CoversClass(MyPDO::class)]
+#[CoversClass(Connection::class)]
 #[CoversClass(Schema::class)]
 #[CoversClass(Str::class)]
 class MigrationCommandsTest extends AbstractDatabase
@@ -77,8 +77,8 @@ class MigrationCommandsTest extends AbstractDatabase
         $this->app = new Application(dirname(__DIR__, 2));
         $this->app->setMigrationPath('/fixtures/console/database/migration/');
         $this->app->set('environment', 'dev');
-        $this->app->set(MyPDO::class, fn () => $this->pdo);
-        $this->app->set('MySchema', fn () => $this->schema);
+        $this->app->set(Connection::class, fn () => $this->pdo);
+        $this->app->set('Schema', fn () => $this->schema);
         $this->app->set('dsn.sql', fn () => $this->env);
 
         Facade::setFacadeBase($this->app);

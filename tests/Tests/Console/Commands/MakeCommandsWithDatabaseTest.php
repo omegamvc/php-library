@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MakeCommand;
-use Omega\Database\MyPDO;
-use Omega\Database\MyQuery;
+use Omega\Database\Connection;
+use Omega\Database\Query\Query;
 use Omega\Application\Application;
 use Omega\Support\Facades\PDO;
 use Omega\Support\Facades\Schema;
@@ -39,7 +39,7 @@ use function unlink;
  * has access to a live database connection. It verifies that metadata such as
  * table name and primary key are correctly injected into the generated model.
  *
- * It sets up an in-memory environment using `Application`, `MyPDO`, and `Schema`,
+ * It sets up an in-memory environment using `Application`, `Connection`, and `Schema`,
  * and cleans up the generated files after each run.
  *
  * @category   Omega\Tests
@@ -53,8 +53,8 @@ use function unlink;
  */
 #[CoversClass(Application::class)]
 #[CoversClass(MakeCommand::class)]
-#[CoversClass(MyQuery::class)]
-#[CoversClass(MyPDO::class)]
+#[CoversClass(Query::class)]
+#[CoversClass(Connection::class)]
 #[CoversClass(Schema::class)]
 #[CoversClass(Str::class)]
 class MakeCommandsWithDatabaseTest extends AbstractDatabase
@@ -78,10 +78,10 @@ class MakeCommandsWithDatabaseTest extends AbstractDatabase
         $this->app->set('environment', 'dev');
         new Schema($this->app);
         new PDO($this->app);
-        $this->app->set(MyPDO::class, $this->pdo);
-        $this->app->set('MySchema', $this->schema);
+        $this->app->set(Connection::class, $this->pdo);
+        $this->app->set('Schema', $this->schema);
         $this->app->set('dsn.sql', $this->env);
-        $this->app->set('MyQuery', fn () => new MyQuery($this->pdo));
+        $this->app->set('Query', fn () => new Query($this->pdo));
         $this->app->setModelPath(dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'console' . DIRECTORY_SEPARATOR);
     }
 

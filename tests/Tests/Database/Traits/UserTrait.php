@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\Traits;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 
 use function PHPUnit\Framework\assertEquals;
 use function PHPUnit\Framework\assertTrue;
@@ -50,7 +50,7 @@ trait UserTrait
      */
     protected function assertUserExist(string $user): void
     {
-        $data  = MyQuery::from('users', $this->pdo)
+        $data  = Query::from('users', $this->pdo)
             ->select(['user'])
             ->equal('user', $user)
             ->all();
@@ -69,7 +69,7 @@ trait UserTrait
      */
     protected function assertUserNotExist(string $user): void
     {
-        $data  = MyQuery::from('users', $this->pdo)
+        $data  = Query::from('users', $this->pdo)
             ->select(['user'])
             ->equal('user', $user)
             ->all();
@@ -89,7 +89,7 @@ trait UserTrait
      */
     protected function assertUserStat(string $user, int $expect): void
     {
-        $data  = MyQuery::from('users', $this->pdo)
+        $data  = Query::from('users', $this->pdo)
             ->select(['stat'])
             ->equal('user', $user)
             ->all();

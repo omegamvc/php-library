@@ -39,7 +39,7 @@ use function Omega\Console\warn;
  * - `db:seed`: Runs a specific or default seeder class.
  *     Examples:
  *     php omega db:seed --class=UserSeeder
- *     php omega db:seed --name-space=App\\Database\\Seeders\\MySeeder
+ *     php omega db:seed --name-space=App\\Database\\Seeders\\Seeder
  *
  * - `make:seed`: Generates a new seeder class.
  *     Example:

@@ -15,12 +15,12 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query;
 
-use Omega\Database\MyQuery;
+use Omega\Database\Query\Query;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
 /**
- * Test suite for validating SQL DELETE query generation using the MyQuery builder.
+ * Test suite for validating SQL DELETE query generation using the Query builder.
  *
  * This class ensures that a wide range of DELETE statements are correctly built,
  * covering different conditions including equality, comparison, BETWEEN, IN,
@@ -36,7 +36,7 @@ use Tests\Database\AbstractDatabaseQuery;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 class DeleteTest extends AbstractDatabaseQuery
 {
     /**
@@ -46,7 +46,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCanDeleteBetween(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->between('column_1', 1, 100)
         ;
@@ -69,7 +69,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCanDeleteCompare(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->compare('column_1', '=', 100)
         ;
@@ -92,7 +92,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCanDeleteEqual(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->equal('column_1', 100)
         ;
@@ -115,7 +115,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCanDeleteIn(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->in('column_1', [1, 2])
         ;
@@ -138,7 +138,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCanDeleteLike(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->like('column_1', 'test')
         ;
@@ -161,7 +161,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCanDeleteWhere(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->where('a < :a OR b > :b', [[':a', 1], [':b', 2]])
         ;
@@ -186,7 +186,7 @@ class DeleteTest extends AbstractDatabaseQuery
      */
     public function testItCorrectDeleteWithStrictOff(): void
     {
-        $delete = MyQuery::from('test', $this->pdo)
+        $delete = Query::from('test', $this->pdo)
             ->delete()
             ->equal('column_1', 123)
             ->equal('column_2', 'abc')

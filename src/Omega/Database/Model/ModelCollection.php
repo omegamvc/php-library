@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Omega\Database\Model;
 
 use Omega\Collection\Collection;
-use Omega\Database\MyQuery\Delete;
-use Omega\Database\MyQuery\Update;
+use Omega\Database\Query\Delete;
+use Omega\Database\Query\Update;
 
 /**
  * @extends Collection<array-key, Model>

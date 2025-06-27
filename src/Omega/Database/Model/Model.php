@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Omega\Database\Model;
 
-use Omega\Database\MyPDO;
-use Omega\Database\MyQuery;
-use Omega\Database\MyQuery\Bind;
-use Omega\Database\MyQuery\Join\InnerJoin;
-use Omega\Database\MyQuery\Query;
-use Omega\Database\MyQuery\Select;
-use Omega\Database\MyQuery\Where;
+use Omega\Database\Connection;
+use Omega\Database\Query\Query;
+use Omega\Database\Query\Bind;
+use Omega\Database\Query\Join\InnerJoin;
+use Omega\Database\Query\AbstractQuery;
+use Omega\Database\Query\Select;
+use Omega\Database\Query\Where;
 
 /**
  * @implements \ArrayAccess<array-key, mixed>
@@ -18,7 +18,7 @@ use Omega\Database\MyQuery\Where;
  */
 class Model implements \ArrayAccess, \IteratorAggregate
 {
-    protected MyPDO $pdo;
+    protected Connection $pdo;
 
     protected string $table_name;
 
@@ -61,8 +61,8 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * @final
      */
     public function __construct(
-        MyPDO $pdo,
-        array $column,
+        Connection $pdo,
+        array      $column,
     ) {
         $this->pdo        = $pdo;
         $this->columns    = $this->fresh = $column;
@@ -87,13 +87,13 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * @return static
      */
     public function setUp(
-        string $table,
-        array $column,
-        MyPDO $pdo,
-        Where $where,
-        string $primary_key,
-        array $stash,
-        array $resistant,
+        string     $table,
+        array      $column,
+        Connection $pdo,
+        Where      $where,
+        string     $primary_key,
+        array      $stash,
+        array      $resistant,
     ): self {
         $this->table_name  = $table;
         $this->columns     = $this->fresh = $column;
@@ -266,7 +266,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function insert(): bool
     {
-        $insert = MyQuery::from($this->table_name, $this->pdo);
+        $insert = Query::from($this->table_name, $this->pdo);
         foreach ($this->columns as $column) {
             $success = $insert->insert()
                 ->values($column)
@@ -309,7 +309,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             return false;
         }
 
-        $update = MyQuery::from($this->table_name, $this->pdo)
+        $update = Query::from($this->table_name, $this->pdo)
             ->update()
             ->values(
                 $this->changes()
@@ -323,7 +323,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      */
     public function delete(): bool
     {
-        $delete = MyQuery::from($this->table_name, $this->pdo)
+        $delete = Query::from($this->table_name, $this->pdo)
             ->delete();
 
         return $this->changing($this->execute($delete));
@@ -360,7 +360,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             $join_ref   = $ref ?? $this->primary_key;
             $model      = new static($this->pdo, []);
         }
-        $result   = MyQuery::from($this->table_name, $this->pdo)
+        $result   = Query::from($this->table_name, $this->pdo)
             ->select([$table_name . '.*'])
             ->join(InnerJoin::ref($table_name, $this->primary_key, $join_ref))
             ->whereRef($this->where)
@@ -389,7 +389,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             $join_ref   = $ref ?? $this->primary_key;
             $model      = new static($this->pdo, []);
         }
-        $result = MyQuery::from($this->table_name, $this->pdo)
+        $result = Query::from($this->table_name, $this->pdo)
              ->select([$table_name . '.*'])
              ->join(InnerJoin::ref($table_name, $this->primary_key, $join_ref))
              ->whereRef($this->where)
@@ -550,7 +550,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * Set sort column and order
      * column name must register.
      */
-    public function order(string $column_name, int $order_using = MyQuery::ORDER_ASC, ?string $belong_to = null): self
+    public function order(string $column_name, int $order_using = Query::ORDER_ASC, ?string $belong_to = null): self
     {
         $order = 0 === $order_using ? 'ASC' : 'DESC';
         $belong_to ??= $this->table_name;
@@ -606,7 +606,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @param int|string $id
      */
-    public static function find($id, MyPDO $pdo): static
+    public static function find($id, Connection $pdo): static
     {
         $model          = new static($pdo, []);
         $model->where   = (new Where($model->table_name))
@@ -625,7 +625,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @throws \Exception cant inset data
      */
-    public static function findOrCreate($id, array $column, MyPDO $pdo): static
+    public static function findOrCreate($id, array $column, Connection $pdo): static
     {
         $model          = new static($pdo, [$column]);
         $model->where   = (new Where($model->table_name))
@@ -649,7 +649,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @param array<string|int> $binder
      */
-    public static function where(string $where_condition, array $binder, MyPDO $pdo): static
+    public static function where(string $where_condition, array $binder, Connection $pdo): static
     {
         $model = new static($pdo, []);
         $map   = [];
@@ -670,7 +670,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      * @param array-key $column_name
      * @param mixed     $value
      */
-    public static function equal($column_name, $value, MyPDO $pdo): static
+    public static function equal($column_name, $value, Connection $pdo): static
     {
         $model = new static($pdo, []);
 
@@ -685,7 +685,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @return ModelCollection<array-key, static>
      */
-    public static function all(MyPDO $pdo): ModelCollection
+    public static function all(Connection $pdo): ModelCollection
     {
         $model = new static($pdo, []);
         $model->read();
@@ -745,7 +745,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @return array<Bind[]|string>
      */
-    private function builder(Query $query): array
+    private function builder(AbstractQuery $query): array
     {
         return [
             (fn () => $this->{'builder'}())->call($query),
@@ -758,7 +758,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
      *
      * @return mixed[]|false
      */
-    private function fetch(Query $base_query)
+    private function fetch(AbstractQuery $base_query)
     {
         // costume where
         $base_query->whereRef($this->where);
@@ -778,7 +778,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     /**
      * Execute query with where condition given.
      */
-    private function execute(Query $base_query): bool
+    private function execute(AbstractQuery $base_query): bool
     {
         $base_query->whereRef($this->where);
 

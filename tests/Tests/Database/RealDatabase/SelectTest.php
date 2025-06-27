@@ -15,14 +15,14 @@ declare(strict_types=1);
 
 namespace Tests\Database\RealDatabase;
 
-use Omega\Database\MyQuery;
-use Omega\Database\MyQuery\Join\InnerJoin;
+use Omega\Database\Query\Query;
+use Omega\Database\Query\Join\InnerJoin;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabase;
 use Tests\Database\Traits\UserTrait;
 
 /**
- * Test suite for SELECT operations using the MyQuery class.
+ * Test suite for SELECT operations using the Query class.
  *
  * This class verifies the correct behavior of SELECT queries under various conditions,
  * including column selection, filtering, pagination, and joins.
@@ -44,7 +44,7 @@ use Tests\Database\Traits\UserTrait;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  */
-#[CoversClass(MyQuery::class)]
+#[CoversClass(Query::class)]
 #[CoversClass(InnerJoin::class)]
 class SelectTest extends AbstractDatabase
 {
@@ -123,7 +123,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQuery(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->all()
         ;
@@ -140,7 +140,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryOnlyUser(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select(['user'])
             ->all()
         ;
@@ -157,7 +157,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithBetween(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->between('stat', 0, 100)
             ->all()
@@ -173,7 +173,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithCompare(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->compare('user', '=', 'taylor')
             ->all()
@@ -189,7 +189,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithEqual(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->equal('user', 'taylor')
             ->all()
@@ -205,7 +205,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithIn()
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->in('user', ['taylor'])
             ->all()
@@ -221,7 +221,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithLike(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->like('user', 'tay%')
             ->all()
@@ -237,7 +237,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithWhere(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->where('user = :user', [
                 [':user', 'taylor'],
@@ -255,7 +255,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithMultiCondition(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->compare('stat', '>', 1)
             ->where('user = :user', [
@@ -274,7 +274,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithLimit(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->limit(0, 1)
             ->all()
@@ -292,7 +292,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithOffset(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->limitStart(0)
             ->offset(1)
@@ -311,7 +311,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithLimitOffset(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->limitOffset(0, 10)
             ->all()
@@ -329,7 +329,7 @@ class SelectTest extends AbstractDatabase
      */
     public function testItCanSelectQueryWithStrictMode(): void
     {
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->equal('user', 'taylor')
             ->equal('stat', 99)
@@ -349,7 +349,7 @@ class SelectTest extends AbstractDatabase
     {
         $this->profileFactory();
 
-        $users = MyQuery::from('users', $this->pdo)
+        $users = Query::from('users', $this->pdo)
             ->select()
             ->equal('user', 'taylor')
             ->join(InnerJoin::ref('profiles', 'user '))

@@ -15,7 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Database\Query\Schema\DB;
 
-use Omega\Database\MySchema\DB\Create;
+use Omega\Database\Schema\DB\Create;
 use PHPUnit\Framework\Attributes\CoversClass;
 use Tests\Database\AbstractDatabaseQuery;
 
