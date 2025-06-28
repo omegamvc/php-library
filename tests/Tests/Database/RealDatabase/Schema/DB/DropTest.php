@@ -72,7 +72,7 @@ class DropTest extends AbstractDatabase
      */
     public function testItCanGenerateCreateDatabase(): void
     {
-        $schema = new Drop($this->pdo_schema->configs()['database_name'], $this->pdo_schema);
+        $schema = new Drop($this->pdo_schema->getConfig()['database_name'], $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }

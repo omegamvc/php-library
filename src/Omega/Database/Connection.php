@@ -4,87 +4,105 @@ declare(strict_types=1);
 
 namespace Omega\Database;
 
+use Exception;
+use PDO;
+use PDOException;
+use PDOStatement;
+
+use function call_user_func;
+use function is_bool;
+use function is_int;
+use function is_null;
+use function microtime;
+use function round;
+
 class Connection
 {
-    /** @var \PDO PDO */
-    private $dbh;
-    /** @var \PDOStatement */
-    private $stmt;
+    /** @var PDO PDO */
+    private PDO $pdo;
+
+    /** @var PDOStatement */
+    private PDOStatement $statement;
 
     /**
      * Connection configuration.
      *
      * @var array<string, string>
      */
-    protected $configs;
+    protected array $config;
 
     /**
-     * Query prepare statment;.
+     * Query prepare statement;.
      */
     protected string $query;
 
     /**
-     * Log query when execute and fatching.
+     * Log query when execute and fetching.
      * - query.
      *
      * @var array<int, array<string, mixed>>
      */
-    protected $logs = [];
+    protected array $logs = [];
 
     /**
-     * @param array<string, string> $configs
+     * @param array<string, string> $config
+     * @throws Exception
      */
-    public function __construct(array $configs)
+    public function __construct(array $config)
     {
-        $database_name    = $configs['database_name'];
-        $host             = $configs['host'];
-        $user             = $configs['user'];
-        $pass             = $configs['password'];
+        $databaseName = $config['database_name'];
+        $host         = $config['host'];
+        $user         = $config['user'];
+        $pass         = $config['password'];
 
-        $this->configs = $configs;
-        $dsn           = "mysql:host=$host;dbname=$database_name";
+        $this->config = $config;
+        $dsn           = "mysql:host=$host;dbname=$databaseName";
         $this->useDsn($dsn, $user, $pass);
     }
 
     /**
-     * Singleton pattern implemnt for Databese connation.
+     * Singleton pattern implement for Database connation.
      *
      * @return self
      */
-    public function instance()
+    public function getInstance(): static
     {
         return $this;
     }
 
     /**
-     * @throws \Exception
+     * @param string $dsn
+     * @param string $user
+     * @param string $pass
+     * @return $this
+     * @throws Exception
      */
     protected function useDsn(string $dsn, string $user, string $pass): self
     {
         $option = [
-            \PDO::ATTR_PERSISTENT => true,
-            \PDO::ATTR_ERRMODE    => \PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_PERSISTENT => true,
+            PDO::ATTR_ERRMODE    => PDO::ERRMODE_EXCEPTION,
         ];
 
         try {
-            $this->dbh = new \PDO($dsn, $user, $pass, $option);
-        } catch (\PDOException $e) {
-            throw new \Exception($e->getMessage());
+            $this->pdo = new PDO($dsn, $user, $pass, $option);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage());
         }
 
         return $this;
     }
 
     /**
-     * Create connaction using static.
+     * Create connection using static.
      *
-     * @param array<string, string> $configs
-     *
+     * @param array<string, string> $config
      * @return Connection
-     * */
-    public static function conn(array $configs)
+     * @throws Exception
+     */
+    public static function conn(array $config): Connection
     {
-        return new self($configs);
+        return new self($config);
     }
 
     /**
@@ -92,54 +110,51 @@ class Connection
      *
      * @return array<string, string>
      */
-    public function configs()
+    public function getConfig(): array
     {
-        return $this->configs;
+        return $this->config;
     }
 
     /**
-     *  mempersiapkan statement pada query.
+     * @param string $query
+     * @return $this
      */
     public function query(string $query): self
     {
-        $this->stmt = $this->dbh->prepare($this->query = $query);
+        $this->statement = $this->pdo->prepare($this->query = $query);
 
         return $this;
     }
 
     /**
-     * Menggantikan paramater input dari user dengan sebuah placeholder.
-     *
-     * @param int|string|bool|null $param
+     * @param bool|int|string|null $param
      * @param mixed                $value
-     * @param int|string|bool|null $type
+     * @param bool|int|string|null $type
+     * @return $this
      */
-    public function bind($param, $value, $type = null): self
+    public function bind(bool|int|string|null $param, mixed $value, bool|int|string $type = null): self
     {
         if (is_null($type)) {
             $type = match (true) {
-                is_int($value)  => \PDO::PARAM_INT,
-                is_bool($value) => \PDO::PARAM_BOOL,
-                is_null($value) => \PDO::PARAM_NULL,
-                default         => \PDO::PARAM_STR,
+                is_int($value)  => PDO::PARAM_INT,
+                is_bool($value) => PDO::PARAM_BOOL,
+                is_null($value) => PDO::PARAM_NULL,
+                default         => PDO::PARAM_STR,
             };
         }
-        $this->stmt->bindValue($param, $value, $type);
+        $this->statement->bindValue($param, $value, $type);
 
         return $this;
     }
 
     /**
-     * Menjalankan atau mengeksekusi query.
-     *
      * @return bool True if success
-     *
-     * @throws \PDOException
+     * @throws PDOException
      */
-    public function execute()
+    public function execute(): bool
     {
         $start    = microtime(true);
-        $execute  = $this->stmt->execute();
+        $execute  = $this->statement->execute();
         $elapsed  = round((microtime(true) - $start) * 1000, 2);
 
         $this->addLog($this->query, $elapsed);
@@ -148,53 +163,45 @@ class Connection
     }
 
     /**
-     * mengembalikan hasil dari query yang dijalankan berupa array.
-     *
-     * @return mixed[]|false
+     * @return array|false
      */
-    public function resultset()
+    public function resultSet(): array|false
     {
         $this->execute();
 
-        return $this->stmt->fetchAll(\PDO::FETCH_ASSOC);
+        return $this->statement->fetchAll(PDO::FETCH_ASSOC);
     }
 
     /**
-     * Mengembalikan hasil dari query, ditampilkan hanya satu baris data saja.
-     *
      * @return mixed
      */
-    public function single()
+    public function single(): mixed
     {
         $this->execute();
 
-        return $this->stmt->fetch(\PDO::FETCH_ASSOC);
+        return $this->statement->fetch(PDO::FETCH_ASSOC);
     }
 
     /**
-     * menampilkan jumlah data yang berhasil di simpan, di ubah maupun dihapus.
-     *
      * @return int the number of rows
      */
-    public function rowCount()
+    public function rowCount(): int
     {
-        return $this->stmt->rowCount();
+        return $this->statement->rowCount();
     }
 
     /**
-     * id dari data yang terakhir disimpan.
-     *
      * @return string|false last id
      */
-    public function lastInsertId()
+    public function lastInsertId(): false|string
     {
-        return $this->dbh->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
 
     /**
      * @return bool Transaction status
      */
-    public function transaction(callable $callable)
+    public function transaction(callable $callable): bool
     {
         if (false === $this->beginTransaction()) {
             return false;
@@ -212,38 +219,40 @@ class Connection
      * Initiates a transaction.
      *
      * @return bool True if success
-     *
-     * @throws \PDOException
+     * @throws PDOException
      */
     public function beginTransaction(): bool
     {
-        return $this->dbh->beginTransaction();
+        return $this->pdo->beginTransaction();
     }
 
     /**
      * Commits a transaction.
      *
      * @return bool True if success
-     *
-     * @throws \PDOException
+     * @throws PDOException
      */
     public function endTransaction(): bool
     {
-        return $this->dbh->commit();
+        return $this->pdo->commit();
     }
 
     /**
      * Rolls back a transaction.
      *
      * @return bool True if success
-     *
-     * @throws \PDOException
+     * @throws PDOException
      */
     public function cancelTransaction(): bool
     {
-        return $this->dbh->rollBack();
+        return $this->pdo->rollBack();
     }
 
+    /**
+     * @param string $query
+     * @param float $elapsed_time
+     * @return void
+     */
     protected function addLog(string $query, float $elapsed_time): void
     {
         $this->logs[] = [

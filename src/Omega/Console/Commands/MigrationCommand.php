@@ -639,14 +639,14 @@ class MigrationCommand extends Command
         $width   = $this->getWidth(40, 60);
         info('showing database')->out(false);
 
-        $tables = PDO::instance()
+        $tables = PDO::getInstance()
             ->query('SHOW DATABASES')
             ->query('
                 SELECT table_name, create_time, ROUND((DATA_LENGTH + INDEX_LENGTH) / 1024 / 1024) AS `size`
                 FROM information_schema.tables
                 WHERE table_schema = :db_name')
             ->bind(':db_name', $dbName)
-            ->resultset();
+            ->resultSet();
 
         if (0 === count($tables)) {
             warn('table is empty try to run migration')->out();
@@ -681,7 +681,7 @@ class MigrationCommand extends Command
      */
     public function tableShow(string $table): int
     {
-        $table = (new Query(PDO::instance()))->table($table)->info();
+        $table = (new Query(PDO::getInstance()))->table($table)->info();
         $print = new Style("\n");
         $width = $this->getWidth(40, 60);
 
@@ -778,7 +778,7 @@ class MigrationCommand extends Command
      */
     private function hasMigrationTable(): bool
     {
-        $result = PDO::instance()->query(
+        $result = PDO::getInstance()->query(
             "SELECT COUNT(table_name) as total
             FROM information_schema.tables
             WHERE table_schema = :dbname

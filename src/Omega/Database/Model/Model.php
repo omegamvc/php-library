@@ -772,7 +772,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             }
         }
 
-        return $this->pdo->resultset();
+        return $this->pdo->resultSet();
     }
 
     /**

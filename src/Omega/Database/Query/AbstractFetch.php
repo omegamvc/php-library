@@ -50,6 +50,6 @@ abstract class AbstractFetch extends AbstractQuery
             }
         }
 
-        return $this->PDO->resultset();
+        return $this->PDO->resultSet();
     }
 }

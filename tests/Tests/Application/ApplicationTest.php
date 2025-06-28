@@ -398,6 +398,7 @@ class ApplicationTest extends TestCase
         $this->assertEquals($app->getServicesPath(), services_path());
         $this->assertEquals($app->getComponentPath(), component_path());
         $this->assertEquals($app->getCommandPath(), commands_path());
+        $this->assertEquals($app->getControllerPath(), controllers_path());
         $this->assertEquals($app->getStoragePath(), storage_path());
         $this->assertEquals($app->getCachePath(), cache_path());
         $this->assertEquals($app->getCompiledViewPath(), compiled_view_path());

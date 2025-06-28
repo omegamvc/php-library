@@ -26,7 +26,7 @@ use Omega\Database\Connection;
  *
  * Example:
  * ```php
- * $pdo = PDO::instance();
+ * $pdo = PDO::getInstance();
  * $stmt = $pdo->prepare('SELECT * FROM users WHERE id = :id');
  * $stmt->execute(['id' => 1]);
  * ```
@@ -39,7 +39,7 @@ use Omega\Database\Connection;
  * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html GPL V3.0+
  * @version    2.0.0
  *
- * @method static Connection instance() Get the singleton instance of the custom Connection wrapper.
+ * @method static Connection getInstance() Get the singleton instance of the custom Connection wrapper.
  */
 class PDO extends Facade
 {

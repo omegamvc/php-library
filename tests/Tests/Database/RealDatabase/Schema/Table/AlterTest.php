@@ -83,7 +83,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingModifyColumn(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -100,7 +100,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingAddColumn(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -118,7 +118,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingDropColumn(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -136,7 +136,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingRenameColumn(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -153,7 +153,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingRenamesColumn(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -171,7 +171,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingAlterColumn(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -191,7 +191,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingModifyAddWithOrder(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );
@@ -209,7 +209,7 @@ class AlterTest extends AbstractDatabase
     public function testItCanExecuteQueryUsingModifyColumnWithOrder(): void
     {
         $schema = new Alter(
-            $this->pdo_schema->configs()['database_name'],
+            $this->pdo_schema->getConfig()['database_name'],
             'profiles',
             $this->pdo_schema
         );

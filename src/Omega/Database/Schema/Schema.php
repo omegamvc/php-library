@@ -31,14 +31,14 @@ class Schema
 
     public function refresh(string $table_name): Truncate
     {
-        $database_name = $this->pdo->configs()['database_name'];
+        $database_name = $this->pdo->getConfig()['database_name'];
 
         return new Truncate($database_name, $table_name, $this->pdo);
     }
 
     public function table(string $table_name, callable $blueprint): CreateTable
     {
-        $database_name = $this->pdo->configs()['database_name'];
+        $database_name = $this->pdo->getConfig()['database_name'];
         $columns       = new CreateTable($database_name, $table_name, $this->pdo);
         $blueprint($columns);
 
@@ -53,7 +53,7 @@ class Schema
      */
     public function alter(string $table_name, callable $blueprint): Alter
     {
-        $database_name = $this->pdo->configs()['database_name'];
+        $database_name = $this->pdo->getConfig()['database_name'];
         $columns       = new Alter($database_name, $table_name, $this->pdo);
         $blueprint($columns);
 

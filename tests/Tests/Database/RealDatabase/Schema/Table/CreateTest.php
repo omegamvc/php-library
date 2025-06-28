@@ -75,7 +75,7 @@ class CreateTest extends AbstractDatabase
      */
     public function testItCanCreateDatabase(): void
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->getConfig()['database_name'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('name')->varchar(32)->notNull();
@@ -92,7 +92,7 @@ class CreateTest extends AbstractDatabase
      */
     public function testItCanExecuteQueryWithMultiplePrimaryKeys(): void
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->getConfig()['database_name'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('xid')->int(3)->notNull();
@@ -111,7 +111,7 @@ class CreateTest extends AbstractDatabase
      */
     public function testItCanExecuteQueryWithMultipleUniqueConstraints(): void
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->getConfig()['database_name'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('name')->varchar(32)->notNull();
@@ -129,7 +129,7 @@ class CreateTest extends AbstractDatabase
      */
     public function testItCanCreateDatabaseWithEngine(): void
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->getConfig()['database_name'], 'profiles', $this->pdo_schema);
 
         $schema('id')->int(3)->notNull();
         $schema('name')->varchar(32)->notNull();
@@ -149,7 +149,7 @@ class CreateTest extends AbstractDatabase
      */
     public function testItCanGenerateDefaultConstraint(): void
     {
-        $schema = new Create($this->pdo_schema->configs()['database_name'], 'profiles', $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->getConfig()['database_name'], 'profiles', $this->pdo_schema);
         $schema('PersonID')->int()->unsigned()->default(1);
         $schema('LastName')->varchar(255)->default('-');
         $schema('suffix')->varchar(15)->defaultNull();

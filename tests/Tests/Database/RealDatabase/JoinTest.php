@@ -206,7 +206,7 @@ class JoinTest extends AbstractDatabase
             INNER JOIN roles ON
                 users.role_id = roles.id
             ')
-            ->resultset();
+            ->resultSet();
 
         $this->assertEquals('Eve', $users[0]['name']);
         $this->assertEquals('Admin', $users[0]['role_name']);
@@ -246,7 +246,7 @@ class JoinTest extends AbstractDatabase
             INNER JOIN roles ON
                 users.role_id = roles.id
             ')
-            ->resultset();
+            ->resultSet();
 
         $this->assertEquals('Bob', $users[0]['name']);
         $this->assertEquals('Editor', $users[0]['role_name']);

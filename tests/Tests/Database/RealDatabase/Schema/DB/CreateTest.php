@@ -72,7 +72,7 @@ class CreateTest extends AbstractDatabase
     public function testItCanGenerateCreateDatabase(): void
     {
         $this->tearDown();
-        $schema = new Create($this->pdo_schema->configs()['database_name'], $this->pdo_schema);
+        $schema = new Create($this->pdo_schema->getConfig()['database_name'], $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }

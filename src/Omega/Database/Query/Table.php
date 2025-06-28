@@ -105,9 +105,9 @@ class Table
                 TABLE_SCHEMA = :dbs AND TABLE_NAME = :table'
         );
         $this->PDO->bind(':table', $this->table_name);
-        $this->PDO->bind(':dbs', $this->PDO->configs()['database_name']);
+        $this->PDO->bind(':dbs', $this->PDO->getConfig()['database_name']);
 
-        $result = $this->PDO->resultset();
+        $result = $this->PDO->resultSet();
 
         return $result === false ? [] : $result;
     }

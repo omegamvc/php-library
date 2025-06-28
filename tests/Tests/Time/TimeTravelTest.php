@@ -15,6 +15,7 @@ declare(strict_types=1);
 
 namespace Tests\Time;
 
+use DateInvalidTimeZoneException;
 use DateMalformedStringException;
 use DateTime;
 use Omega\Time\Exceptions\PropertyNotExistException;
@@ -278,6 +279,7 @@ class TimeTravelTest extends TestCase
      *
      * @return void
      * @throws DateMalformedStringException
+     * @throws DateInvalidTimeZoneException
      */
     public function testItHandlesEdgeCasesAroundBirthdayCorrectly(): void
     {

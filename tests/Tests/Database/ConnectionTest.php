@@ -84,7 +84,7 @@ class ConnectionTest extends AbstractDatabase
     public function testItCanLogExecutionConnection(): void
     {
         $this->pdo->flushLogs();
-        $this->pdo->query('select * from users where user = :user')->bind('user', 'giovannini')->resultset();
+        $this->pdo->query('select * from users where user = :user')->bind('user', 'giovannini')->resultSet();
         $this->pdo->query('select * from users where user = :user')->bind('user', 'giovannini')->single();
         $this->pdo->query('delete from users where user = :user')->bind('user', 'giovannini')->execute();
 

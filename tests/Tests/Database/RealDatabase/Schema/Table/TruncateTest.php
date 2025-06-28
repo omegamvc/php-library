@@ -81,7 +81,7 @@ class TruncateTest extends AbstractDatabase
      */
     public function testItCanExecuteTruncateTable(): void
     {
-        $schema = new Truncate($this->pdo_schema->configs()['database_name'], 'users', $this->pdo_schema);
+        $schema = new Truncate($this->pdo_schema->getConfig()['database_name'], 'users', $this->pdo_schema);
 
         $this->assertTrue($schema->execute());
     }
