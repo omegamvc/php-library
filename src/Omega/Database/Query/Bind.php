@@ -14,51 +14,51 @@ final class Bind
      *
      * @var string
      */
-    private $bind;
+    private string $bind;
 
     /**
      * Bind value (required).
      *
      * @var mixed
      */
-    private $bind_value;
+    private mixed $bindValue;
 
     /**
      * represented column name (optional).
      *
      * @var string
      */
-    private $column_name;
+    private string $columnName;
 
     /**
      * set prefix bind (bind name not same with column name).
      *
      * @var string
      */
-    private $prefix_bind;
+    private string $prefixBind;
 
     /**
      * @param mixed $value
      */
-    public function __construct(string $bind, $value, string $column_name = '')
+    public function __construct(string $bind, mixed $value, string $columnName = '')
     {
-        $this->bind        = $bind;
-        $this->bind_value  = $value;
-        $this->column_name = $column_name;
-        $this->prefix_bind = ':';
+        $this->bind       = $bind;
+        $this->bindValue  = $value;
+        $this->columnName = $columnName;
+        $this->prefixBind = ':';
     }
 
     /**
      * @param mixed $value
      */
-    public static function set(string $bind, $value, string $column_name = ''): self
+    public static function set(string $bind, mixed $value, string $columnName = ''): self
     {
-        return new static($bind, $value, $column_name);
+        return new static($bind, $value, $columnName);
     }
 
     public function prefixBind(string $prefix): self
     {
-        $this->prefix_bind = $prefix;
+        $this->prefixBind = $prefix;
 
         return $this;
     }
@@ -70,46 +70,46 @@ final class Bind
         return $this;
     }
 
-    public function setValue(mixed $bind_value): self
+    public function setValue(mixed $bindValue): self
     {
-        $this->bind_value = $bind_value;
+        $this->bindValue = $bindValue;
 
         return $this;
     }
 
-    public function setColumnName(string $column_name): self
+    public function setColumnName(string $columnName): self
     {
-        $this->column_name = $column_name;
+        $this->columnName = $columnName;
 
         return $this;
     }
 
     public function getBind(): string
     {
-        return $this->prefix_bind . $this->bind;
+        return $this->prefixBind . $this->bind;
     }
 
     /**
      * @return mixed
      */
-    public function getValue()
+    public function getValue(): mixed
     {
-        return $this->bind_value;
+        return $this->bindValue;
     }
 
     public function getColumnName(): string
     {
-        return $this->column_name;
+        return $this->columnName;
     }
 
     public function hasColumName(): bool
     {
-        return '' !== $this->column_name;
+        return '' !== $this->columnName;
     }
 
     public function markAsColumn(): self
     {
-        $this->column_name = $this->bind;
+        $this->columnName = $this->bind;
 
         return $this;
     }

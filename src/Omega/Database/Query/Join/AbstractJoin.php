@@ -33,7 +33,7 @@ abstract class AbstractJoin
      */
     protected string $stringJoin = '';
 
-    protected ?InnerQuery $sub_query = null;
+    protected ?InnerQuery $subQuery = null;
 
     final public function __construct()
     {
@@ -97,7 +97,7 @@ abstract class AbstractJoin
      */
     public function clause(InnerQuery $select): self
     {
-        $this->sub_query  = $select;
+        $this->subQuery  = $select;
         $this->tableName = $select->getAlias();
 
         return $this;
@@ -188,6 +188,6 @@ abstract class AbstractJoin
 
     protected function getAlias(): string
     {
-        return null === $this->sub_query ? $this->tableName : (string) $this->sub_query;
+        return null === $this->subQuery ? $this->tableName : (string) $this->subQuery;
     }
 }

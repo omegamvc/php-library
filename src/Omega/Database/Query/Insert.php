@@ -11,15 +11,15 @@ class Insert extends AbstractExecute
     /**
      * @var array<string, string>
      */
-    private ?array $duplicate_key = null;
+    private ?array $duplicateKey = null;
 
-    public function __construct(string $table_name, Connection $PDO)
+    public function __construct(string $tableName, Connection $pdo)
     {
-        $this->_table = $table_name;
-        $this->PDO    = $PDO;
+        $this->table = $tableName;
+        $this->pdo    = $pdo;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->builder();
     }
@@ -28,10 +28,9 @@ class Insert extends AbstractExecute
      *  Value query builder (key => value).
      *
      * @param array<string, string|int|bool|null> $values Insert values
-     *
      * @return self
      */
-    public function values($values)
+    public function values(array $values): self
     {
         foreach ($values as $key => $value) {
             $this->value($key, $value);
@@ -41,13 +40,13 @@ class Insert extends AbstractExecute
     }
 
     /**
-     * @param string|int|bool|null $value
+     * @param bool|int|string|null $value
      *
      * @return self
      */
-    public function value(string $bind, $value)
+    public function value(string $bind, bool|int|string|null $value): self
     {
-        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
+        $this->binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
 
         return $this;
     }
@@ -61,7 +60,7 @@ class Insert extends AbstractExecute
     {
         foreach ($rows as $index => $values) {
             foreach ($values as $bind => $value) {
-                $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
+                $this->binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_' . $index . '_');
             }
         }
 
@@ -73,7 +72,7 @@ class Insert extends AbstractExecute
      */
     public function on(string $column, ?string $value = null): self
     {
-        $this->duplicate_key[$column] = $value ?? "VALUES({$column})";
+        $this->duplicateKey[$column] = $value ?? "VALUES({$column})";
 
         return $this;
     }
@@ -82,33 +81,33 @@ class Insert extends AbstractExecute
     {
         [$binds, ,$columns] = $this->bindsDestructur();
 
-        $strings_binds = [];
+        $stringsBinds = [];
         /** @var array<int, array<int, string>> */
         $chunk         = array_chunk($binds, count($columns), true);
         foreach ($chunk as $group) {
-            $strings_binds[] = '(' . implode(', ', $group) . ')';
+            $stringsBinds[] = '(' . implode(', ', $group) . ')';
         }
 
         $builds              = [];
         $builds['column']    = '(' . implode(', ', $columns) . ')';
         $builds['values']    = 'VALUES';
-        $builds['binds']     = implode(', ', $strings_binds);
+        $builds['binds']     = implode(', ', $stringsBinds);
         $builds['keyUpdate'] = $this->getDuplicateKeyUpdate();
         $string_build        = implode(' ', array_filter($builds, fn ($item) => $item !== ''));
 
-        $this->_query = "INSERT INTO {$this->_table} {$string_build}";
+        $this->query = "INSERT INTO {$this->table} {$string_build}";
 
-        return $this->_query;
+        return $this->query;
     }
 
     private function getDuplicateKeyUpdate(): string
     {
-        if (null === $this->duplicate_key) {
+        if (null === $this->duplicateKey) {
             return '';
         }
 
         $keys = [];
-        foreach ($this->duplicate_key as $key => $value) {
+        foreach ($this->duplicateKey as $key => $value) {
             $keys[] = "{$key} = {$value}";
         }
 

@@ -13,18 +13,18 @@ class Create extends AbstractQuery
     use ConditionTrait;
 
     /** @var string */
-    private $database_name;
+    private string $databaseName;
 
-    public function __construct(string $database_name, SchemaConnection $pdo)
+    public function __construct(string $databaseName, SchemaConnection $pdo)
     {
-        $this->database_name = $database_name;
-        $this->pdo           = $pdo;
+        $this->databaseName = $databaseName;
+        $this->pdo          = $pdo;
     }
 
     protected function builder(): string
     {
-        $conditon = $this->join([$this->if_exists, $this->database_name]);
+        $condition = $this->join([$this->ifExists, $this->databaseName]);
 
-        return 'CREATE DATABASE ' . $conditon . ';';
+        return 'CREATE DATABASE ' . $condition . ';';
     }
 }

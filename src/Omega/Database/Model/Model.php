@@ -749,7 +749,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
     {
         return [
             (fn () => $this->{'builder'}())->call($query),
-            (fn () => $this->{'_binds'})->call($query),
+            (fn () => $this->{'binds'})->call($query),
         ];
     }
 

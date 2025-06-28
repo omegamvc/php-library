@@ -10,47 +10,47 @@ use Omega\Database\Schema\Table\Attributes\DataType;
 
 class Create extends AbstractQuery
 {
-    public const INNODB    = 'INNODB';
-    public const MYISAM    = 'MYISAM';
-    public const MEMORY    = 'MEMORY';
-    public const MERGE     = 'MERGE';
-    public const EXAMPLE   = 'EXAMPLE';
-    public const ARCHIVE   = 'ARCHIVE';
-    public const CSV       = 'CSV';
-    public const BLACKHOLE = 'BLACKHOLE';
-    public const FEDERATED = 'FEDERATED';
+    public const string INNODB    = 'INNODB';
+    public const string MYISAM    = 'MYISAM';
+    public const string MEMORY    = 'MEMORY';
+    public const string MERGE     = 'MERGE';
+    public const string EXAMPLE   = 'EXAMPLE';
+    public const string ARCHIVE   = 'ARCHIVE';
+    public const string CSV       = 'CSV';
+    public const string BLACKHOLE = 'BLACKHOLE';
+    public const string FEDERATED = 'FEDERATED';
 
     /** @var Column[]|DataType[] */
-    private $columns;
+    private array $columns;
 
     /** @var string[] */
-    private $primaryKeys;
+    private array $primaryKeys;
 
     /** @var string[] */
-    private $uniques;
+    private array $uniques;
 
     /** @var string */
-    private $store_engine;
+    private string $storeEngine;
 
-    private string $character_set;
+    private string $characterSet;
 
     /** @var string */
-    private $table_name;
+    private string $tableName;
 
-    public function __construct(string $database_name, string $table_name, SchemaConnection $pdo)
+    public function __construct(string $databaseName, string $tableName, SchemaConnection $pdo)
     {
-        $this->table_name    = $database_name . '.' . $table_name;
-        $this->pdo           = $pdo;
-        $this->columns       = [];
-        $this->primaryKeys   = [];
-        $this->uniques       = [];
-        $this->store_engine  = '';
-        $this->character_set = '';
+        $this->tableName    = $databaseName . '.' . $tableName;
+        $this->pdo          = $pdo;
+        $this->columns      = [];
+        $this->primaryKeys  = [];
+        $this->uniques      = [];
+        $this->storeEngine  = '';
+        $this->characterSet = '';
     }
 
-    public function __invoke(string $column_name): DataType
+    public function __invoke(string $columnName): DataType
     {
-        return $this->columns[] = (new Column())->column($column_name);
+        return $this->columns[] = (new Column())->column($columnName);
     }
 
     public function addColumn(): Column
@@ -59,7 +59,7 @@ class Create extends AbstractQuery
     }
 
     /** @param Column[] $columns */
-    public function collumns(array $columns): self
+    public function columns(array $columns): self
     {
         $this->columns = [];
         foreach ($columns as $column) {
@@ -69,9 +69,9 @@ class Create extends AbstractQuery
         return $this;
     }
 
-    public function primaryKey(string $column_name): self
+    public function primaryKey(string $columnName): self
     {
-        $this->primaryKeys[] = $column_name;
+        $this->primaryKeys[] = $columnName;
 
         return $this;
     }
@@ -85,24 +85,24 @@ class Create extends AbstractQuery
 
     public function engine(string $engine): self
     {
-        $this->store_engine = $engine;
+        $this->storeEngine = $engine;
 
         return $this;
     }
 
-    public function character(string $character_set): self
+    public function character(string $characterSet): self
     {
-        $this->character_set = $character_set;
+        $this->characterSet = $characterSet;
 
         return $this;
     }
 
     protected function builder(): string
     {
-        /** @var string[] */
-        $columns = array_merge($this->getColumns(), $this->getPrimarykey(), $this->getUnique());
+        /** @var string[] $columns */
+        $columns = array_merge($this->getColumns(), $this->getPrimaryKey(), $this->getUnique());
         $columns = $this->join($columns, ', ');
-        $query   = $this->join([$this->table_name, '(', $columns, ')' . $this->getStoreEngine() . $this->getCharacterSet()]);
+        $query   = $this->join([$this->tableName, '(', $columns, ')' . $this->getStoreEngine() . $this->getCharacterSet()]);
 
         return 'CREATE TABLE ' . $query;
     }
@@ -120,7 +120,7 @@ class Create extends AbstractQuery
     }
 
     /** @return string[] */
-    private function getPrimarykey(): array
+    private function getPrimaryKey(): array
     {
         if (count($this->primaryKeys) === 0) {
             return [''];
@@ -146,11 +146,11 @@ class Create extends AbstractQuery
 
     private function getStoreEngine(): string
     {
-        return $this->store_engine === '' ? '' : ' ENGINE=' . $this->store_engine;
+        return $this->storeEngine === '' ? '' : ' ENGINE=' . $this->storeEngine;
     }
 
     private function getCharacterSet(): string
     {
-        return $this->character_set === '' ? '' : " CHARACTER SET {$this->character_set}";
+        return $this->characterSet === '' ? '' : " CHARACTER SET {$this->characterSet}";
     }
 }

@@ -13,18 +13,18 @@ class Truncate extends AbstractQuery
     use ConditionTrait;
 
     /** @var string */
-    private $table_name;
+    private string $tableName;
 
-    public function __construct(string $database_name, string $table_name, SchemaConnection $pdo)
+    public function __construct(string $databaseName, string $tableName, SchemaConnection $pdo)
     {
-        $this->table_name    = $database_name . '.' . $table_name;
+        $this->tableName    = $databaseName . '.' . $tableName;
         $this->pdo           = $pdo;
     }
 
     protected function builder(): string
     {
-        $conditon = $this->join([$this->if_exists, $this->table_name]);
+        $condition = $this->join([$this->ifExists, $this->tableName]);
 
-        return 'TRUNCATE TABLE ' . $conditon . ';';
+        return 'TRUNCATE TABLE ' . $condition . ';';
     }
 }

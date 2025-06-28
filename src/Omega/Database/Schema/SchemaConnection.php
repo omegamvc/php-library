@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Omega\Database\Schema;
 
-use Omega\Database\Connection as BasePDO;
+use Exception;
+use Omega\Database\Connection;
 
-class SchemaConnection extends BasePDO
+class SchemaConnection extends Connection
 {
     /**
      * @param array<string, string> $config
+     * @throws Exception
      */
     public function __construct(array $config)
     {

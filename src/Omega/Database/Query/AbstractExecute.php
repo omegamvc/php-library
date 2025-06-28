@@ -10,17 +10,17 @@ abstract class AbstractExecute extends AbstractQuery
     {
         $this->builder();
 
-        if ($this->_query != null) {
-            $this->PDO->query($this->_query);
-            foreach ($this->_binds as $bind) {
+        if ($this->query != null) {
+            $this->pdo->query($this->query);
+            foreach ($this->binds as $bind) {
                 if (!$bind->hasBind()) {
-                    $this->PDO->bind($bind->getBind(), $bind->getValue());
+                    $this->pdo->bind($bind->getBind(), $bind->getValue());
                 }
             }
 
-            $this->PDO->execute();
+            $this->pdo->execute();
 
-            return $this->PDO->rowCount() > 0 ? true : false;
+            return $this->pdo->rowCount() > 0;
         }
 
         return false;

@@ -57,6 +57,7 @@ abstract class AbstractDatabase extends TestCase
      * Creates a connection to the testing database and builds it if necessary.
      *
      * @return void
+     * @throws \Exception
      */
     protected function createConnection(): void
     {

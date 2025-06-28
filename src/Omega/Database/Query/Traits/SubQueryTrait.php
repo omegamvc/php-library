@@ -16,10 +16,10 @@ trait SubQueryTrait
      */
     public function whereClause(string $clause, Select $select): self
     {
-        $binds          = (fn () => $this->{'_binds'})->call($select);
-        $this->_where[] = implode(' ', [$clause, '(', (string) $select, ')']);
+        $binds          = (fn () => $this->{'binds'})->call($select);
+        $this->where[] = implode(' ', [$clause, '(', (string) $select, ')']);
         foreach ($binds as $bind) {
-            $this->_binds[] = $bind;
+            $this->binds[] = $bind;
         }
 
         return $this;

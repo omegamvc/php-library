@@ -16,10 +16,10 @@ class Delete extends AbstractExecute
 
     protected ?string $alias = null;
 
-    public function __construct(string $table_name, Connection $PDO)
+    public function __construct(string $tableName, Connection $pdo)
     {
-        $this->_table = $table_name;
-        $this->PDO    = $PDO;
+        $this->table = $tableName;
+        $this->pdo    = $pdo;
     }
 
     public function __toString()
@@ -48,14 +48,14 @@ class Delete extends AbstractExecute
      */
     public function join(AbstractJoin $ref_table): self
     {
-        $table = $this->alias ?? $this->_table;
+        $table = $this->alias ?? $this->table;
         $ref_table->table($table);
 
-        $this->_join[] = $ref_table->stringJoin();
-        $binds         = (fn () => $this->{'sub_query'})->call($ref_table);
+        $this->join[] = $ref_table->stringJoin();
+        $binds         = (fn () => $this->{'subQuery'})->call($ref_table);
 
         if (null !== $binds) {
-            $this->_binds = array_merge($this->_binds, $binds->getBind());
+            $this->binds = array_merge($this->binds, $binds->getBind());
         }
 
         return $this;
@@ -63,9 +63,9 @@ class Delete extends AbstractExecute
 
     private function getJoin(): string
     {
-        return 0 === count($this->_join)
+        return 0 === count($this->join)
             ? ''
-            : implode(' ', $this->_join)
+            : implode(' ', $this->join)
         ;
     }
 
@@ -78,8 +78,8 @@ class Delete extends AbstractExecute
 
         $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query =  null === $this->alias
-            ? "DELETE FROM {$this->_table} {$query_parts}"
-            : "DELETE {$this->alias} FROM {$this->_table} AS {$this->alias} {$query_parts}";
+        return $this->query =  null === $this->alias
+            ? "DELETE FROM {$this->table} {$query_parts}"
+            : "DELETE {$this->alias} FROM {$this->table} AS {$this->alias} {$query_parts}";
     }
 }

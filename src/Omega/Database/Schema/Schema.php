@@ -12,7 +12,7 @@ use Omega\Database\Schema\Table\Truncate;
 class Schema
 {
     /** @var SchemaConnection PDO property */
-    private $pdo;
+    private SchemaConnection $pdo;
 
     public function __construct(SchemaConnection $pdo)
     {
@@ -29,32 +29,32 @@ class Schema
         return new Drop($this->pdo);
     }
 
-    public function refresh(string $table_name): Truncate
+    public function refresh(string $tableName): Truncate
     {
-        $database_name = $this->pdo->getConfig()['database_name'];
+        $databaseName = $this->pdo->getConfig()['database_name'];
 
-        return new Truncate($database_name, $table_name, $this->pdo);
+        return new Truncate($databaseName, $tableName, $this->pdo);
     }
 
-    public function table(string $table_name, callable $blueprint): CreateTable
+    public function table(string $tableName, callable $blueprint): CreateTable
     {
-        $database_name = $this->pdo->getConfig()['database_name'];
-        $columns       = new CreateTable($database_name, $table_name, $this->pdo);
+        $databaseName = $this->pdo->getConfig()['database_name'];
+        $columns       = new CreateTable($databaseName, $tableName, $this->pdo);
         $blueprint($columns);
 
         return $columns;
     }
 
     /**
-     * Update table structur.
+     * Update table structure.
      *
-     * @param string                $table_name Target table name
+     * @param string                $tableName Target table name
      * @param callable(Alter): void $blueprint
      */
-    public function alter(string $table_name, callable $blueprint): Alter
+    public function alter(string $tableName, callable $blueprint): Alter
     {
-        $database_name = $this->pdo->getConfig()['database_name'];
-        $columns       = new Alter($database_name, $table_name, $this->pdo);
+        $databaseName = $this->pdo->getConfig()['database_name'];
+        $columns       = new Alter($databaseName, $tableName, $this->pdo);
         $blueprint($columns);
 
         return $columns;

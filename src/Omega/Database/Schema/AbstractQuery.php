@@ -7,7 +7,7 @@ namespace Omega\Database\Schema;
 abstract class AbstractQuery
 {
     /** @var SchemaConnection PDO property */
-    protected $pdo;
+    protected SchemaConnection $pdo;
 
     public function __toString()
     {
@@ -29,10 +29,10 @@ abstract class AbstractQuery
      *
      * @param string[] $array
      */
-    protected function join(array $array, string $sperator = ' '): string
+    protected function join(array $array, string $separator = ' '): string
     {
         return implode(
-            $sperator,
+            $separator,
             array_filter($array, fn ($item) => $item !== '')
         );
     }

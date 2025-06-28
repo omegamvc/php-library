@@ -7,11 +7,11 @@ namespace Omega\Database\Schema\Traits;
 trait ConditionTrait
 {
     /** @var string */
-    private $if_exists = '';
+    private string $ifExists = '';
 
     public function ifExists(bool $value = true): self
     {
-        $this->if_exists = $value
+        $this->ifExists = $value
             ? 'IF EXISTS'
             : 'IF NOT EXISTS'
         ;
@@ -21,7 +21,7 @@ trait ConditionTrait
 
     public function ifNotExists(bool $value = true): self
     {
-        $this->if_exists = $value
+        $this->ifExists = $value
             ? 'IF NOT EXISTS'
             : 'IF EXISTS'
         ;

@@ -10,16 +10,16 @@ class Replace extends Insert
     {
         [$binds, ,$columns] = $this->bindsDestructur();
 
-        $strings_binds = [];
+        $stringsBinds = [];
         /** @var array<int, array<int, string>> */
         $chunk         = array_chunk($binds, count($columns), true);
         foreach ($chunk as $group) {
-            $strings_binds[] = '(' . implode(', ', $group) . ')';
+            $stringsBinds[] = '(' . implode(', ', $group) . ')';
         }
 
-        $stringBinds  = implode(', ', $strings_binds);
+        $stringBinds  = implode(', ', $stringsBinds);
         $stringColumn = implode(', ', $columns);
 
-        return $this->_query = "REPLACE INTO {$this->_table} ({$stringColumn}) VALUES {$stringBinds}";
+        return $this->query = "REPLACE INTO {$this->table} ({$stringColumn}) VALUES {$stringBinds}";
     }
 }

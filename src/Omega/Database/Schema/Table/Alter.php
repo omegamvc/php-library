@@ -11,52 +11,52 @@ use Omega\Database\Schema\Table\Attributes\Alter\DataType;
 class Alter extends AbstractQuery
 {
     /** @var Column[]|DataType[] */
-    private $alter_columns = [];
+    private array $alterColumns = [];
 
     /** @var Column[]|DataType[] */
-    private $add_columns = [];
+    private array $addColumns = [];
 
     /** @var string[] */
-    private $drop_columns = [];
+    private array $dropColumns = [];
 
     /** @var array<string, string> */
-    private $rename_columns = [];
+    private array $renameColumns = [];
 
     /** @var string */
-    private $table_name;
+    private string $tableName;
 
-    public function __construct(string $database_name, string $table_name, SchemaConnection $pdo)
+    public function __construct(string $databaseName, string $tableName, SchemaConnection $pdo)
     {
-        $this->table_name   = $database_name . '.' . $table_name;
-        $this->pdo          = $pdo;
+        $this->tableName   = $databaseName . '.' . $tableName;
+        $this->pdo         = $pdo;
     }
 
     /**
      * Add new column to the exist table.
      */
-    public function __invoke(string $column_name): DataType
+    public function __invoke(string $columnName): DataType
     {
-        return $this->column($column_name);
+        return $this->column($columnName);
     }
 
-    public function add(string $column_name): DataType
+    public function add(string $columnName): DataType
     {
-        return $this->add_columns[] = (new Column())->alterColumn($column_name);
+        return $this->addColumns[] = (new Column())->alterColumn($columnName);
     }
 
-    public function drop(string $column_name): string
+    public function drop(string $columnName): string
     {
-        return $this->drop_columns[] = $column_name;
+        return $this->dropColumns[] = $columnName;
     }
 
-    public function column(string $column_name): DataType
+    public function column(string $columnName): DataType
     {
-        return $this->alter_columns[] = (new Column())->alterColumn($column_name);
+        return $this->alterColumns[] = (new Column())->alterColumn($columnName);
     }
 
     public function rename(string $from, string $to): string
     {
-        return $this->rename_columns[$from] = $to;
+        return $this->renameColumns[$from] = $to;
     }
 
     protected function builder(): string
@@ -67,7 +67,7 @@ class Alter extends AbstractQuery
         $query = array_merge($query, $this->getModify(), $this->getColumns(), $this->getDrops(), $this->getRename());
         $query = implode(', ', $query);
 
-        return "ALTER TABLE {$this->table_name} {$query};";
+        return "ALTER TABLE {$this->tableName} {$query};";
     }
 
     /** @return string[] */
@@ -75,7 +75,7 @@ class Alter extends AbstractQuery
     {
         $res = [];
 
-        foreach ($this->alter_columns as $attribute) {
+        foreach ($this->alterColumns as $attribute) {
             $res[] = "MODIFY COLUMN {$attribute->__toString()}";
         }
 
@@ -87,7 +87,7 @@ class Alter extends AbstractQuery
     {
         $res = [];
 
-        foreach ($this->rename_columns as $old => $new) {
+        foreach ($this->renameColumns as $old => $new) {
             $res[] = "RENAME COLUMN {$old} TO {$new}";
         }
 
@@ -99,7 +99,7 @@ class Alter extends AbstractQuery
     {
         $res = [];
 
-        foreach ($this->add_columns as $attribute) {
+        foreach ($this->addColumns as $attribute) {
             $res[] = "ADD {$attribute->__toString()}";
         }
 
@@ -111,7 +111,7 @@ class Alter extends AbstractQuery
     {
         $res = [];
 
-        foreach ($this->drop_columns as $drop) {
+        foreach ($this->dropColumns as $drop) {
             $res[] = "DROP COLUMN {$drop}";
         }
 

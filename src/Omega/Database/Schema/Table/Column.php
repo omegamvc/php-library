@@ -10,21 +10,21 @@ use Omega\Database\Schema\Table\Attributes\DataType;
 class Column
 {
     /** @var string|DataType|AlterDataType */
-    protected $query;
+    protected string|AlterDataType|DataType $query;
 
-    public function __toString()
+    public function __toString(): string
     {
         return (string) $this->query;
     }
 
-    public function column(string $column_name): DataType
+    public function column(string $columnName): DataType
     {
-        return $this->query = new DataType($column_name);
+        return $this->query = new DataType($columnName);
     }
 
-    public function alterColumn(string $column_name): AlterDataType
+    public function alterColumn(string $columnName): AlterDataType
     {
-        return $this->query = new AlterDataType($column_name);
+        return $this->query = new AlterDataType($columnName);
     }
 
     public function raw(string $query): self

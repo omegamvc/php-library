@@ -13,22 +13,23 @@ class Table
      *
      * @var Connection
      */
-    protected $PDO;
+    protected Connection $pdo;
 
     /**
      * Table name.
      *
      * @var string|InnerQuery
      */
-    protected $table_name;
+    protected InnerQuery|string $tableName;
 
     /**
-     * @param string|InnerQuery $table_name Table name
+     * @param string|InnerQuery $tableName Table name
+     * @param Connection        $pdo
      */
-    public function __construct($table_name, Connection $PDO)
+    public function __construct(string|InnerQuery $tableName, Connection $pdo)
     {
-        $this->table_name = $table_name;
-        $this->PDO        = $PDO;
+        $this->tableName = $tableName;
+        $this->pdo       = $pdo;
     }
 
     /**
@@ -36,9 +37,9 @@ class Table
      *
      * @return Insert
      */
-    public function insert()
+    public function insert(): Insert
     {
-        return new Insert($this->table_name, $this->PDO);
+        return new Insert($this->tableName, $this->pdo);
     }
 
     /**
@@ -46,21 +47,21 @@ class Table
      *
      * @return Replace
      */
-    public function replace()
+    public function replace(): Replace
     {
-        return new Replace($this->table_name, $this->PDO);
+        return new Replace($this->tableName, $this->pdo);
     }
 
     /**
      * Perform select query.
      *
-     * @param string[] $select_columns Selected column (raw)
+     * @param string[] $selectColumns Selected column (raw)
      *
      * @return Select
      */
-    public function select(array $select_columns = ['*'])
+    public function select(array $selectColumns = ['*']): Select
     {
-        return new Select($this->table_name, $select_columns, $this->PDO);
+        return new Select($this->tableName, $selectColumns, $this->pdo);
     }
 
     /**
@@ -68,9 +69,9 @@ class Table
      *
      * @return Update
      */
-    public function update()
+    public function update(): Update
     {
-        return new Update($this->table_name, $this->PDO);
+        return new Update($this->tableName, $this->pdo);
     }
 
     /**
@@ -78,9 +79,9 @@ class Table
      *
      * @return Delete
      */
-    public function delete()
+    public function delete(): Delete
     {
-        return new Delete($this->table_name, $this->PDO);
+        return new Delete($this->tableName, $this->pdo);
     }
 
     /**
@@ -90,7 +91,7 @@ class Table
      */
     public function info(): array
     {
-        $this->PDO->query(
+        $this->pdo->query(
             'SELECT
                 COLUMN_NAME,
                 COLUMN_TYPE,
@@ -104,10 +105,10 @@ class Table
             WHERE
                 TABLE_SCHEMA = :dbs AND TABLE_NAME = :table'
         );
-        $this->PDO->bind(':table', $this->table_name);
-        $this->PDO->bind(':dbs', $this->PDO->getConfig()['database_name']);
+        $this->pdo->bind(':table', $this->tableName);
+        $this->pdo->bind(':dbs', $this->pdo->getConfig()['database_name']);
 
-        $result = $this->PDO->resultSet();
+        $result = $this->pdo->resultSet();
 
         return $result === false ? [] : $result;
     }

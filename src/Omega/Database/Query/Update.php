@@ -14,13 +14,13 @@ class Update extends AbstractExecute
     use ConditionTrait;
     use SubQueryTrait;
 
-    public function __construct(string $table_name, Connection $PDO)
+    public function __construct(string $tableName, Connection $pdo)
     {
-        $this->_table = $table_name;
-        $this->PDO    = $PDO;
+        $this->table = $tableName;
+        $this->pdo   = $pdo;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->builder();
     }
@@ -29,10 +29,9 @@ class Update extends AbstractExecute
      * Insert set value (single).
      *
      * @param array<string, string|int|bool|null> $values Array of bing and value
-     *
      * @return self
      */
-    public function values($values)
+    public function values(array $values): self
     {
         foreach ($values as $key => $value) {
             $this->value($key, $value);
@@ -45,34 +44,36 @@ class Update extends AbstractExecute
      * Insert set value (single).
      *
      * @param string               $bind  Pdo bind
-     * @param string|int|bool|null $value Value of the bind
-     *
+     * @param bool|int|string|null $value Value of the bind
      * @return self
      */
-    public function value(string $bind, $value)
+    public function value(string $bind, bool|int|string|null $value): self
     {
-        $this->_binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
+        $this->binds[] = Bind::set($bind, $value, $bind)->prefixBind(':bind_');
 
         return $this;
     }
 
     /**
-     * Join statment:
+     * Join statement:
      *  - inner join
      *  - left join
      *  - right join
      *  - full join.
+     *
+     * @param AbstractJoin $refTable
+     * @return $this
      */
-    public function join(AbstractJoin $ref_table): self
+    public function join(AbstractJoin $refTable): self
     {
-        // overide master table
-        $ref_table->table($this->_table);
+        // override master table
+        $refTable->table($this->table);
 
-        $this->_join[] = $ref_table->stringJoin();
-        $binds         = (fn () => $this->{'sub_query'})->call($ref_table);
+        $this->join[] = $refTable->stringJoin();
+        $binds        = (fn () => $this->{'subQuery'})->call($refTable);
 
         if (null !== $binds) {
-            $this->_binds = array_merge($this->_binds, $binds->getBind());
+            $this->binds = array_merge($this->binds, $binds->getBind());
         }
 
         return $this;
@@ -80,16 +81,16 @@ class Update extends AbstractExecute
 
     private function getJoin(): string
     {
-        return 0 === count($this->_join)
+        return 0 === count($this->join)
             ? ''
-            : implode(' ', $this->_join)
+            : implode(' ', $this->join)
         ;
     }
 
     protected function builder(): string
     {
         $setter = [];
-        foreach ($this->_binds as $bind) {
+        foreach ($this->binds as $bind) {
             if ($bind->hasColumName()) {
                 $setter[] = $bind->getColumnName() . ' = ' . $bind->getBind();
             }
@@ -100,8 +101,8 @@ class Update extends AbstractExecute
         $build[]        = 'SET ' . implode(', ', $setter);
         $build['where'] = $this->getWhere();
 
-        $query_parts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
+        $queryParts = implode(' ', array_filter($build, fn ($item) => $item !== ''));
 
-        return $this->_query = "UPDATE {$this->_table} {$query_parts}";
+        return $this->query = "UPDATE {$this->table} {$queryParts}";
     }
 }

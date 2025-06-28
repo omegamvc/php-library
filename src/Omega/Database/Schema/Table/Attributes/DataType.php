@@ -7,17 +7,18 @@ namespace Omega\Database\Schema\Table\Attributes;
 class DataType
 {
     /** @var string */
-    private $name;
-    /** @var string|Constraint */
-    private $datatype;
+    private string $name;
 
-    public function __construct(string $column_name)
+    /** @var string|Constraint */
+    private string|Constraint $datatype;
+
+    public function __construct(string $columnName)
     {
-        $this->name     = $column_name;
+        $this->name     = $columnName;
         $this->datatype = '';
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->query();
     }

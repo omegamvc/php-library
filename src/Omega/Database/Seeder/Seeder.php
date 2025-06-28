@@ -17,17 +17,17 @@ abstract class Seeder
     }
 
     /**
-     * @param class-string $class_name
+     * @param class-string $className
      */
-    public function call(string $class_name): void
+    public function call(string $className): void
     {
-        $class = new $class_name($this->pdo);
+        $class = new $className($this->pdo);
         $class->run();
     }
 
-    public function create(string $table_name): Insert
+    public function create(string $tableName): Insert
     {
-        return new Insert($table_name, $this->pdo);
+        return new Insert($tableName, $this->pdo);
     }
 
     /**

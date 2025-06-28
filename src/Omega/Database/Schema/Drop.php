@@ -8,22 +8,22 @@ namespace Omega\Database\Schema;
 class Drop
 {
     /** @var SchemaConnection */
-    private $pdo;
+    private SchemaConnection $pdo;
 
     public function __construct(SchemaConnection $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function database(string $database_name): DB\Drop
+    public function database(string $databaseName): DB\Drop
     {
-        return new DB\Drop($database_name, $this->pdo);
+        return new DB\Drop($databaseName, $this->pdo);
     }
 
-    public function table(string $table_name): Table\Drop
+    public function table(string $tableName): Table\Drop
     {
-        $database_name = $this->pdo->getConfig()['database_name'];
+        $databaseName = $this->pdo->getConfig()['database_name'];
 
-        return new Table\Drop($database_name, $table_name, $this->pdo);
+        return new Table\Drop($databaseName, $tableName, $this->pdo);
     }
 }

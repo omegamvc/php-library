@@ -144,7 +144,7 @@ class CreateTest extends AbstractDatabaseQuery
     public function testItCanGenerateQueryUsingColumns(): void
     {
         $schema = new Create('testing_db', 'test', $this->pdo_schema);
-        $schema->collumns([
+        $schema->columns([
             (new Column())->raw('PersonID int'),
             (new Column())->raw('LastName varchar(255)'),
         ]);

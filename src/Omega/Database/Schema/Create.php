@@ -8,22 +8,22 @@ namespace Omega\Database\Schema;
 class Create
 {
     /** @var SchemaConnection */
-    private $pdo;
+    private SchemaConnection $pdo;
 
     public function __construct(SchemaConnection $pdo)
     {
         $this->pdo = $pdo;
     }
 
-    public function database(string $database_name): DB\Create
+    public function database(string $databaseName): DB\Create
     {
-        return new DB\Create($database_name, $this->pdo);
+        return new DB\Create($databaseName, $this->pdo);
     }
 
-    public function table(string $table_name): Table\Create
+    public function table(string $tableName): Table\Create
     {
-        $database_name = $this->pdo->getConfig()['database_name'];
+        $databaseName = $this->pdo->getConfig()['database_name'];
 
-        return new Table\Create($database_name, $table_name, $this->pdo);
+        return new Table\Create($databaseName, $tableName, $this->pdo);
     }
 }

@@ -9,7 +9,7 @@ use Omega\Collection\Collection;
 abstract class AbstractFetch extends AbstractQuery
 {
     /**
-     * @return Collection<string|int, mixed>
+     * @return Collection<string|int, mixed>|null
      */
     public function get(): ?Collection
     {
@@ -23,33 +23,33 @@ abstract class AbstractFetch extends AbstractQuery
     /**
      * @return string[]|mixed
      */
-    public function single()
+    public function single(): mixed
     {
         $this->builder();
 
-        $this->PDO->query($this->_query);
-        foreach ($this->_binds as $bind) {
+        $this->pdo->query($this->query);
+        foreach ($this->binds as $bind) {
             if (!$bind->hasBind()) {
-                $this->PDO->bind($bind->getBind(), $bind->getValue());
+                $this->pdo->bind($bind->getBind(), $bind->getValue());
             }
         }
-        $result = $this->PDO->single();
+        $result = $this->pdo->single();
 
-        return $result === false ? [] : $this->PDO->single();
+        return $result === false ? [] : $this->pdo->single();
     }
 
     /** @return array<string|int, mixed>|false */
-    public function all()
+    public function all(): array|false
     {
         $this->builder();
 
-        $this->PDO->query($this->_query);
-        foreach ($this->_binds as $bind) {
+        $this->pdo->query($this->query);
+        foreach ($this->binds as $bind) {
             if (!$bind->hasBind()) {
-                $this->PDO->bind($bind->getBind(), $bind->getValue());
+                $this->pdo->bind($bind->getBind(), $bind->getValue());
             }
         }
 
-        return $this->PDO->resultSet();
+        return $this->pdo->resultSet();
     }
 }
