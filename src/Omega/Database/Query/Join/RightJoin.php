@@ -8,8 +8,6 @@ class RightJoin extends AbstractJoin
 {
     protected function joinBuilder(): string
     {
-        $on = $this->splitJoin();
-
-        return "RIGHT JOIN {$this->getAlias()} ON {$on}";
+        return "RIGHT JOIN {$this->getAlias()} ON {$this->splitJoin()}";
     }
 }

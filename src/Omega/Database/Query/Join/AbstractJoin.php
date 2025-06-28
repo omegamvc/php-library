@@ -11,27 +11,27 @@ abstract class AbstractJoin
     /**
      * @var string
      */
-    protected $_mainTable     = '';
+    protected string $mainTable = '';
 
     /**
      * @var string
      */
-    protected $_tableName     = '';
+    protected string $tableName = '';
 
     /**
      * @var string
      */
-    protected $_colomnName    = '';
+    protected string $columnName = '';
 
     /**
      * @var string[]
      */
-    protected $_compereColumn = [];
+    protected array $compareColumn = [];
 
     /**
      * @var string
      */
-    protected $_stringJoin    = '';
+    protected string $stringJoin = '';
 
     protected ?InnerQuery $sub_query = null;
 
@@ -40,16 +40,17 @@ abstract class AbstractJoin
     }
 
     /**
+     * @param string $mainTable
      * @return self
      */
-    public function __invoke(string $main_table)
+    public function __invoke(string $mainTable): self
     {
-        $this->_mainTable = $main_table;
+        $this->mainTable = $mainTable;
 
         return $this;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->stringJoin();
     }
@@ -57,45 +58,47 @@ abstract class AbstractJoin
     /**
      * Instance of class.
      *
-     * @param string|InnerQuery $ref_table Name of the table want to join or sub query
-     * @param string            $id        Main id of the table
-     * @param string|null       $ref_id    Id of the table want to join, null means same as main id
+     * @param string|InnerQuery $refTable Name of the table want to join or sub query
+     * @param string            $id       Main id of the table
+     * @param string|null       $refId    ID of the table want to join, null means same as main id
+     * @return AbstractJoin
      */
-    public static function ref($ref_table, string $id, ?string $ref_id = null): AbstractJoin
+    public static function ref(string|InnerQuery $refTable, string $id, ?string $refId = null): AbstractJoin
     {
         $instance = new static();
 
-        if ($ref_table instanceof InnerQuery) {
+        if ($refTable instanceof InnerQuery) {
             return $instance
-                ->clausa($ref_table)
-                ->compare($id, $ref_id);
+                ->clause($refTable)
+                ->compare($id, $refId);
         }
 
         return $instance
-            ->tableRef($ref_table)
-            ->compare($id, $ref_id);
+            ->tableRef($refTable)
+            ->compare($id, $refId);
     }
-
-    // setter
 
     /**
      * set main table / master table.
      *
-     * @param string $main_table Name of the master table
-     *
+     * @param string $mainTable Name of the master table
      * @return self
      */
-    public function table(string $main_table)
+    public function table(string $mainTable): self
     {
-        $this->_mainTable = $main_table;
+        $this->mainTable = $mainTable;
 
         return $this;
     }
 
-    public function clausa(InnerQuery $select): self
+    /**
+     * @param InnerQuery $select
+     * @return $this
+     */
+    public function clause(InnerQuery $select): self
     {
         $this->sub_query  = $select;
-        $this->_tableName = $select->getAlias();
+        $this->tableName = $select->getAlias();
 
         return $this;
     }
@@ -103,13 +106,12 @@ abstract class AbstractJoin
     /**
      * Set table reference.
      *
-     * @param string $ref_table Name of the ref table
-     *
+     * @param string $refTable Name of the ref table
      * @return self
      */
-    public function tableRef(string $ref_table)
+    public function tableRef(string $refTable): self
     {
-        $this->_tableName = $ref_table;
+        $this->tableName = $refTable;
 
         return $this;
     }
@@ -117,15 +119,14 @@ abstract class AbstractJoin
     /**
      * set main table and ref table.
      *
-     * @param string $main_table Name of the master table
-     * @param string $ref_table  Name of the ref table
-     *
+     * @param string $mainTable Name of the master table
+     * @param string $refTable  Name of the ref table
      * @return self
      */
-    public function tableRelation(string $main_table, string $ref_table)
+    public function tableRelation(string $mainTable, string $refTable): self
     {
-        $this->_mainTable = $main_table;
-        $this->_tableName = $ref_table;
+        $this->mainTable = $mainTable;
+        $this->tableName = $refTable;
 
         return $this;
     }
@@ -133,23 +134,21 @@ abstract class AbstractJoin
     /**
      * Compare identical two table.
      *
-     * @param string $main_column    Identical of the main table column
-     * @param string $compire_column Identical of the ref table column
-     *
+     * @param string      $mainColumn    Identical of the main table column
+     * @param string|null $compareColumn Identical of the ref table column
      * @return self
      */
-    public function compare(string $main_column, ?string $compire_column = null)
+    public function compare(string $mainColumn, ?string $compareColumn = null): self
     {
-        $compire_column ??= $main_column;
+        $compareColumn ??= $mainColumn;
 
-        $this->_compereColumn[] = [
-            $main_column, $compire_column,
+        $this->compareColumn[] = [
+            $mainColumn, $compareColumn,
         ];
 
         return $this;
     }
 
-    // getter
     /**
      * Get string of raw join builder.
      *
@@ -160,16 +159,14 @@ abstract class AbstractJoin
         return $this->joinBuilder();
     }
 
-    // main
-
     /**
-     * Setup bulider.
+     * Setup builder.
      *
      * @return string Raw of builder join
      */
     protected function joinBuilder(): string
     {
-        return $this->_stringJoin;
+        return $this->stringJoin;
     }
 
     /**
@@ -179,11 +176,11 @@ abstract class AbstractJoin
     protected function splitJoin(): string
     {
         $on = [];
-        foreach ($this->_compereColumn as $column) {
+        foreach ($this->compareColumn as $column) {
             $masterColumn  = $column[0];
-            $compireColumn = $column[1];
+            $compareColumn = $column[1];
 
-            $on[] = "$this->_mainTable.$masterColumn = $this->_tableName.$compireColumn";
+            $on[] = "$this->mainTable.$masterColumn = $this->tableName.$compareColumn";
         }
 
         return implode(' AND ', $on);
@@ -191,6 +188,6 @@ abstract class AbstractJoin
 
     protected function getAlias(): string
     {
-        return null === $this->sub_query ? $this->_tableName : (string) $this->sub_query;
+        return null === $this->sub_query ? $this->tableName : (string) $this->sub_query;
     }
 }

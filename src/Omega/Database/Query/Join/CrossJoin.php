@@ -8,6 +8,8 @@ class CrossJoin extends AbstractJoin
 {
     /**
      * Create cross join table query.
+     *
+     * @return string
      */
     protected function joinBuilder(): string
     {
