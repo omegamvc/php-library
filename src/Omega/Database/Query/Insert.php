@@ -1,4 +1,15 @@
-<?php
+<?php /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
+
+/**
+ * Part of Omega - Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 
 declare(strict_types=1);
 
@@ -6,28 +17,66 @@ namespace Omega\Database\Query;
 
 use Omega\Database\Connection;
 
+use function array_chunk;
+use function array_filter;
+use function count;
+use function implode;
+
+/**
+ * Handles SQL INSERT operations with support for single and multiple rows,
+ * binding of values, and "ON DUPLICATE KEY UPDATE" clause.
+ *
+ * This class builds and executes parameterized INSERT statements
+ * using a fluent interface and PDO bindings.
+ *
+ * @category   Omega
+ * @package    Database
+ * @subpackage Query
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
 class Insert extends AbstractExecute
 {
     /**
-     * @var array<string, string>
+     * Columns and expressions used in ON DUPLICATE KEY UPDATE clause.
+     *
+     * The key is the column name, and the value is the expression to apply.
+     * If no value is set, the default is to use VALUES(column).
+     *
+     * @var array<string, string>|null
      */
     private ?array $duplicateKey = null;
 
+    /**
+     * Create a new Insert query for a specific table.
+     *
+     * @param string     $tableName Table name to insert into
+     * @param Connection $pdo       Database connection instance
+     */
     public function __construct(string $tableName, Connection $pdo)
     {
         $this->table = $tableName;
-        $this->pdo    = $pdo;
+        $this->pdo   = $pdo;
     }
 
+    /**
+     * Convert the built INSERT query to a string.
+     *
+     * @return string The full SQL INSERT query
+     */
     public function __toString(): string
     {
         return $this->builder();
     }
 
     /**
-     *  Value query builder (key => value).
+     * Set a list of values to insert into the table.
+     * This is a shorthand for calling `value()` repeatedly.
      *
-     * @param array<string, string|int|bool|null> $values Insert values
+     * @param array<string, string|int|bool|null> $values Key-value pairs to insert
      * @return self
      */
     public function values(array $values): self
@@ -40,8 +89,10 @@ class Insert extends AbstractExecute
     }
 
     /**
-     * @param bool|int|string|null $value
+     * Add a single value to insert.
      *
+     * @param string               $bind   Column name / bind key
+     * @param bool|int|string|null $value  Value to bind
      * @return self
      */
     public function value(string $bind, bool|int|string|null $value): self
@@ -52,9 +103,10 @@ class Insert extends AbstractExecute
     }
 
     /**
-     * Added multy rows (values).
+     * Insert multiple rows in a single query.
      *
-     * @param array<int, array<string, string|int|bool|null>> $rows
+     * @param array<int, array<string, string|int|bool|null>> $rows List of key-value pairs representing rows
+     * @return self
      */
     public function rows(array $rows): self
     {
@@ -68,7 +120,13 @@ class Insert extends AbstractExecute
     }
 
     /**
-     * On duplicate key update.
+     * Add a column to the ON DUPLICATE KEY UPDATE clause.
+     *
+     * If no custom value is provided, it defaults to using `VALUES(column)`.
+     *
+     * @param string      $column Column name to update
+     * @param string|null $value  Expression to set (optional)
+     * @return self
      */
     public function on(string $column, ?string $value = null): self
     {
@@ -77,13 +135,18 @@ class Insert extends AbstractExecute
         return $this;
     }
 
+    /**
+     * Builds the final SQL INSERT query string.
+     *
+     * @return string The generated SQL INSERT statement
+     */
     protected function builder(): string
     {
-        [$binds, ,$columns] = $this->bindsDestructur();
+        [$binds, , $columns] = $this->bindsDestructor();
 
         $stringsBinds = [];
-        /** @var array<int, array<int, string>> */
-        $chunk         = array_chunk($binds, count($columns), true);
+        /** @var array<int, array<int, string>> $chunk */
+        $chunk = array_chunk($binds, count($columns), true);
         foreach ($chunk as $group) {
             $stringsBinds[] = '(' . implode(', ', $group) . ')';
         }
@@ -100,6 +163,11 @@ class Insert extends AbstractExecute
         return $this->query;
     }
 
+    /**
+     * Builds the ON DUPLICATE KEY UPDATE part of the query, if defined.
+     *
+     * @return string SQL fragment for ON DUPLICATE KEY UPDATE
+     */
     private function getDuplicateKeyUpdate(): string
     {
         if (null === $this->duplicateKey) {

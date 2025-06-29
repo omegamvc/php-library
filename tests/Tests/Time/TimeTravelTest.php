@@ -143,7 +143,6 @@ class TimeTravelTest extends TestCase
         $now = new Now();
         date_default_timezone_set('Asia/Jakarta');
         $time = 1625316759; // 7/3/2021, 19:52:39 PM
-        // costume time
         $now->year(2021);
         $now->month(7);
         $now->day(3);

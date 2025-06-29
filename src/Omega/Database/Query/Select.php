@@ -1,27 +1,65 @@
-<?php
+<?php /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
+
+/**
+ * Part of Omega - Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 
 declare(strict_types=1);
 
 namespace Omega\Database\Query;
 
 use Omega\Database\Connection;
-use Omega\Database\Query\Query;
 use Omega\Database\Query\Join\AbstractJoin;
 use Omega\Database\Query\Traits\ConditionTrait;
 use Omega\Database\Query\Traits\SubQueryTrait;
 
-final class Select extends AbstractFetch
+use function array_filter;
+use function array_merge;
+use function count;
+use function implode;
+use function max;
+
+/**
+ * SQL SELECT query builder.
+ *
+ * This class constructs SQL SELECT statements with support for:
+ * - JOINs
+ * - WHERE conditions
+ * - GROUP BY
+ * - ORDER BY
+ * - LIMIT/OFFSET
+ * - Subqueries
+ *
+ * It builds the SQL dynamically and manages bindings for safe execution via prepared statements.
+ *
+ * @category   Omega
+ * @package    Database
+ * @subpackage Query
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
+class Select extends AbstractFetch
 {
     use ConditionTrait;
     use SubQueryTrait;
 
     /**
-     * @param string|InnerQuery $tableName   Table name
-     * @param string[]          $columnsName Selected column
-     * @param Connection        $pdo         MyPDO class
-     * @param string[]          $options     Add costume option (eg: query)
+     * Constructor for the Select query.
      *
-     * @return void
+     * @param string|InnerQuery $tableName   The table name or a subquery
+     * @param string[]          $columnsName List of columns to select
+     * @param Connection        $pdo         Database connection
+     * @param string[]|null     $options     Optional query overrides
      */
     public function __construct(
         string|InnerQuery $tableName,
@@ -42,31 +80,34 @@ final class Select extends AbstractFetch
         $this->query = $options['query'] ?? "SELECT {$column} FROM { $this->subQuery}";
     }
 
-    public function __toString()
+    /**
+     * Cast the object to a string by returning the generated SQL.
+     *
+     * @return string The SQL query
+     */
+    public function __toString(): string
     {
         return $this->builder();
     }
 
     /**
-     * Instance of `Select::class`.
+     * Static constructor for fluent query creation.
      *
-     * @param string   $tableName  Table name
-     * @param string[] $columnName Selected column
-     * @param Connection    $pdo         MyPdo
-     *
+     * @param string     $tableName   The name of the table
+     * @param string[]   $columnName  The columns to select
+     * @param Connection $pdo         Database connection
      * @return Select
      */
     public static function from(string $tableName, array $columnName, Connection $pdo): Select
     {
-        return new static($tableName, $columnName, $pdo);
+        return new Select($tableName, $columnName, $pdo);
     }
 
     /**
-     * Join statment:
-     *  - inner join
-     *  - left join
-     *  - right join
-     *  - full join.
+     * Add a JOIN clause to the query.
+     *
+     * @param AbstractJoin $refTable Join statement
+     * @return $this
      */
     public function join(AbstractJoin $refTable): self
     {
@@ -83,6 +124,11 @@ final class Select extends AbstractFetch
         return $this;
     }
 
+    /**
+     * Build JOIN clause string.
+     *
+     * @return string
+     */
     private function joinBuilder(): string
     {
         return 0 === count($this->join)
@@ -92,12 +138,11 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set data start for fetc all data.
+     * Set both limit and offset for result pagination.
      *
-     * @param int $limitStart limit start
-     * @param int $limitEnd   limit end
-     *
-     * @return self
+     * @param int $limitStart The number of rows to fetch
+     * @param int $limitEnd   The limit end value
+     * @return $this
      */
     public function limit(int $limitStart, int $limitEnd): self
     {
@@ -108,11 +153,10 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set data start for fetch all data.
+     * Set the starting point of the limit.
      *
-     * @param int $value limit start default is 0
-     *
-     * @return self
+     * @param int $value Starting index (default is 0)
+     * @return $this
      */
     public function limitStart(int $value): self
     {
@@ -122,12 +166,10 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set data end for feact all data
-     * zero value meaning no data show.
+     * Set the end limit value.
      *
-     * @param int $value limit start default
-     *
-     * @return self
+     * @param int $value Number of rows to return (0 means unlimited)
+     * @return $this
      */
     public function limitEnd(int $value): self
     {
@@ -137,10 +179,10 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set offest.
+     * Set the offset for paginated results.
      *
-     * @param int $value offset
-     * @return self
+     * @param int $value Offset value
+     * @return $this
      */
     public function offset(int $value): self
     {
@@ -150,11 +192,11 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set limit using limit and offset.
+     * Set limit and offset for paginated results.
      *
-     * @param int $limit
-     * @param int $offset
-     * @return self
+     * @param int $limit  Number of rows to return
+     * @param int $offset Offset of the first row
+     * @return $this
      */
     public function limitOffset(int $limit, int $offset): self
     {
@@ -165,12 +207,11 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set sort column and order
-     * column name must register.
+     * Add an ORDER BY clause to the query.
      *
-     * @param string $columnName
-     * @param int $orderUsing
-     * @param string|null $belongTo
+     * @param string      $columnName Column to sort
+     * @param int         $orderUsing Use Query::ORDER_ASC or Query::ORDER_DESC
+     * @param string|null $belongTo   Optional table alias
      * @return $this
      */
     public function order(string $columnName, int $orderUsing = Query::ORDER_ASC, ?string $belongTo = null): self
@@ -185,12 +226,11 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set sort column and order
-     * with Column if not null.
+     * Add ORDER BY with IS NOT NULL condition.
      *
-     * @param string $columnName
-     * @param int $orderUsing
-     * @param string|null $belongTo
+     * @param string      $columnName Column to sort
+     * @param int         $orderUsing Sort direction
+     * @param string|null $belongTo   Optional table alias
      * @return $this
      */
     public function orderIfNotNull(string $columnName, int $orderUsing = Query::ORDER_ASC, ?string $belongTo = null): self
@@ -199,12 +239,11 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Set sort column and order
-     * with Column if null.
+     * Add ORDER BY with IS NULL condition.
      *
-     * @param string $columnName
-     * @param int $orderUsing
-     * @param string|null $belongTo
+     * @param string      $columnName Column to sort
+     * @param int         $orderUsing Sort direction
+     * @param string|null $belongTo   Optional table alias
      * @return $this
      */
     public function orderIfNull(string $columnName, int $orderUsing = Query::ORDER_ASC, ?string $belongTo = null): self
@@ -213,10 +252,9 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Adds one or more columns to the
-     * GROUP BY clause of the SQL query.
+     * Add a GROUP BY clause to the query.
      *
-     * @param string ...$groups
+     * @param string ...$groups Columns to group by
      * @return $this
      */
     public function groupBy(string ...$groups): self
@@ -227,7 +265,9 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Build SQL query syntax for bind in next step.
+     * Build the full SQL SELECT query.
+     *
+     * @return string The generated SQL query
      */
     protected function builder(): string
     {
@@ -247,7 +287,9 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * Get formated combine limit and offset.
+     * Generate the SQL LIMIT clause.
+     *
+     * @return string
      */
     private function getLimit(): string
     {
@@ -264,6 +306,11 @@ final class Select extends AbstractFetch
         return "LIMIT $this->limitStart, $this->limitEnd";
     }
 
+    /**
+     * Generate the SQL GROUP BY clause.
+     *
+     * @return string
+     */
     private function getGroupBy(): string
     {
         if ([] === $this->groupBy) {
@@ -275,6 +322,11 @@ final class Select extends AbstractFetch
         return "GROUP BY {$groupBy}";
     }
 
+    /**
+     * Generate the SQL ORDER BY clause.
+     *
+     * @return string
+     */
     private function getOrderBy(): string
     {
         if ([] === $this->sortOrder) {
@@ -292,13 +344,19 @@ final class Select extends AbstractFetch
     }
 
     /**
-     * @param array<string, string> $sortOrdder
+     * Set limit, offset, and order from a reference source.
+     *
+     * @param int                   $limitStart
+     * @param int                   $limitEnd
+     * @param int                   $offset
+     * @param array<string, string> $sortOrder
+     * @return void
      */
-    public function sortOrderRef(int $limitStart, int $limitEnd, int $offset, array $sortOrdder): void
+    public function sortOrderRef(int $limitStart, int $limitEnd, int $offset, array $sortOrder): void
     {
         $this->limitStart = $limitStart;
         $this->limitEnd   = $limitEnd;
         $this->offset     = $offset;
-        $this->sortOrder  = $sortOrdder;
+        $this->sortOrder  = $sortOrder;
     }
 }

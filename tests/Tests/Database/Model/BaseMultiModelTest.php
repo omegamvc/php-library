@@ -101,7 +101,7 @@ class BaseMultiModelTest extends AbstractDatabase
     public function users(bool $read = true): User
     {
         $user = new User($this->pdo, []);
-        $user->indentifer()->equal('user', 'taylor');
+        $user->identifier()->equal('user', 'taylor');
         if ($read) {
             $user->read();
         }

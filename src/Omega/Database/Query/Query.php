@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Database\Query;
@@ -7,20 +18,40 @@ namespace Omega\Database\Query;
 use Omega\Database\Connection;
 
 /**
- * Query Builder.
+ * Query builder factory class.
+ *
+ * This class is responsible for instantiating new `Table` builders to construct SQL queries.
+ * It supports dynamic table assignment via method calls, invocation, and static access,
+ * and defines constants for ordering results.
+ *
+ * @category   Omega
+ * @package    Database
+ * @subpackage Query
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
  */
 class Query
 {
-    public const int ORDER_ASC   = 0;
-    public const int ORDER_DESC  = 1;
+    /** Constant representing ascending sort order. */
+    public const int ORDER_ASC = 0;
 
-    /** @var Connection */
+    /** Constant representing descending sort order. */
+    public const int ORDER_DESC = 1;
+
+    /**
+     * The database connection instance.
+     *
+     * @var Connection
+     */
     protected Connection $pdo;
 
     /**
-     * Create new Builder.
+     * Initialize the query builder with a PDO connection.
      *
-     * @param Connection $pdo the PDO connection
+     * @param Connection $pdo The PDO connection to use
      */
     public function __construct(Connection $pdo)
     {
@@ -28,11 +59,12 @@ class Query
     }
 
     /**
-     * Create builder using invoke.
+     * Create a new query builder instance via function invocation.
      *
-     * @param string $tableName Table name
+     * Allows use of `$query('table')` syntax as shorthand for `$query->table('table')`.
      *
-     * @return Table
+     * @param string $tableName The table name
+     * @return Table The table query builder instance
      */
     public function __invoke(string $tableName): Table
     {
@@ -40,11 +72,10 @@ class Query
     }
 
     /**
-     * Create builder and set table name.
+     * Create a new `Table` builder for a given table or subquery.
      *
-     * @param string|InnerQuery $tableName Table name
-     *
-     * @return Table
+     * @param string|InnerQuery $tableName Table name or subquery
+     * @return Table The table query builder instance
      */
     public function table(string|InnerQuery $tableName): Table
     {
@@ -52,11 +83,16 @@ class Query
     }
 
     /**
-     * Create Builder using static function.
+     * Static method to create a `Table` builder from a table or subquery.
      *
-     * @param string|InnerQuery $tableName Table name
-     * @param Connection        $pdo       The PDO connection, null give global instance
-     * @return Table
+     * Acts as a shortcut for:
+     * ```php
+     * Query::from('users', $pdo);
+     * ```
+     *
+     * @param string|InnerQuery $tableName Table name or subquery
+     * @param Connection        $pdo       The PDO connection to use
+     * @return Table The table query builder instance
      */
     public static function from(string|InnerQuery $tableName, Connection $pdo): Table
     {

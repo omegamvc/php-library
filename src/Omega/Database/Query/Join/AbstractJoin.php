@@ -1,46 +1,75 @@
 <?php
 
+/**
+ * Part of Omega - Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Database\Query\Join;
 
 use Omega\Database\Query\InnerQuery;
 
+/**
+ * Abstract base class to build SQL JOIN clauses between tables or subqueries.
+ *
+ * It supports defining relationships between a main table and a reference table,
+ * including comparisons between columns, and optionally allows subqueries as join targets.
+ *
+ * @category   Omega
+ * @package    Database
+ * @subpackage Query\Join
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ */
 abstract class AbstractJoin
 {
-    /**
-     * @var string
-     */
+    /** @var string The name of the main (master) table initiating the join. */
     protected string $mainTable = '';
 
-    /**
-     * @var string
-     */
+    /** @var string The name of the reference table or alias of the subquery being joined. */
     protected string $tableName = '';
 
-    /**
-     * @var string
-     */
+    /** @var string Column from the main table used for join comparison. */
     protected string $columnName = '';
 
     /**
-     * @var string[]
+     * Array of column pairs used for comparison in the join condition.
+     * Each element is an array with [mainTableColumn, refTableColumn].
+     *
+     * @var string[][]
      */
     protected array $compareColumn = [];
 
-    /**
-     * @var string
-     */
+    /** @var string The raw SQL join string built by the join builder. */
     protected string $stringJoin = '';
 
+    /** @var InnerQuery|null Optional subquery used as the reference join target. */
     protected ?InnerQuery $subQuery = null;
 
+    /**
+     * Final constructor, not extendable.
+     *
+     * @return void
+     */
     final public function __construct()
     {
     }
 
     /**
-     * @param string $mainTable
+     * Set the main table using an invokable interface.
+     *
+     * @param string $mainTable The name of the main table.
      * @return self
      */
     public function __invoke(string $mainTable): self
@@ -50,18 +79,23 @@ abstract class AbstractJoin
         return $this;
     }
 
+    /**
+     * Converts the join object to string using the join builder.
+     *
+     * @return string The generated JOIN clause.
+     */
     public function __toString(): string
     {
         return $this->stringJoin();
     }
 
     /**
-     * Instance of class.
+     * Creates a new join instance from a table or subquery reference.
      *
-     * @param string|InnerQuery $refTable Name of the table want to join or sub query
-     * @param string            $id       Main id of the table
-     * @param string|null       $refId    ID of the table want to join, null means same as main id
-     * @return AbstractJoin
+     * @param string|InnerQuery $refTable The reference table or subquery.
+     * @param string            $id       Column name in the main table.
+     * @param string|null       $refId    Column name in the ref table (defaults to $id).
+     * @return AbstractJoin The join instance.
      */
     public static function ref(string|InnerQuery $refTable, string $id, ?string $refId = null): AbstractJoin
     {
@@ -79,9 +113,9 @@ abstract class AbstractJoin
     }
 
     /**
-     * set main table / master table.
+     * Sets the main table name.
      *
-     * @param string $mainTable Name of the master table
+     * @param string $mainTable The name of the main table.
      * @return self
      */
     public function table(string $mainTable): self
@@ -92,7 +126,9 @@ abstract class AbstractJoin
     }
 
     /**
-     * @param InnerQuery $select
+     * Defines a subquery as the join target.
+     *
+     * @param InnerQuery $select The subquery object.
      * @return $this
      */
     public function clause(InnerQuery $select): self
@@ -104,9 +140,9 @@ abstract class AbstractJoin
     }
 
     /**
-     * Set table reference.
+     * Sets the name of the reference table.
      *
-     * @param string $refTable Name of the ref table
+     * @param string $refTable The name of the reference table.
      * @return self
      */
     public function tableRef(string $refTable): self
@@ -117,10 +153,10 @@ abstract class AbstractJoin
     }
 
     /**
-     * set main table and ref table.
+     * Sets both main and reference table names.
      *
-     * @param string $mainTable Name of the master table
-     * @param string $refTable  Name of the ref table
+     * @param string $mainTable The main table name.
+     * @param string $refTable  The reference table name.
      * @return self
      */
     public function tableRelation(string $mainTable, string $refTable): self
@@ -132,10 +168,10 @@ abstract class AbstractJoin
     }
 
     /**
-     * Compare identical two table.
+     * Adds a pair of columns to be compared in the join condition.
      *
-     * @param string      $mainColumn    Identical of the main table column
-     * @param string|null $compareColumn Identical of the ref table column
+     * @param string      $mainColumn    Column from the main table.
+     * @param string|null $compareColumn Column from the ref table (defaults to $mainColumn).
      * @return self
      */
     public function compare(string $mainColumn, ?string $compareColumn = null): self
@@ -150,9 +186,9 @@ abstract class AbstractJoin
     }
 
     /**
-     * Get string of raw join builder.
+     * Returns the generated JOIN clause as a string.
      *
-     * @return string String of raw join builder
+     * @return string Raw JOIN string.
      */
     public function stringJoin(): string
     {
@@ -160,9 +196,9 @@ abstract class AbstractJoin
     }
 
     /**
-     * Setup builder.
+     * Builds the raw JOIN clause string.
      *
-     * @return string Raw of builder join
+     * @return string JOIN clause.
      */
     protected function joinBuilder(): string
     {
@@ -170,8 +206,9 @@ abstract class AbstractJoin
     }
 
     /**
-     * Get string of compare join
-     * (ex: a.b = c.d).
+     * Returns the ON clause condition string, combining column comparisons.
+     *
+     * @return string The ON clause, e.g., "a.id = b.user_id AND a.status = b.status".
      */
     protected function splitJoin(): string
     {
@@ -186,6 +223,11 @@ abstract class AbstractJoin
         return implode(' AND ', $on);
     }
 
+    /**
+     * Gets the alias name for the reference table or subquery.
+     *
+     * @return string The alias name.
+     */
     protected function getAlias(): string
     {
         return null === $this->subQuery ? $this->tableName : (string) $this->subQuery;

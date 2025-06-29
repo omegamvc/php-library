@@ -1,78 +1,131 @@
 <?php
 
+/**
+ * Part of Omega - Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Database\Model;
 
+use ArrayAccess;
+use ArrayIterator;
+use Exception;
+use IteratorAggregate;
 use Omega\Database\Connection;
-use Omega\Database\Query\Query;
+use Omega\Database\Query\AbstractQuery;
 use Omega\Database\Query\Bind;
 use Omega\Database\Query\Join\InnerJoin;
-use Omega\Database\Query\AbstractQuery;
+use Omega\Database\Query\Query;
 use Omega\Database\Query\Select;
 use Omega\Database\Query\Where;
+use ReturnTypeWillChange;
+use Traversable;
+
+use function array_filter;
+use function array_key_exists;
+use function array_key_first;
+use function array_keys;
+use function class_exists;
+use function in_array;
+use function is_a;
+use function key_exists;
+use function max;
+use function method_exists;
+use function sprintf;
+
+use const ARRAY_FILTER_USE_KEY;
 
 /**
- * @implements \ArrayAccess<array-key, mixed>
- * @implements \IteratorAggregate<array-key, mixed>
+ * Represents a base ORM (Object-Relational Mapping) model.
+ *
+ * This class provides an abstraction layer for interacting with a database table.
+ * It supports dynamic data manipulation, CRUD operations, relationships (hasOne, hasMany),
+ * change tracking (clean/dirty), query filtering, pagination, and sorting.
+ *
+ * @category   Omega
+ * @package    Database
+ * @subpackage Model
+ * @link       https://omegamvc.github.io
+ * @author     Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright  Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license    https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version    2.0.0
+ *
+ * @implements ArrayAccess<array-key, mixed>
+ * @implements IteratorAggregate<array-key, mixed>
  */
-class Model implements \ArrayAccess, \IteratorAggregate
+class Model implements ArrayAccess, IteratorAggregate
 {
+    /** @var Connection The PDO connection instance used to interact with the database. */
     protected Connection $pdo;
 
-    protected string $table_name;
+    /** @var string The name of the database table associated with this model. */
+    protected string $tableName;
 
-    protected string $primary_key = 'id';
+    /** @var string The primary key column name. Defaults to 'id'. */
+    protected string $primaryKey = 'id';
 
-    /** @var array<array<array-key, mixed>> */
-    protected $columns;
+    /** @var array<array<array-key, mixed>> The current dataset loaded into the model. */
+    protected array $columns;
 
-    /** @var string[] Hide from shoing column */
-    protected $stash = [];
+    /** @var string[] List of columns to be excluded when accessing or displaying the model data. */
+    protected array $stash = [];
 
-    /** @var string[] Set Column cant be modify */
-    protected $resistant = [];
+    /** @var string[] List of columns that cannot be modified. */
+    protected array $immutableColumn = [];
 
-    /** @var array<array<array-key, mixed>> Orginat data from database */
-    protected $fresh;
+    /** @var array<array<array-key, mixed>> Original data loaded from the database. */
+    protected array $fresh;
 
+    /** @var Where|null WHERE clause used to filter queries. Can be overwritten with identifier(). */
     protected ?Where $where = null;
 
-    /**
-     * Binder array(['key', 'val']).
-     *
-     * @var Bind[] Binder for PDO bind */
-    protected $binds = [];
+    /** @var Bind[] List of bound values used for PDO prepared statements. Each Bind contains the key and value */
+    protected array $binds = [];
 
-    // costume select -------------
+    /** @var int Starting point for query limit. */
+    protected int $limitStart = 0;
 
-    protected int $limit_start    = 0;
-    protected int $limit_end      = 0;
-    protected int $offset         = 0;
+    /** @var int Maximum number of records to return. A value of 0 means no limit. */
+    protected int $limitEnd = 0;
 
-    /** @var array<string, string> */
-    protected $sort_order  = [];
+    /** @var int Offset to apply in SELECT queries. */
+    protected int $offset = 0;
 
-    // magic ----------------------
+    /** @var array<string, string> Sort order in SELECT. The key is "table.column" and the value is "ASC" or "DESC". */
+    protected array $sortOrder = [];
 
     /**
-     * @param array<array-key, mixed> $column
+     * Model constructor.
      *
-     * @final
+     * Initializes the model with a PDO connection and an array of column data.
+     * Also sets the table name (defaulting to the class name in lowercase) and initializes the WHERE clause.
+     *
+     * @param Connection               $pdo    PDO connection instance.
+     * @param array<array-key, mixed> $column Initial dataset for the model.
+     * @return void
      */
-    public function __construct(
-        Connection $pdo,
-        array      $column,
-    ) {
+    public function __construct(Connection $pdo, array $column) {
         $this->pdo        = $pdo;
         $this->columns    = $this->fresh = $column;
         // auto table
-        $this->table_name ??= strtolower(__CLASS__);
-        $this->where = new Where($this->table_name);
+        $this->tableName ??= strtolower(__CLASS__);
+        $this->where = new Where($this->tableName);
     }
 
     /**
-     * Debug information, stash exclude from showing.
+     * Returns debug information for the model.
+     * Excludes any columns listed in the stash.
+     *
+     * @return array<array<array-key, mixed>> Filtered column data.
      */
     public function __debugInfo()
     {
@@ -80,47 +133,57 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * @param array<array<array-key, mixed>> $column
-     * @param string[]                       $stash
-     * @param string[]                       $resistant
+     * Manually sets up the model instance with table and configuration details.
      *
-     * @return static
+     * @param string                         $table           Table name.
+     * @param array<array<array-key, mixed>> $column          Model column data.
+     * @param Connection                     $pdo             PDO connection instance.
+     * @param Where                          $where           Custom WHERE clause.
+     * @param string                         $primaryKey      Primary key column name.
+     * @param string[]                       $stash           Columns to hide from output.
+     * @param string[]                       $immutableColumn Columns that cannot be modified.
+     * @return self Returns the configured model instance.
      */
     public function setUp(
         string     $table,
         array      $column,
         Connection $pdo,
         Where      $where,
-        string     $primary_key,
+        string     $primaryKey,
         array      $stash,
-        array      $resistant,
+        array      $immutableColumn,
     ): self {
-        $this->table_name  = $table;
-        $this->columns     = $this->fresh = $column;
-        $this->pdo         = $pdo;
-        $this->where       = $where;
-        $this->primary_key = $primary_key;
-        $this->stash       = $stash;
-        $this->resistant   = $resistant;
+        $this->tableName       = $table;
+        $this->columns         = $this->fresh = $column;
+        $this->pdo             = $pdo;
+        $this->where           = $where;
+        $this->primaryKey      = $primaryKey;
+        $this->stash           = $stash;
+        $this->immutableColumn = $immutableColumn;
 
         return $this;
     }
 
     /**
-     * Getter.
+     * Magic getter for model properties and dynamic relationships.
      *
+     * If a method with the given name exists, it will be called and interpreted
+     * as a relationship (hasOne/hasMany). Otherwise, it fetches the column value.
+     *
+     * @param string $name Property or method name.
      * @return mixed
+     * @throws Exception If property is not accessible or not found.
      */
     public function __get(string $name)
     {
         if (method_exists($this, $name)) {
-            $highorder = $this->{$name}();
-            if (is_a($highorder, Model::class)) {
-                return $highorder->first();
+            $highOrder = $this->{$name}();
+            if (is_a($highOrder, Model::class)) {
+                return $highOrder->first();
             }
 
-            if (is_a($highorder, ModelCollection::class)) {
-                return $highorder->toArrayArray();
+            if (is_a($highOrder, ModelCollection::class)) {
+                return $highOrder->toArrayArray();
             }
         }
 
@@ -128,17 +191,24 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Setter.
+     * Magic setter for assigning column values dynamically.
      *
-     * @param mixed $value
+     * @param string $name  Column name.
+     * @param mixed  $value Value to assign.
+     * @return void
+     * @throws Exception If assignment fails.
      */
-    public function __set(string $name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->setter($name, $value);
     }
 
     /**
-     * Check first column has key.
+     * Checks whether the given column exists in the first record.
+     *
+     * @param string $name Column name.
+     * @return bool
+     * @throws Exception If no data is present.
      */
     public function __isset(string $name): bool
     {
@@ -146,7 +216,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Check first column contains key.
+     * Checks if the specified column exists in the first data row.
+     *
+     * @param string $name Column name.
+     * @return bool
+     * @throws Exception If no data is present.
      */
     public function has(string $name): bool
     {
@@ -154,16 +228,19 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Setter.
+     * Sets a value on the first available column row.
      *
-     * @param mixed $value
+     * The column must exist and not be listed in the immutable columns.
      *
+     * @param string $key   Column name.
+     * @param mixed  $value Value to assign.
      * @return static
+     * @throws Exception If no data is present or the column is immutable.
      */
-    public function setter(string $key, $value): self
+    public function setter(string $key, mixed $value): self
     {
         $this->firstColumn($current);
-        if (key_exists($key, $this->columns[$current]) && !in_array($key, $this->resistant)) {
+        if (key_exists($key, $this->columns[$current]) && !in_array($key, $this->immutableColumn)) {
             $this->columns[$current][$key] = $value;
 
             return $this;
@@ -173,88 +250,91 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Getter.
+     * Retrieves the value of a column from the first data row.
      *
-     * @param mixed|null $default
+     * Returns the default value if the column is not set,
+     * or throws an exception if the column is in the stash.
      *
+     * @param string     $key     Column name.
+     * @param mixed|null $default Default value if not found.
      * @return mixed
+     * @throws Exception If the column is hidden in the stash.
      */
-    public function getter(string $key, $default = null)
+    public function getter(string $key, mixed $default = null): mixed
     {
         if (array_key_exists($key, $this->stash)) {
-            throw new \Exception("Cant read this column `{$key}`.");
+            throw new Exception(sprintf("Cant read this column %s ", $key));
         }
 
         return $this->first()[$key] ?? $default;
     }
 
-    // core -----------------------------
-
     /**
-     * Get value of primary key from first collumn/record.
+     * Retrieves the value of the primary key from the first row.
      *
      * @return mixed
-     *
-     * @throws \Exception No records founds
+     * @throws Exception If the primary key is not found in the row.
      */
-    public function getPrimaryKey()
+    public function getPrimaryKey(): mixed
     {
         $first = $this->first();
-        if (false === array_key_exists($this->primary_key, $first)) {
-            throw new \Exception('this ' . __CLASS__ . 'model doest contain correct record, plase check your query.');
+        if (false === array_key_exists($this->primaryKey, $first)) {
+            throw new Exception('this ' . __CLASS__ . 'model doest contain correct record, please check your query.');
         }
 
-        return $first[$this->primary_key];
+        return $first[$this->primaryKey];
     }
 
     /**
-     * Costume where condition (overwrite where).
+     * Resets the WHERE condition to a new instance.
+     *
+     * @return Where New Where clause instance.
      */
-    public function indentifer(): Where
+    public function identifier(): Where
     {
-        return $this->where = new Where($this->table_name);
+        return $this->where = new Where($this->tableName);
     }
 
     /**
-     * Get first collomn without stash.
+     * Returns the first column after filtering out hidden (stash) keys.
      *
-     * @param int|string|null $key ByRef key
-     *
-     * @return array<array-key, mixed>
+     * @param int|string|null $key Reference to the returned key index.
+     * @return array<array-key, mixed> The first available column.
+     * @throws Exception If no data is available.
      */
-    public function first(&$key = null): array
+    public function first(int|string &$key = null): array
     {
         $columns = $this->getColumns();
         if (null === ($key = array_key_first($columns))) {
-            throw new \Exception('Empty columns, try to assgin using read.');
+            throw new Exception('Empty columns, try to assign using read.');
         }
 
         return $columns[$key];
     }
 
     /**
-     * Fetch query return as model collection.
+     * Converts all current rows into a collection of model instances.
      *
-     * @return ModelCollection<array-key, static>
+     * @return ModelCollection<array-key, static> A collection of model objects.
      */
     public function get(): ModelCollection
     {
-        /** @var ModelCollection<array-key, static> */
+        /** @var ModelCollection<array-key, static> $collection */
         $collection = new ModelCollection([], $this);
         foreach ($this->columns as $column) {
-            $where = new Where($this->table_name);
-            if (array_key_exists($this->primary_key, $column)) {
-                $where->equal($this->primary_key, $column[$this->primary_key]);
+            $where = new Where($this->tableName);
+            if (array_key_exists($this->primaryKey, $column)) {
+                $where->equal($this->primaryKey, $column[$this->primaryKey]);
             }
 
             $collection->push((new static($this->pdo, []))->setUp(
-                $this->table_name,
+                $this->tableName,
                 [$column],
                 $this->pdo,
                 $where,
-                $this->primary_key,
+                $this->primaryKey,
                 $this->stash,
-                $this->resistant
+                $this->immutableColumn
             ));
         }
 
@@ -262,11 +342,13 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Insert all column to database.
+     * Inserts all records into the database.
+     *
+     * @return bool True if all inserts succeed, false otherwise.
      */
     public function insert(): bool
     {
-        $insert = Query::from($this->table_name, $this->pdo);
+        $insert = Query::from($this->tableName, $this->pdo);
         foreach ($this->columns as $column) {
             $success = $insert->insert()
                 ->values($column)
@@ -280,14 +362,16 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return true;
     }
 
-    /*
-     * Read record base where condition given.
+    /**
+     * Reads records from the database using the current WHERE condition.
+     *
+     * @return bool True if any rows are found, false otherwise.
      */
     public function read(): bool
     {
-        $query = new Select($this->table_name, ['*'], $this->pdo);
+        $query = new Select($this->tableName, ['*'], $this->pdo);
 
-        $query->sortOrderRef($this->limit_start, $this->limit_end, $this->offset, $this->sort_order);
+        $query->sortOrderRef($this->limitStart, $this->limitEnd, $this->offset, $this->sortOrder);
 
         $all = $this->fetch($query);
 
@@ -301,7 +385,10 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Update column from database.
+     * Updates the current record in the database.
+     *
+     * @return bool True if any rows were affected, false otherwise.
+     * @throws Exception If change detection fails.
      */
     public function update(): bool
     {
@@ -309,7 +396,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
             return false;
         }
 
-        $update = Query::from($this->table_name, $this->pdo)
+        $update = Query::from($this->tableName, $this->pdo)
             ->update()
             ->values(
                 $this->changes()
@@ -318,23 +405,27 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $this->changing($this->execute($update));
     }
 
-    /*
-     * Delete record base on where condition given.
+    /**
+     * Deletes records from the database using the current WHERE condition.
+     *
+     * @return bool True if deletion succeeds, false otherwise.
      */
     public function delete(): bool
     {
-        $delete = Query::from($this->table_name, $this->pdo)
+        $delete = Query::from($this->tableName, $this->pdo)
             ->delete();
 
         return $this->changing($this->execute($delete));
     }
 
     /**
-     * Check where condition has rocord or not.
+     * Checks if any record exists matching the current WHERE condition.
+     *
+     * @return bool True if record exists, false otherwise.
      */
     public function isExist(): bool
     {
-        $query = new Select($this->table_name, [$this->primary_key], $this->pdo);
+        $query = new Select($this->tableName, [$this->primaryKey], $this->pdo);
 
         $query->whereRef($this->where);
 
@@ -342,27 +433,28 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Get get model relation.
+     * Defines a one-to-one relationship with another model.
      *
-     * @param class-string|string $model
-     *
-     * @return Model
+     * @param string|class-string $model Related model class name or table name.
+     * @param string|null         $ref   Foreign key reference.
+     * @return Model Related model instance.
      */
-    public function hasOne($model, ?string $ref = null)
+    public function hasOne(string $model, ?string $ref = null): self
     {
+        /** @noinspection DuplicatedCode */
         if (class_exists($model)) {
-            /** @var object */
-            $model      = new $model($this->pdo, []);
-            $table_name = $model->table_name;
-            $join_ref   = $ref ?? $model->primary_key;
+            /** @var object $model */
+            $model     = new $model($this->pdo, []);
+            $tableName = $model->tableName;
+            $joinRef   = $ref ?? $model->primaryKey;
         } else {
-            $table_name = $model;
-            $join_ref   = $ref ?? $this->primary_key;
-            $model      = new static($this->pdo, []);
+            $tableName = $model;
+            $joinRef   = $ref ?? $this->primaryKey;
+            $model     = new static($this->pdo, []);
         }
-        $result   = Query::from($this->table_name, $this->pdo)
-            ->select([$table_name . '.*'])
-            ->join(InnerJoin::ref($table_name, $this->primary_key, $join_ref))
+        $result   = Query::from($this->tableName, $this->pdo)
+            ->select([$tableName . '.*'])
+            ->join(InnerJoin::ref($tableName, $this->primaryKey, $joinRef))
             ->whereRef($this->where)
             ->single();
         $model->columns = $model->fresh = [$result];
@@ -371,27 +463,28 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Get get model relation.
+     * Defines a one-to-many relationship with another model.
      *
-     * @param class-string|string $model
-     *
-     * @return ModelCollection<array-key, Model>
+     * @param string|class-string $model Related model class name or table name.
+     * @param string|null         $ref   Foreign key reference.
+     * @return ModelCollection<array-key, Model> Collection of related models.
      */
-    public function hasMany($model, ?string $ref = null)
+    public function hasMany(string $model, ?string $ref = null): ModelCollection
     {
+        /** @noinspection DuplicatedCode */
         if (class_exists($model)) {
-            /** @var object */
-            $model      = new $model($this->pdo, []);
-            $table_name = $model->table_name;
-            $join_ref   = $ref ?? $model->primary_key;
+            /** @var object $model */
+            $model     = new $model($this->pdo, []);
+            $tableName = $model->tableName;
+            $joinRef   = $ref ?? $model->primaryKey;
         } else {
-            $table_name = $model;
-            $join_ref   = $ref ?? $this->primary_key;
-            $model      = new static($this->pdo, []);
+            $tableName = $model;
+            $joinRef   = $ref ?? $this->primaryKey;
+            $model     = new static($this->pdo, []);
         }
-        $result = Query::from($this->table_name, $this->pdo)
-             ->select([$table_name . '.*'])
-             ->join(InnerJoin::ref($table_name, $this->primary_key, $join_ref))
+        $result = Query::from($this->tableName, $this->pdo)
+             ->select([$tableName . '.*'])
+             ->join(InnerJoin::ref($tableName, $this->primaryKey, $joinRef))
              ->whereRef($this->where)
              ->get();
         $model->columns = $model->fresh = $result->toArray();
@@ -400,7 +493,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Check current column has modify or not.
+     * Checks if the current column or entire record is unchanged.
+     *
+     * @param string|null $column Optional column name to check.
+     * @return bool True if clean, false if modified.
+     * @throws Exception If the column is not found.
      */
     public function isClean(?string $column = null): bool
     {
@@ -417,7 +514,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
                 !array_key_exists($column, $this->columns[$key])
                 || !array_key_exists($column, $this->fresh[$key])
             ) {
-                throw new \Exception("Column {$column} is not in table `{$this->table_name}`.");
+                throw new Exception(sprintf(
+                    'Column %s is not in table `%s`.',
+                    $column,
+                    $this->tableName
+                ));
             }
 
             if (false === ($this->columns[$key][$column] === $this->fresh[$key][$column])) {
@@ -429,7 +530,11 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Check current coulmn has modify or not.
+     * Checks if the current column or entire record has been modified.
+     *
+     * @param string|null $column Optional column name to check.
+     * @return bool True if modified, false otherwise.
+     * @throws Exception If the column is not found.
      */
     public function isDirty(?string $column = null): bool
     {
@@ -437,9 +542,10 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Get change (diff) between fresh and current column.
+     * Returns the difference between current and original (fresh) data.
      *
-     * @return array<array-key, mixed>
+     * @return array<array-key, mixed> Modified key-value pairs.
+     * @throws Exception If column lookup fails.
      */
     public function changes(): array
     {
@@ -463,82 +569,78 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Convert model column to array.
+     * Converts the model to an array of rows.
      *
-     * @return array<array<array-key, mixed>>
+     * @return array<array<array-key, mixed>> Array of column data.
      */
     public function toArray(): array
     {
         return $this->getColumns();
     }
 
-    // costume select ------------
-
     /**
-     * Set data start for feact all data.
+     * Sets both the starting and ending limits for result pagination.
      *
-     * @param int $limit_start limit start
-     * @param int $limit_end   limit end
-     *
-     * @return static
+     * @param int $limitStart Start index.
+     * @param int $limitEnd   End index.
+     * @return self
      */
-    public function limit(int $limit_start, int $limit_end)
+    public function limit(int $limitStart, int $limitEnd): self
     {
-        $this->limitStart($limit_start);
-        $this->limitEnd($limit_end);
+        $this->limitStart($limitStart);
+        $this->limitEnd($limitEnd);
 
         return $this;
     }
 
     /**
-     * Set data start for feact all data.
+     * Sets the starting index for result pagination.
      *
-     * @param int $value limit start default is 0
-     *
+     * @param int $value Starting limit (defaults to 0).
      * @return static
      */
-    public function limitStart(int $value)
+    public function limitStart(int $value): self
     {
-        $this->limit_start = $value < 0 ? 0 : $value;
+        $this->limitStart = max($value, 0);
 
         return $this;
     }
 
     /**
-     * Set data end for feact all data
-     * zero value meaning no data show.
+     * Sets the ending index for result pagination.
+     * A value of 0 means no results are shown.
      *
-     * @param int $value limit start default
-     *
+     * @param int $value Ending limit (defaults to 0).
      * @return static
      */
-    public function limitEnd(int $value)
+    public function limitEnd(int $value): self
     {
-        $this->limit_end = $value < 0 ? 0 : $value;
+        $this->limitEnd = max($value, 0);
 
         return $this;
     }
 
     /**
-     * Set offest.
+     * Sets the offset for paginated results.
      *
-     * @param int $value offet
-     *
+     * @param int $value Offset value.
      * @return static
      */
-    public function offset(int $value)
+    public function offset(int $value): self
     {
-        $this->offset = $value < 0 ? 0 : $value;
+        $this->offset = max($value, 0);
 
         return $this;
     }
 
     /**
-     * Set limit using limit and offset.
+     * Applies limit and offset together for paginated results.
      *
+     * @param int $limit  Maximum number of rows.
+     * @param int $offset Number of rows to skip.
      * @return static
      */
-    public function limitOffset(int $limit, int $offset)
+    public function limitOffset(int $limit, int $offset): self
     {
         return $this
             ->limitStart($limit)
@@ -547,70 +649,97 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Set sort column and order
-     * column name must register.
+     * Sets sorting for a given column.
+     * Column name must exist in the table schema.
+     *
+     * @param string      $columnName Column to sort.
+     * @param int         $orderUsing Sort order (Query::ORDER_ASC or Query::ORDER_DESC).
+     * @param string|null $belongTo   Table alias or name (defaults to model's table).
+     * @return $this
      */
-    public function order(string $column_name, int $order_using = Query::ORDER_ASC, ?string $belong_to = null): self
+    public function order(string $columnName, int $orderUsing = Query::ORDER_ASC, ?string $belongTo = null): self
     {
-        $order = 0 === $order_using ? 'ASC' : 'DESC';
-        $belong_to ??= $this->table_name;
-        $res = "{$belong_to}.{$column_name}";
+        $order = 0 === $orderUsing ? 'ASC' : 'DESC';
+        $belongTo ??= $this->tableName;
+        /** @noinspection PhpUnnecessaryCurlyVarSyntaxInspection */
+        $res = "{$belongTo}.{$columnName}";
 
-        $this->sort_order[$res] = $order;
+        $this->sortOrder[$res] = $order;
 
         return $this;
     }
 
-    // array access --------------
-
     /**
+     * Checks if the given offset exists.
+     *
      * @param array-key $offset
+     * @return bool
+     * @throws Exception If the column is not accessible.
      */
-    public function offsetExists($offset): bool
+    public function offsetExists(mixed $offset): bool
     {
         return $this->has($offset);
     }
 
     /**
-     * @param array-key $offset
+     * Retrieves a value at the given offset.
      *
-     * @return mixed|null
+     * @param array-key $offset
+     * @return mixed|null Value at the given offset, or null if not found.
+     * @throws Exception If the column is inaccessible or stashed.
      */
-    #[\ReturnTypeWillChange]
-    public function offsetGet($offset): mixed
+    #[ReturnTypeWillChange]
+    public function offsetGet(mixed $offset): mixed
     {
-        return $this->getter($offset, null);
+        return $this->getter($offset);
     }
 
-    public function offsetSet($offset, $value): void
+    /**
+     * Sets a value at the given offset.
+     *
+     * @param mixed $offset Offset key.
+     * @param mixed $value  Value to set.
+     * @return void
+     * @throws Exception If setting is not allowed or the column is immutable.
+     */
+    public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->setter($offset, $value);
     }
 
-    public function offsetUnset($offset): void
-    {
-    }
-
     /**
-     * @return \Traversable<array-key, mixed>
-     */
-    public function getIterator(): \Traversable
-    {
-        return new \ArrayIterator($this->first());
-    }
-
-    // static ---------------------
-
-    /**
-     * Find model using defined primary key.
+     * Unsets the value at the given offset.
      *
-     * @param int|string $id
+     * @param mixed $offset Offset key.
+     * @return void
      */
-    public static function find($id, Connection $pdo): static
+    public function offsetUnset(mixed $offset): void
+    {
+    }
+
+    /**
+     * Returns an iterator for the current record.
+     *
+     * @return Traversable<array-key, mixed>
+     * @throws Exception If no data is available.
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->first());
+    }
+
+    /**
+     * Finds a model by primary key.
+     *
+     * @param int|string $id  Primary key value.
+     * @param Connection $pdo Database connection.
+     * @return static
+     */
+    public static function find(int|string $id, Connection $pdo): static
     {
         $model          = new static($pdo, []);
-        $model->where   = (new Where($model->table_name))
-            ->equal($model->primary_key, $id);
+        $model->where   = (new Where($model->tableName))
+            ->equal($model->primaryKey, $id);
 
         $model->read();
 
@@ -618,18 +747,19 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Find model using defined primary key.
+     * Finds a model by primary key or creates it with the provided data.
      *
-     * @param mixed                   $id
-     * @param array<array-key, mixed> $column
-     *
-     * @throws \Exception cant inset data
+     * @param mixed                   $id     Primary key value.
+     * @param array<array-key, mixed> $column Data to insert if not found.
+     * @param Connection              $pdo    Database connection.
+     * @return static
+     * @throws Exception If insert fails.
      */
-    public static function findOrCreate($id, array $column, Connection $pdo): static
+    public static function findOrCreate(mixed $id, array $column, Connection $pdo): static
     {
         $model          = new static($pdo, [$column]);
-        $model->where   = (new Where($model->table_name))
-            ->equal($model->primary_key, $id);
+        $model->where   = (new Where($model->tableName))
+            ->equal($model->primaryKey, $id);
 
         if ($model->isExist()) {
             $model->read();
@@ -641,15 +771,18 @@ class Model implements \ArrayAccess, \IteratorAggregate
             return $model;
         }
 
-        throw new \Exception('Cant inset data.');
+        throw new Exception('Cant inset data.');
     }
 
     /**
-     * Find model using costume where.
+     * Finds a model using a custom where clause.
      *
-     * @param array<string|int> $binder
+     * @param string            $whereCondition SQL where condition.
+     * @param array<string|int> $binder         Bind values for the condition.
+     * @param Connection        $pdo            Database connection.
+     * @return static
      */
-    public static function where(string $where_condition, array $binder, Connection $pdo): static
+    public static function where(string $whereCondition, array $binder, Connection $pdo): static
     {
         $model = new static($pdo, []);
         $map   = [];
@@ -657,32 +790,35 @@ class Model implements \ArrayAccess, \IteratorAggregate
             $map[] = [$bind, $value];
         }
 
-        $model->where = (new Where($model->table_name))
-            ->where($where_condition, $map);
+        $model->where = (new Where($model->tableName))
+            ->where($whereCondition, $map);
         $model->read();
 
         return $model;
     }
 
     /**
-     * Find model using costume equal.
+     * Finds a model using an equality condition.
      *
-     * @param array-key $column_name
-     * @param mixed     $value
+     * @param array-key  $columnName Column name.
+     * @param mixed      $value      Value to match.
+     * @param Connection $pdo        Database connection.
+     * @return static
      */
-    public static function equal($column_name, $value, Connection $pdo): static
+    public static function equal(int|string $columnName, mixed $value, Connection $pdo): static
     {
         $model = new static($pdo, []);
 
-        $model->indentifer()->equal($column_name, $value);
+        $model->identifier()->equal($columnName, $value);
         $model->read();
 
         return $model;
     }
 
     /**
-     * Fetch all records.
+     * Retrieves all rows for the model.
      *
+     * @param Connection $pdo Database connection.
      * @return ModelCollection<array-key, static>
      */
     public static function all(Connection $pdo): ModelCollection
@@ -693,16 +829,15 @@ class Model implements \ArrayAccess, \IteratorAggregate
         return $model->get();
     }
 
-    // protected ------------------
-
     /**
-     * Get current column without stash.
+     * Retrieves all columns excluding stashed fields.
      *
-     * @return array<array<array-key, mixed>>
+     * @return array<array<array-key, mixed>> Filtered columns.
      */
     protected function getColumns(): array
     {
         $columns = [];
+        /** @noinspection PhpLoopCanBeConvertedToArrayMapInspection */
         foreach ($this->columns as $key => $column) {
             $columns[$key] = array_filter($column, fn ($k) => false === in_array($k, $this->stash), ARRAY_FILTER_USE_KEY);
         }
@@ -711,25 +846,26 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Get first collumn.
+     * Retrieves the first column and optionally its key.
      *
-     * @param int|string|null $key ByRef key
-     *
-     * @return array<array-key, mixed>
+     * @param int|string|null $key Reference variable to receive the key.
+     * @return array<array-key, mixed> The first column's data.
+     * @throws Exception If there are no columns.
      */
-    protected function firstColumn(&$key = null): array
+    protected function firstColumn(int|string &$key = null): array
     {
         if (null === ($key = array_key_first($this->columns))) {
-            throw new \Exception('Empty columns, try to assgin using read.');
+            throw new Exception('Empty columns, try to assign using read.');
         }
 
         return $this->columns[$key];
     }
 
-    // private --------------------
-
     /**
-     * Reverse fresh column with current column.
+     * Synchronizes current state as fresh if a change occurred.
+     *
+     * @param bool $change Whether the operation resulted in a change.
+     * @return bool The same value as input.
      */
     private function changing(bool $change): bool
     {
@@ -741,9 +877,10 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Get binder.
+     * Builds the SQL query and its bound parameters.
      *
-     * @return array<Bind[]|string>
+     * @param AbstractQuery $query The query to compile.
+     * @return array{0: Bind[], 1: string} Query and its bindings.
      */
     private function builder(AbstractQuery $query): array
     {
@@ -754,16 +891,17 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Fetch pdo query result.
+     * Executes a SELECT query and returns the result set.
      *
-     * @return mixed[]|false
+     * @param AbstractQuery $baseQuery Query instance to execute.
+     * @return array<array-key, mixed>|false The result set, or false on failure.
      */
-    private function fetch(AbstractQuery $base_query)
+    private function fetch(AbstractQuery $baseQuery): array|false
     {
         // costume where
-        $base_query->whereRef($this->where);
+        $baseQuery->whereRef($this->where);
 
-        [$query, $binds] = $this->builder($base_query);
+        [$query, $binds] = $this->builder($baseQuery);
 
         $this->pdo->query($query);
         foreach ($binds as $bind) {
@@ -776,13 +914,16 @@ class Model implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Execute query with where condition given.
+     * Executes a non-SELECT query (INSERT/UPDATE/DELETE).
+     *
+     * @param AbstractQuery $baseQuery Query instance to execute.
+     * @return bool True if at least one row was affected.
      */
-    private function execute(AbstractQuery $base_query): bool
+    private function execute(AbstractQuery $baseQuery): bool
     {
-        $base_query->whereRef($this->where);
+        $baseQuery->whereRef($this->where);
 
-        [$query, $binds] = $this->builder($base_query);
+        [$query, $binds] = $this->builder($baseQuery);
 
         if ($query != null) {
             $this->pdo->query($query);
@@ -794,7 +935,7 @@ class Model implements \ArrayAccess, \IteratorAggregate
 
             $this->pdo->execute();
 
-            return $this->pdo->rowCount() > 0 ? true : false;
+            return $this->pdo->rowCount() > 0;
         }
 
         return false;

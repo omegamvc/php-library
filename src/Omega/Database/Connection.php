@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * Part of Omega - Database Package
+ * php version 8.3
+ *
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
+
 declare(strict_types=1);
 
 namespace Omega\Database;
@@ -16,37 +27,44 @@ use function is_null;
 use function microtime;
 use function round;
 
+/**
+ * Class Connection
+ *
+ * Manages a PDO-based database connection and provides a simplified interface
+ * for preparing, binding, executing, and retrieving query results.
+ * Includes transaction handling and lightweight query logging with timing.
+ *
+ * @category  Omega
+ * @package   Database
+ * @link      https://omegamvc.github.io
+ * @author    Adriano Giovannini <agisoftt@gmail.com>
+ * @copyright Copyright (c) 2024 - 2025 Adriano Giovannini (https://omegamvc.github.io)
+ * @license   https://www.gnu.org/licenses/gpl-3.0-standalone.html     GPL V3.0+
+ * @version   2.0.0
+ */
 class Connection
 {
-    /** @var PDO PDO */
+    /** @var PDO The PDO instance for database operations. */
     private PDO $pdo;
 
-    /** @var PDOStatement */
+    /** @var PDOStatement The current prepared statement. */
     private PDOStatement $statement;
 
-    /**
-     * Connection configuration.
-     *
-     * @var array<string, string>
-     */
+    /** @var array<string, string> Connection configuration such as host, dbname, user, and password. */
     protected array $config;
 
-    /**
-     * Query prepare statement;.
-     */
+    /** @var string The last SQL query string prepared. */
     protected string $query;
 
-    /**
-     * Log query when execute and fetching.
-     * - query.
-     *
-     * @var array<int, array<string, mixed>>
-     */
+    /** @var array<int, array<string, mixed>> Query logs containing SQL and execution time in milliseconds. */
     protected array $logs = [];
 
     /**
-     * @param array<string, string> $config
-     * @throws Exception
+     * Creates a new database connection using the provided configuration array.
+     *
+     * @param array<string, string> $config Database connection parameters.
+     * @return void
+     * @throws Exception If the PDO connection fails.
      */
     public function __construct(array $config)
     {
@@ -61,9 +79,9 @@ class Connection
     }
 
     /**
-     * Singleton pattern implement for Database connation.
+     * Returns the current instance (singleton pattern-like behavior).
      *
-     * @return self
+     * @return static
      */
     public function getInstance(): static
     {
@@ -71,11 +89,13 @@ class Connection
     }
 
     /**
-     * @param string $dsn
-     * @param string $user
-     * @param string $pass
+     * Establishes the actual PDO connection using DSN and credentials.
+     *
+     * @param string $dsn  The DSN string.
+     * @param string $user Database username.
+     * @param string $pass Database password.
      * @return $this
-     * @throws Exception
+     * @throws Exception If PDO fails to connect.
      */
     protected function useDsn(string $dsn, string $user, string $pass): self
     {
@@ -94,11 +114,11 @@ class Connection
     }
 
     /**
-     * Create connection using static.
+     * Static factory to create a new connection.
      *
-     * @param array<string, string> $config
+     * @param array<string, string> $config Connection parameters.
      * @return Connection
-     * @throws Exception
+     * @throws Exception If connection fails.
      */
     public static function conn(array $config): Connection
     {
@@ -106,7 +126,7 @@ class Connection
     }
 
     /**
-     * Get connection configuration.
+     * Returns the database configuration used for the connection.
      *
      * @return array<string, string>
      */
@@ -116,7 +136,9 @@ class Connection
     }
 
     /**
-     * @param string $query
+     * Prepares a SQL query for execution.
+     *
+     * @param string $query The raw SQL query.
      * @return $this
      */
     public function query(string $query): self
@@ -127,9 +149,11 @@ class Connection
     }
 
     /**
-     * @param bool|int|string|null $param
-     * @param mixed                $value
-     * @param bool|int|string|null $type
+     * Binds a parameter to the prepared statement.
+     *
+     * @param bool|int|string|null $param The parameter placeholder or index.
+     * @param mixed $value The value to bind.
+     * @param bool|int|string|null $type (optional) The PDO parameter type.
      * @return $this
      */
     public function bind(bool|int|string|null $param, mixed $value, bool|int|string $type = null): self
@@ -148,7 +172,9 @@ class Connection
     }
 
     /**
-     * @return bool True if success
+     * Executes the prepared statement and logs the query duration.
+     *
+     * @return bool True if the execution was successful.
      * @throws PDOException
      */
     public function execute(): bool
@@ -163,7 +189,9 @@ class Connection
     }
 
     /**
-     * @return array|false
+     * Executes the prepared statement and returns all results as associative arrays.
+     *
+     * @return array|false The result set or false on failure.
      */
     public function resultSet(): array|false
     {
@@ -173,7 +201,9 @@ class Connection
     }
 
     /**
-     * @return mixed
+     * Executes the prepared statement and returns a single result row.
+     *
+     * @return mixed The fetched row as an associative array.
      */
     public function single(): mixed
     {
@@ -183,7 +213,9 @@ class Connection
     }
 
     /**
-     * @return int the number of rows
+     * Returns the number of rows affected by the last operation.
+     *
+     * @return int
      */
     public function rowCount(): int
     {
@@ -191,7 +223,9 @@ class Connection
     }
 
     /**
-     * @return string|false last id
+     * Returns the last inserted auto-increment ID from the connection.
+     *
+     * @return string|false
      */
     public function lastInsertId(): false|string
     {
@@ -199,7 +233,10 @@ class Connection
     }
 
     /**
-     * @return bool Transaction status
+     * Wraps a callable within a transaction. Rolls back on failure.
+     *
+     * @param callable $callable The function to run within the transaction.
+     * @return bool True if committed, false if rolled back.
      */
     public function transaction(callable $callable): bool
     {
@@ -216,9 +253,9 @@ class Connection
     }
 
     /**
-     * Initiates a transaction.
+     * Begins a transaction.
      *
-     * @return bool True if success
+     * @return bool
      * @throws PDOException
      */
     public function beginTransaction(): bool
@@ -227,9 +264,9 @@ class Connection
     }
 
     /**
-     * Commits a transaction.
+     * Commits the current transaction.
      *
-     * @return bool True if success
+     * @return bool
      * @throws PDOException
      */
     public function endTransaction(): bool
@@ -238,9 +275,9 @@ class Connection
     }
 
     /**
-     * Rolls back a transaction.
+     * Rolls back the current transaction.
      *
-     * @return bool True if success
+     * @return bool
      * @throws PDOException
      */
     public function cancelTransaction(): bool
@@ -249,9 +286,10 @@ class Connection
     }
 
     /**
-     * @param string $query
-     * @param float $elapsed_time
-     * @return void
+     * Adds a log entry for a query and its execution time in milliseconds.
+     *
+     * @param string $query The SQL query string.
+     * @param float  $elapsed_time Execution time in milliseconds.
      */
     protected function addLog(string $query, float $elapsed_time): void
     {
@@ -262,7 +300,9 @@ class Connection
     }
 
     /**
-     * Flush logs query.
+     * Clears the query log.
+     *
+     * @return void
      */
     public function flushLogs(): void
     {
@@ -270,7 +310,7 @@ class Connection
     }
 
     /**
-     * Get logs query.
+     * Returns the internal query log with timing data.
      *
      * @return array<int, array<string, mixed>>
      */

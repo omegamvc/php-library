@@ -35,10 +35,10 @@ use Omega\Database\Model\Model;
 class Profile extends Model
 {
     /** @var string The name of the table associated with the model. */
-    protected string $table_name = 'profiles';
+    protected string $tableName = 'profiles';
 
     /** @var string The name of the primary key column. */
-    protected string $primary_key = 'user';
+    protected string $primaryKey = 'user';
 
     /**
      * Filter profiles by gender.

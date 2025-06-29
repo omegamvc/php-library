@@ -37,13 +37,13 @@ use Omega\Database\Model\ModelCollection;
 class User extends Model
 {
     /** @var string The name of the table associated with the model. */
-    protected string $table_name  = 'users';
+    protected string $tableName  = 'users';
 
     /** @var string The name of the primary key column. */
-    protected string $primary_key = 'user';
+    protected string $primaryKey = 'user';
 
     /** @var string[] Hide from showing column */
-    protected $stash = ['password'];
+    protected array $stash = ['password'];
 
     /**
      * Get the user's profile (has-one relationship).
