@@ -138,11 +138,13 @@ final class Str
      *
      * @return string|false
      */
-    public static function slice(string $text, int $start, ?int $length)
+    public static function slice(string $text, int $start, ?int $length = null)
     {
-        $text_length = $length ?? self::length($text);
+        if ($start >= self::length($text)) {
+            return false;
+        }
 
-        return mb_substr($text, $start, $text_length);
+        return mb_substr($text, $start, $length);
     }
 
     /**

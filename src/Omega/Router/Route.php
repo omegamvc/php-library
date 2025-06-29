@@ -21,7 +21,8 @@ class Route implements \ArrayAccess
     public function __construct(array $route)
     {
         $this->prefix_name = Router::$group['as'] ?? '';
-        $route['name']     = $this->prefix_name;
+        $route['name'] ??= $this->prefix_name;
+        //$route['name']     = $this->prefix_name;
         $this->route       = $route;
     }
 
