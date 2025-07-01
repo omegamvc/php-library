@@ -1,0 +1,7 @@
+parameters:
+	level: 10
+	paths:
+		- app
+		- routes
+		- tests
+	tmpDir: cache/phpstan

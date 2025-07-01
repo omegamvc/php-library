@@ -24,9 +24,9 @@ use Omega\Application\Application;
 use Omega\Config\ConfigRepository;
 use Omega\Exceptions\ApplicationNotAvailableException;
 use Omega\Http\Exceptions\HttpException;
-
 use Tests\Support\Bootstrap\TestBootstrapProvider;
 use Tests\Support\Bootstrap\TestServiceProvider;
+
 use function dirname;
 
 use const DIRECTORY_SEPARATOR;
