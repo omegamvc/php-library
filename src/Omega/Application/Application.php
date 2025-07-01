@@ -24,7 +24,6 @@ use Omega\Http\Exceptions\HttpException;
 use Omega\Http\Request;
 use Omega\Support\PackageManifest;
 use Omega\Support\RequestMacroServiceProvider;
-use Omega\Support\Singleton\SingletonTrait;
 use Omega\Support\Vite;
 use Omega\View\Templator;
 
@@ -56,7 +55,6 @@ use const DIRECTORY_SEPARATOR;
  */
 class Application extends Container implements ApplicationInterface
 {
-    use SingletonTrait;
 
     /** @var Application|null The singleton application instance. */
     private static ?Application $app = null;
