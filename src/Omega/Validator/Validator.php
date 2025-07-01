@@ -14,6 +14,10 @@ use Omega\Validator\Rule\ValidPool;
 /**
  * @property Collection $errors
  * @property Collection $filters
+ * @property mixed|Collection|Valid $id
+ * @property mixed|Collection|Valid $test
+ * @property mixed|Collection|Valid $test1
+ * @property mixed|Collection|Valid $test2
  */
 class Validator
 {
@@ -267,7 +271,7 @@ class Validator
             return true;
         }
 
-        throw $exception ?? new \Exception('vaildate if fallen', 1);
+        throw $exception ?? new \Exception('validate if fallen', 1);
     }
 
     /**

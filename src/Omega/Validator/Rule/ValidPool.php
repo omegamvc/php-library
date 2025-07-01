@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Omega\Validator\Rule;
 
+/**
+ * @property Valid $test
+ * @property \Omega\Validator\Rule\Valid $test3
+ */
 class ValidPool
 {
     /** @var array<int, array<string, string|Valid>> */

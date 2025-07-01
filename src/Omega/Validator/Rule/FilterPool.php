@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Omega\Validator\Rule;
 
+/**
+ * @property Filter $test
+ * @property \Omega\Validator\Rule\Filter $test2
+ */
 class FilterPool
 {
     /** @var array<int, array<string, string|Filter>> */

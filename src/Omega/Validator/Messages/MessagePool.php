@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Omega\Validator\Messages;
 
+/**
+ * @property Message $test
+ */
 final class MessagePool
 {
     /** @var Message[] */

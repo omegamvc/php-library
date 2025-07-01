@@ -9,6 +9,10 @@ use Omega\Validator\Contract\CollectionInterface;
 /**
  * Simple collection helper.
  *
+ * @property mixed $key
+ * @property null $item
+ * @property null $test
+ * @property null $test2
  * @template TKey of array-key
  * @template TValue
  *
