@@ -88,7 +88,7 @@ class HeaderCollectionTest extends TestCase
             'public',
             'no-transform',
             'proxy-revalidate',
-            's-maxage'=> '2592000',
+            's-maxage' => '2592000',
         ], $header->getDirective('Cache-Control'));
     }
 
@@ -121,14 +121,14 @@ class HeaderCollectionTest extends TestCase
         $header = new HeaderCollection([
             'Cache-Control' => 'max-age=31536000, public, no-transform',
         ]);
-        $header->addDirective('Cache-Control', ['proxy-revalidate', 's-maxage'=>'2592000']);
+        $header->addDirective('Cache-Control', ['proxy-revalidate', 's-maxage' => '2592000']);
 
         $this->assertEquals([
             'max-age' => '31536000',
             'public',
             'no-transform',
             'proxy-revalidate',
-            's-maxage'=> '2592000',
+            's-maxage' => '2592000',
         ], $header->getDirective('Cache-Control'));
     }
 

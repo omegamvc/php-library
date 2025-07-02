@@ -18,8 +18,8 @@ namespace Omega\Console\Output;
 use InvalidArgumentException;
 use Omega\Console\Exceptions\InvalidOutputStreamException;
 use Omega\Console\Exceptions\OutputWriteException;
-
 use TypeError;
+
 use function fwrite;
 use function get_resource_type;
 use function is_resource;

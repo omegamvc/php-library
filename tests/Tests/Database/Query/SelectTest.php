@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantOptionalArgumentInspection */
+<?php
+
+/** @noinspection PhpRedundantOptionalArgumentInspection */
 
 /**
  * Part of Omega - Tests\Database Package
@@ -347,7 +349,8 @@ class SelectTest extends AbstractDatabaseQuery
         $select = Query::from(
             new InnerQuery(
                 (new Select('base_2', ['id'], $this->pdo))
-                    ->in('test', ['success']), 'user'
+                    ->in('test', ['success']),
+                'user'
             ),
             $this->pdo
         )

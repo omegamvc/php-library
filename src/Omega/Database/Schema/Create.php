@@ -74,4 +74,3 @@ class Create
         return new Table\Create($databaseName, $tableName, $this->pdo);
     }
 }
-

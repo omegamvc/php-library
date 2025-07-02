@@ -55,7 +55,6 @@ use const DIRECTORY_SEPARATOR;
  */
 class Application extends Container implements ApplicationInterface
 {
-
     /** @var Application|null The singleton application instance. */
     private static ?Application $app = null;
 
@@ -144,7 +143,8 @@ class Application extends Container implements ApplicationInterface
         $this->set(
             PackageManifest::class,
             fn () => new PackageManifest(
-                $this->basePath, $this->getApplicationCachePath()
+                $this->basePath,
+                $this->getApplicationCachePath()
             )
         );
     }
@@ -185,7 +185,7 @@ class Application extends Container implements ApplicationInterface
                 'view.instance' => [Templator::class],
                 'vite.gets'     => [Vite::class],
                 'config'        => [ConfigRepository::class],
-            ] as $abstract  => $aliases
+            ] as $abstract => $aliases
         ) {
             foreach ($aliases as $alias) {
                 $this->alias($abstract, $alias);
@@ -259,6 +259,7 @@ class Application extends Container implements ApplicationInterface
             'BCRYPT_ROUNDS'         => 12,
             'CACHE_STORE'           => 'file',
 
+            'TEST_PATH'             => 'Generato da application',
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
             'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
@@ -533,8 +534,9 @@ class Application extends Container implements ApplicationInterface
     public function getApplicationCachePath(): string
     {
         return rtrim(
-            $this->getBasePath(), DIRECTORY_SEPARATOR
-            ) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+            $this->getBasePath(),
+            DIRECTORY_SEPARATOR
+        ) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
     }
 
     /**

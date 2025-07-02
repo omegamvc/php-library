@@ -119,7 +119,7 @@ class ExceptionHandlerTest extends TestCase
             fn () => $this->handler
         );
 
-        $this->kernel = new class($this->app) extends HttpKernel {
+        $this->kernel = new class ($this->app) extends HttpKernel {
             /**
              * Dispatches the given request.
              *
@@ -146,7 +146,7 @@ class ExceptionHandlerTest extends TestCase
             }
         };
 
-        $this->handler = new class($this->app) extends ExceptionHandler {
+        $this->handler = new class ($this->app) extends ExceptionHandler {
             /**
              * Renders the given exception into an HTTP response.
              *
@@ -296,7 +296,7 @@ class ExceptionHandlerTest extends TestCase
         // Line assertion using reflection on the dispatcher method (anonymous class)
         $reflectedKernel = new ReflectionClass($this->kernel);
         $dispatcher      = $reflectedKernel->getMethod('dispatcher');
-        $expectedLine    = $dispatcher->getStartLine() +2; // the line with "throw"
+        $expectedLine    = $dispatcher->getStartLine() + 2; // the line with "throw"
 
         $this->assertEquals($expectedLine, $content['messages']['line']);
         $this->assertEquals(429, $response->getStatusCode());

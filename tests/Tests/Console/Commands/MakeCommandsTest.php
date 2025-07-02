@@ -16,8 +16,8 @@ declare(strict_types=1);
 namespace Tests\Console\Commands;
 
 use Omega\Console\Commands\MakeCommand;
-
 use PHPUnit\Framework\Attributes\CoversClass;
+
 use function array_map;
 use function dirname;
 use function file_exists;
@@ -89,7 +89,7 @@ class MakeCommandsTest extends CommandTestHelper
         }
 
         if (file_exists($view = dirname(__DIR__, 2) . '/fixtures/console/welcome.template.php')) {
-           unlink($view);
+            unlink($view);
         }
 
         if (file_exists($service = dirname(__DIR__, 2) . '/fixtures/console/ApplicationService.php')) {

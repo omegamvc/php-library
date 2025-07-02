@@ -58,7 +58,7 @@ class MaintenanceCommandsTest extends CommandTestHelper
      */
     protected function tearDown(): void
     {
-       if (file_exists($down = storage_path() . 'app' . DIRECTORY_SEPARATOR . 'down')) {
+        if (file_exists($down = storage_path() . 'app' . DIRECTORY_SEPARATOR . 'down')) {
             unlink($down);
         }
 

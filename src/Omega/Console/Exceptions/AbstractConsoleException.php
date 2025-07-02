@@ -34,11 +34,10 @@ use Throwable;
 abstract class AbstractConsoleException extends RuntimeException
 {
     public function __construct(
-        ?string    $message = null,
-        int        $code = 0,
+        ?string $message = null,
+        int $code = 0,
         ?Throwable $previous = null
-    )
-    {
+    ) {
         parent::__construct($message ?? 'An unknown console error occurred.', $code, $previous);
     }
 }

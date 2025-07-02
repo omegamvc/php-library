@@ -38,7 +38,6 @@ use Tests\Database\AbstractDatabase;
 #[CoversClass(Drop::class)]
 class DropTest extends AbstractDatabase
 {
-
     /**
      * Set up the test environment before each test.
      *

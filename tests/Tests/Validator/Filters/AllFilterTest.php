@@ -17,7 +17,6 @@ class AllFilterTest extends TestCase
      * @return void
      */
     public function testItCanRenderAllFilterStringUsingChainMethod(): void
-
     {
         $rule = new Filter();
 

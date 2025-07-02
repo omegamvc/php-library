@@ -110,4 +110,3 @@ class IbanTest extends TestCase
         $this->assertTrue($val->isValid());
     }
 }
-

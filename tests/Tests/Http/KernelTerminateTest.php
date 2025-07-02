@@ -71,7 +71,7 @@ class KernelTerminateTest extends TestCase
             fn () => new $this->kernel($this->app)
         );
 
-        $this->kernel = new class($this->app) extends HttpKernel {
+        $this->kernel = new class ($this->app) extends HttpKernel {
             /**
              * Handle the incoming request and return a simple response.
              *

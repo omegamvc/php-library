@@ -32,11 +32,10 @@ use Throwable;
 class OutputWriteException extends AbstractConsoleException
 {
     public function __construct(
-        ?string    $message = null,
-        int        $code = 0,
+        ?string $message = null,
+        int $code = 0,
         ?Throwable $previous = null
-    )
-    {
+    ) {
         parent::__construct($message ?? 'Failed to write to output stream.', $code, $previous);
     }
 }

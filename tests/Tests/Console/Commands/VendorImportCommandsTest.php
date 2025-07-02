@@ -95,10 +95,12 @@ class VendorImportCommandsTest extends TestCase
                 $fullPath = $foldersPath . DIRECTORY_SEPARATOR . $item;
 
                 if (is_dir($fullPath)) {
-                    foreach (new RecursiveIteratorIterator(
-                                 new RecursiveDirectoryIterator($fullPath, FilesystemIterator::SKIP_DOTS),
-                                 RecursiveIteratorIterator::CHILD_FIRST
-                             ) as $file) {
+                    foreach (
+                        new RecursiveIteratorIterator(
+                            new RecursiveDirectoryIterator($fullPath, FilesystemIterator::SKIP_DOTS),
+                            RecursiveIteratorIterator::CHILD_FIRST
+                        ) as $file
+                    ) {
                         $file->isDir() ? @rmdir($file->getRealPath()) : @unlink($file->getRealPath());
                     }
 

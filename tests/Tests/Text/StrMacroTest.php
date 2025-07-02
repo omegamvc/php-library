@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Text;
 
-
 use PHPUnit\Framework\TestCase;
 use Omega\Macroable\Exceptions\MacroNotFoundException;
 use Omega\Text\Str;

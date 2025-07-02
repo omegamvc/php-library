@@ -33,9 +33,13 @@ class GroupRouteTest extends TestCase
                 return call_user_func($callable, $param);
             },
             // not found
-            function ($path) { echo 'not found'; },
+            function ($path) {
+                echo 'not found';
+            },
             // method not allowed
-            function ($path, $method) { echo 'not allowed'; },
+            function ($path, $method) {
+                echo 'not allowed';
+            },
         );
 
         ob_start();

@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpUnreachableStatementInspection */
+<?php
+
+/** @noinspection PhpUnreachableStatementInspection */
 
 /**
  * Part of Omega - Tests\Http Package
@@ -106,7 +108,7 @@ class HttpKernelHandleExceptionTest extends TestCase
             fn () => $this->handler
         );
 
-        $this->kernel = new class($this->app) extends HttpKernel {
+        $this->kernel = new class ($this->app) extends HttpKernel {
             protected function dispatcher(Request $request): array
             {
                 throw new HttpException(500, 'Test Exception');
@@ -119,7 +121,7 @@ class HttpKernelHandleExceptionTest extends TestCase
             }
         };
 
-        $this->handler = new class($this->app) extends ExceptionHandler {
+        $this->handler = new class ($this->app) extends ExceptionHandler {
             public function render(Request $request, Throwable $th): Response
             {
                 return new Response($th->getMessage(), 500);

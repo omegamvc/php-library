@@ -113,7 +113,8 @@ class Model implements ArrayAccess, IteratorAggregate
      * @param array<array-key, mixed> $column Initial dataset for the model.
      * @return void
      */
-    public function __construct(Connection $pdo, array $column) {
+    public function __construct(Connection $pdo, array $column)
+    {
         $this->pdo        = $pdo;
         $this->columns    = $this->fresh = $column;
         // auto table
@@ -145,13 +146,13 @@ class Model implements ArrayAccess, IteratorAggregate
      * @return self Returns the configured model instance.
      */
     public function setUp(
-        string     $table,
-        array      $column,
+        string $table,
+        array $column,
         Connection $pdo,
-        Where      $where,
-        string     $primaryKey,
-        array      $stash,
-        array      $immutableColumn,
+        Where $where,
+        string $primaryKey,
+        array $stash,
+        array $immutableColumn,
     ): self {
         $this->tableName       = $table;
         $this->columns         = $this->fresh = $column;

@@ -78,7 +78,7 @@ class PreventRequestInMaintenanceTest extends TestCase
     public function testItCanRedirectRequestDuringMaintenance(): void
     {
         $app        = new Application(dirname(__DIR__, 2));
-        $app->setStoragePath(DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'http'. DIRECTORY_SEPARATOR . 'storage2' . DIRECTORY_SEPARATOR);
+        $app->setStoragePath(DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'http' . DIRECTORY_SEPARATOR . 'storage2' . DIRECTORY_SEPARATOR);
         $middleware = new MaintenanceMiddleware($app);
         $response   = new Response('test');
         $handle     = $middleware->handle(new Request('/'), fn (Request $request) => $response);

@@ -19,6 +19,7 @@ use DI\DependencyException;
 use DI\NotFoundException;
 use Omega\Application\Application;
 use RuntimeException;
+
 use function array_key_exists;
 
 /**

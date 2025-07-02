@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
 
 use function Omega\Validator\vr;
+
 /**
  * Tests the alpha_numeric_space validation rule rendering and validation behavior with correct and incorrect inputs.
  */

@@ -1,4 +1,6 @@
-<?php /** @noinspection PhpRedundantOptionalArgumentInspection */
+<?php
+
+/** @noinspection PhpRedundantOptionalArgumentInspection */
 
 /**
  * Part of Omega - Tests\Database Package

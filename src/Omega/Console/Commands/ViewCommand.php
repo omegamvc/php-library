@@ -371,7 +371,7 @@ class ViewCommand extends Command
     {
         $watchStart = microtime(true);
         $filename   = Str::replace($file_path, view_path(), '');
-        
+
         $templator->compile($filename);
 
         $length            = strlen($filename);

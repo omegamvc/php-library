@@ -94,7 +94,6 @@ class PackageManifestTest extends TestCase
         $this->basePath             = dirname(__DIR__) . '/fixtures/support/app1/';
         $this->applicationCachePath = dirname(__DIR__) . '/fixtures/support/app1/bootstrap/cache/';
         $this->packageManifest      = dirname(__DIR__) . '/fixtures/support/app1/bootstrap/cache/packages.php';
-
     }
 
     /**

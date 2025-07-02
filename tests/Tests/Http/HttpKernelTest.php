@@ -25,8 +25,8 @@ use Omega\Application\Application;
 use Omega\Support\PackageManifest;
 use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\TestCase;
-
 use Throwable;
+
 use function dirname;
 
 /**
@@ -87,7 +87,7 @@ class HttpKernelTest extends TestCase
             fn () => new $this->kernel($this->app)
         );
 
-        $this->kernel = new class($this->app) extends HttpKernel {
+        $this->kernel = new class ($this->app) extends HttpKernel {
             protected function dispatcher(Request $request): array
             {
                 return [

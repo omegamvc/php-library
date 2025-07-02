@@ -64,7 +64,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetMode(): void
+    public function testICanGetMode(): void
     {
         $command = new CommandMap([
             'cmd'  => 'test:test',
@@ -79,7 +79,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetModeDefault(): void
+    public function testICanGetModeDefault(): void
     {
         $command = new CommandMap([]);
 
@@ -91,7 +91,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetClass(): void
+    public function testICanGetClass(): void
     {
         $command = new CommandMap([
             'class' => 'test-class',
@@ -105,7 +105,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetClassUsingFn(): void
+    public function testICanGetClassUsingFn(): void
     {
         $command = new CommandMap([
             'fn' => ['test-class', 'main'],
@@ -119,7 +119,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testIWillThrowErrorWhenFnIsArrayButClassNotExist(): void
+    public function testIWillThrowErrorWhenFnIsArrayButClassNotExist(): void
     {
         $command = new CommandMap([
             'fn' => [],
@@ -137,7 +137,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testIWillThrowErrorWhenClassNotExist(): void
+    public function testIWillThrowErrorWhenClassNotExist(): void
     {
         $command = new CommandMap([]);
 
@@ -153,7 +153,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetFn(): void
+    public function testICanGetFn(): void
     {
         $command = new CommandMap([
             'fn' => ['test-class', 'main'],
@@ -167,7 +167,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetFnDefault(): void
+    public function testICanGetFnDefault(): void
     {
         $command = new CommandMap([]);
 
@@ -178,7 +178,7 @@ class CommandMapTest extends TestCase
      * Test it can get default option.
      * @return void
      */
-    public function  testICanGetDefaultOption(): void
+    public function testICanGetDefaultOption(): void
     {
         $command = new CommandMap([]);
 
@@ -190,7 +190,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanMatchCallbackUsingPattern(): void
+    public function testICanMatchCallbackUsingPattern(): void
     {
         $command = new CommandMap([
             'pattern' => 'test:test',
@@ -204,7 +204,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanMatchCallbackUsingMatch(): void
+    public function testICanMatchCallbackUsingMatch(): void
     {
         $command = new CommandMap([
             'match' => fn ($given) => true,
@@ -218,7 +218,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanMatchCallbackUsingCmdFull(): void
+    public function testICanMatchCallbackUsingCmdFull(): void
     {
         $command = new CommandMap([
             'cmd' => ['test:test', 'test:start'],
@@ -232,7 +232,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanMatchCallbackUsingCmdStart(): void
+    public function testICanMatchCallbackUsingCmdStart(): void
     {
         $command = new CommandMap([
             'cmd'  => ['make:', 'test:'],
@@ -247,7 +247,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanCallIsMatch(): void
+    public function testICanCallIsMatch(): void
     {
         $command = new CommandMap([
             'cmd'  => 'test:unit',
@@ -261,7 +261,7 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetCallUsingFn(): void
+    public function testICanGetCallUsingFn(): void
     {
         $command = new CommandMap([
             'fn'  => ['some-class', 'main'],
@@ -275,10 +275,10 @@ class CommandMapTest extends TestCase
      *
      * @return void
      */
-    public function  testICanGetCallUsingClass(): void
+    public function testICanGetCallUsingClass(): void
     {
         $command = new CommandMap([
-            'class'=> 'some-class',
+            'class' => 'some-class',
             // skip 'fn' because default if 'main'
         ]);
 

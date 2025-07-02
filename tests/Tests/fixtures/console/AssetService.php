@@ -14,4 +14,3 @@ class AssetService extends Service
         ];
     }
 }
-

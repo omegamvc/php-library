@@ -35,9 +35,13 @@ class RouteControllerTest extends TestCase
                 return call_user_func($callable, $param);
             },
             // not found
-            function ($path) { echo 'not found'; },
+            function ($path) {
+                echo 'not found';
+            },
             // method not allowed
-            function ($path, $method) { echo 'not allowed'; },
+            function ($path, $method) {
+                echo 'not allowed';
+            },
         );
 
         ob_start();
@@ -259,4 +263,3 @@ class RouteControllerTest extends TestCase
         $this->assertEquals('404', $res);
     }
 }
-

@@ -303,7 +303,7 @@ class TemplatorTest extends TestCase
         $cache   = dirname(__DIR__) . DIRECTORY_SEPARATOR . 'fixtures' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR . 'caches';
 
         $view = new Templator(new TemplatorFinder([$loader], ['']), $cache);
-        $out  = $view->render('namingskip.php', ['render'=>'oke']);
+        $out  = $view->render('namingskip.php', ['render' => 'oke']);
 
         $this->assertEquals('<html><head></head><body><h1>oke, your {{ name }}, ages {{ age }}</h1></body></html>', trim($out));
     }

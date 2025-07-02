@@ -3,7 +3,9 @@
 namespace Tests\Validator\Validations;
 
 use Omega\Validator\Validator;
+
 use function Omega\Validator\vr;
+
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
 

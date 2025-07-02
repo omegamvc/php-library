@@ -31,13 +31,13 @@ class AssetCommand extends Command
      * @return array<string, array<string, string|string[]>>
      */
     public function printHelp()
-      {
+    {
           return [
               'commands' => [],
               'options'  => [],
               'relation' => [],
           ];
-      }
+    }
 
     public function main(): int
     {

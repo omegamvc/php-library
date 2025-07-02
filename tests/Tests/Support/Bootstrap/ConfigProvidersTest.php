@@ -103,7 +103,7 @@ class ConfigProvidersTest extends TestCase
      */
     public function testItCanLoadConfigFromCache(): void
     {
-        $app = new Application(dirname(__DIR__,2) . '/fixtures/support/bootstrap/app2');
+        $app = new Application(dirname(__DIR__, 2) . '/fixtures/support/bootstrap/app2');
 
         (new ConfigProviders())->bootstrap($app);
         /** @var Config $config */
