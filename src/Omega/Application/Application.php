@@ -259,7 +259,6 @@ class Application extends Container implements ApplicationInterface
             'BCRYPT_ROUNDS'         => 12,
             'CACHE_STORE'           => 'file',
 
-            'TEST_PATH'             => 'Generato da application',
             'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
             'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
             'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
