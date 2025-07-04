@@ -15,13 +15,13 @@ declare(strict_types=1);
 
 use DI\DependencyException;
 use DI\NotFoundException;
+use Omega\Application\Application;
 use Omega\Collection\CollectionImmutable;
+use Omega\Environment\Dotenv;
 use Omega\Http\RedirectResponse;
 use Omega\Http\Response;
-use Omega\Application\Application;
-use Omega\Exceptions\ApplicationNotAvailableException;
-use Omega\Support\Vite;
 use Omega\Router\Router;
+use Omega\Support\Vite;
 
 /**
  * Application Helper Functions
@@ -372,18 +372,20 @@ if (!function_exists('app')) {
     /**
      * Get the Application container instance.
      *
-     * @throws ApplicationNotAvailableException If the Application instance is not available
-     * @return Application The application instance
+     * @param string|null $alias The instance alias or null to get the main application instance.
+     * @return mixed Returns the resolved instance or the main application instance if no alias is provided.
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
-    function app(): Application
+    function app(?string $alias = null): mixed
     {
         $app = Application::getInstance();
 
-        if (null === $app) {
-            throw new ApplicationNotAvailableException();
+        if (is_null($alias)) {
+            return $app;
         }
 
-        return $app;
+        return $app->get($alias);
     }
 }
 
@@ -433,6 +435,7 @@ if (!function_exists('vite')) {
      * @return array<string, string>|string Resource URLs keyed by entry points, or single resource string
      * @throws DependencyException If Vite service is not available
      * @throws NotFoundException If requested resource is not found
+     * @throws Exception
      */
     function vite(string ...$entry_points): array|string
     {
@@ -500,9 +503,25 @@ if (!function_exists('abort')) {
      * @param string                $message Optional message
      * @param array<string, string> $headers Optional headers to send
      * @return void
+     * @throws DependencyException If a dependency cannot be resolved.
+     * @throws NotFoundException If the requested entry is not found in the container.
      */
     function abort(int $code, string $message = '', array $headers = []): void
     {
         app()->abort($code, $message, $headers);
+    }
+}
+
+if (! function_exists('env')) {
+    /**
+     * Get the value of an environment variable.
+     *
+     * @param string $key     Holds the key of the environment variable.
+     * @param mixed  $default Holds the default value if the key is not set.
+     * @return mixed Returns the value of the environment variable or the default value if the key is not set.
+     */
+    function env(string $key, mixed $default = null): mixed
+    {
+        return Dotenv::get($key, $default);
     }
 }

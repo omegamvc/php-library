@@ -61,11 +61,11 @@ class ConfigProviders
     public function bootstrap(Application $app): void
     {
         $configPath = $app->getConfigPath();
-        $config     = $app->defaultConfigs();
+        $config     = [];
         $hasCache   = false;
 
-        if (file_exists($file = $app->getApplicationCachePath() . '.php')) {
-            $config    = array_merge($config, require $file);
+        if (file_exists($file = $app->getApplicationCachePath() . 'config.php')) {
+            $config   = require $file;
             $hasCache = true;
         }
 
@@ -80,6 +80,6 @@ class ConfigProviders
 
         $app->loadConfig(new ConfigRepository($config));
 
-        date_default_timezone_set($config['time_zone'] ?? 'UTC');
+        date_default_timezone_set($config['TIME_ZONE'] ?? 'UTC');
     }
 }

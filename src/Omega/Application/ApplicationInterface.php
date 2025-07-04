@@ -55,7 +55,7 @@ interface ApplicationInterface
      *
      * @return array<string, mixed> The array of default configuration values.
      */
-    public function defaultConfigs(): array;
+    //public function defaultConfigs(): array;
 
     /**
      * Sets the base path.
@@ -85,10 +85,10 @@ interface ApplicationInterface
      * This method assigns the given path to the model directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the model directory.
+     * @param string|null $path The absolute path to the model directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setModelPath(string $path): self;
+    public function setModelPath(?string $path = null): self;
 
     /**
      * Sets the view path.
@@ -96,10 +96,10 @@ interface ApplicationInterface
      * This method assigns the given path to the view directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the view directory.
+     * @param string|null $path The absolute path to the view directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setViewPath(string $path): self;
+    public function setViewPath(?string $path = null): self;
 
     /**
      * Sets the view paths.
@@ -107,10 +107,10 @@ interface ApplicationInterface
      * This method assigns the given array of paths for the view resource type (e.g., views, translations),
      * and stores them into the container for later resolution and usage by the application.
      *
-     * @param string[] $paths A list of absolute paths to the view directories.
+     * @param string[]|null $paths A list of absolute paths to the view directories.
      * @return self Returns the current instance for method chaining.
      */
-    public function setViewPaths(array $paths): self;
+    public function setViewPaths(?array $paths = null): self;
 
     /**
      * Sets the controller path.
@@ -118,10 +118,10 @@ interface ApplicationInterface
      * This method assigns the given path to the controller directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the controller directory.
+     * @param string|null $path The absolute path to the controller directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setControllerPath(string $path): self;
+    public function setControllerPath(?string $path = null): self;
 
     /**
      * Sets the services path.
@@ -129,10 +129,10 @@ interface ApplicationInterface
      * This method assigns the given path to the services directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the services' directory.
+     * @param string|null $path The absolute path to the services' directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setServicesPath(string $path): self;
+    public function setServicesPath(?string $path = null): self;
 
     /**
      * Sets the component path.
@@ -140,10 +140,10 @@ interface ApplicationInterface
      * This method assigns the given path to the component directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the component directory.
+     * @param string|null $path The absolute path to the component directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setComponentPath(string $path): self;
+    public function setComponentPath(?string $path = null): self;
 
     /**
      * Sets the command path.
@@ -151,10 +151,10 @@ interface ApplicationInterface
      * This method assigns the given path to the command directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the command directory.
+     * @param string|null $path The absolute path to the command directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setCommandPath(string $path): self;
+    public function setCommandPath(?string $path = null): self;
 
     /**
      * Sets the storage path.
@@ -162,10 +162,10 @@ interface ApplicationInterface
      * This method assigns the given path to the storage directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the storage directory.
+     * @param string|null $path The absolute path to the storage directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setStoragePath(string $path): self;
+    public function setStoragePath(?string $path = null): self;
 
     /**
      * Sets the cache path.
@@ -173,12 +173,12 @@ interface ApplicationInterface
      * This method assigns the given path to the cache directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the cache directory.
+     * @param string|null $path The absolute path to the cache directory.
      * @return self Returns the current instance for method chaining.
      *
      * @deprecated version 0.32 use compiled_view_path sited.
      */
-    public function setCachePath(string $path): self;
+    public function setCachePath(string $path = null): self;
 
     /**
      * Sets the compiled path.
@@ -186,10 +186,10 @@ interface ApplicationInterface
      * This method assigns the given path to the compiled directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the compiled directory.
+     * @param string|null $path The absolute path to the compiled directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setCompiledViewPath(string $path): self;
+    public function setCompiledViewPath(?string $path = null): self;
 
     /**
      * Sets the config path.
@@ -197,10 +197,10 @@ interface ApplicationInterface
      * This method assigns the given path to the config directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the config directory.
+     * @param string|null $path The absolute path to the config directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setConfigPath(string $path): self;
+    public function setConfigPath(?string $path = null): self;
 
     /**
      * Sets the middleware path.
@@ -208,10 +208,10 @@ interface ApplicationInterface
      * This method assigns the given path to the middleware directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the middleware directory.
+     * @param string|null $path The absolute path to the middleware directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setMiddlewarePath(string $path): self;
+    public function setMiddlewarePath(?string $path = null): self;
 
     /**
      * Sets the provider path.
@@ -219,10 +219,10 @@ interface ApplicationInterface
      * This method assigns the given path to the provider directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the provider directory.
+     * @param string|null $path The absolute path to the provider directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setProviderPath(string $path): self;
+    public function setProviderPath(?string $path = null): self;
 
     /**
      * Sets the migration path.
@@ -230,10 +230,10 @@ interface ApplicationInterface
      * This method assigns the given path to the migration directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the migration directory.
+     * @param string|null $path The absolute path to the migration directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setMigrationPath(string $path): self;
+    public function setMigrationPath(?string $path = null): self;
 
     /**
      * Sets the seeder path.
@@ -241,10 +241,10 @@ interface ApplicationInterface
      * This method assigns the given path to the seeder directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the seeder directory.
+     * @param string|null $path The absolute path to the seeder directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setSeederPath(string $path): self;
+    public function setSeederPath(?string $path = null): self;
 
     /**
      * Sets the public path.
@@ -252,10 +252,10 @@ interface ApplicationInterface
      * This method assigns the given path to the public directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string $path The absolute path to the public directory.
+     * @param string|null $path The absolute path to the public directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setPublicPath(string $path): self;
+    public function setPublicPath(?string $path = null): self;
 
     /**
      * Returns the base path.
@@ -299,11 +299,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the module directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the model directory.
      * @return string The path to the module directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getModelPath(): string;
+    public function getModelPath(?string $path = null): string;
 
     /**
      * Returns the view path.
@@ -311,11 +312,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the view directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the views directory.
      * @return string The path to the view directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getViewPath(): string;
+    public function getViewPath(?string $path = null): string;
 
     /**
      * Returns the view paths.
@@ -323,11 +325,12 @@ interface ApplicationInterface
      * Retrieves an array of absolute paths where the application should look for view templates.
      * These paths are typically defined via the corresponding setter and stored in the container.
      *
-     * @return string[] List of absolute paths to view directories.
+     * @param string[]|null $paths An array to the absolute view path.
+     * @return string[]List of absolute paths to view directories.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getViewPaths(): array;
+    public function getViewPaths(?array $paths = null): array;
 
     /**
      * Returns the controller path.
@@ -335,11 +338,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the controller directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the controller directory.
      * @return string The path to the controller directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getControllerPath(): string;
+    public function getControllerPath(?string $path = null): string;
 
     /**
      * Returns the services path.
@@ -347,11 +351,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the services directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the services directory.
      * @return string The path to the services' directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getServicesPath(): string;
+    public function getServicesPath(?string $path = null): string;
 
     /**
      * Returns the component path.
@@ -359,11 +364,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the component directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the component directory.
      * @return string The path to the component directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getComponentPath(): string;
+    public function getComponentPath(?string $path = null): string;
 
     /**
      * Returns the command path.
@@ -371,11 +377,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the command directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the commands directory.
      * @return string The path to the command directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getCommandPath(): string;
+    public function getCommandPath(?string $path = null): string;
 
     /**
      * Returns the storage path.
@@ -383,11 +390,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the storage directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the storage directory.
      * @return string The path to the storage directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getStoragePath(): string;
+    public function getStoragePath(?string $path = null): string;
 
     /**
      * Returns the cache path.
@@ -395,13 +403,14 @@ interface ApplicationInterface
      * Retrieves the absolute path to the cache directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path Yhe absolute path to te cache directory.
      * @return string The path to the cache directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      *
      * @deprecated version 0.32 use compiled_view_path instead.
      */
-    public function getCachePath(): string;
+    public function getCachePath(?string $path = null): string;
 
     /**
      * Returns the compiled path.
@@ -409,11 +418,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the compiled directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the compiled view directory.
      * @return string The path to the compiled directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getCompiledViewPath(): string;
+    public function getCompiledViewPath(?string $path = null): string;
 
     /**
      * Returns the config path.
@@ -421,11 +431,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the config directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the config directory.
      * @return string The path to the config directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getConfigPath(): string;
+    public function getConfigPath(?string $path = null): string;
 
     /**
      * Returns the middleware path.
@@ -433,11 +444,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the middleware directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path Te absolute path t the middleware directory.
      * @return string The path to the middleware directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getMiddlewarePath(): string;
+    public function getMiddlewarePath(?string $path = null): string;
 
     /**
      * Returns the provider path.
@@ -445,11 +457,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the provider directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the provider directory.
      * @return string The path to the provider directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getProviderPath(): string;
+    public function getProviderPath(?string $path = null): string;
 
     /**
      * Returns the migration path.
@@ -457,11 +470,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the migration directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path Te absolute path to the migration directory.
      * @return string The path to the migration directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getMigrationPath(): string;
+    public function getMigrationPath(?string $path = null): string;
 
     /**
      * Returns the seeder path.
@@ -469,11 +483,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the seeder directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the seeder directory.
      * @return string The path to the seeder directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getSeederPath(): string;
+    public function getSeederPath(?string $path = null): string;
 
     /**
      * Returns the public path.
@@ -481,11 +496,12 @@ interface ApplicationInterface
      * Retrieves the absolute path to the public directory (e.g., base, config, routes),
      * previously registered in the container.
      *
+     * @param string|null $path The absolute path to the public directory.
      * @return string The path to the public directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getPublicPath(): string;
+    public function getPublicPath(?string $path= null): string;
 
     /**
      * Returns the current application environment (e.g., "dev", "prod", "testing").

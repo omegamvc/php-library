@@ -91,11 +91,11 @@ class Path
      * If no file is given, returns the directory path with trailing slash.
      * If file is provided, returns the full path to the file (no trailing slash).
      *
-     * @param string $dotPath Dot notation path representing a directory (e.g., 'app.Model')
+     * @param string|null $dotPath Dot notation path representing a directory (e.g., 'app.Model')
      * @param string|null $file Optional file name inside the directory (e.g., 'User.php')
      * @return string Resolved and normalized full path
      */
-    public static function getPath(string $dotPath, ?string $file = null): string
+    public static function getPath(?string $dotPath = null, ?string $file = null): string
     {
         $dirPath = self::resolveDotPath($dotPath);
 

@@ -23,12 +23,13 @@ use Omega\Container\Provider\AbstractServiceProvider;
 use Omega\Http\Exceptions\HttpException;
 use Omega\Http\Request;
 use Omega\Support\PackageManifest;
+use Omega\Support\Path;
 use Omega\Support\RequestMacroServiceProvider;
+use Omega\Support\Singleton\SingletonTrait;
 use Omega\Support\Vite;
 use Omega\View\Templator;
 
 use function array_map;
-use function defined;
 use function file_exists;
 use function in_array;
 use function rtrim;
@@ -55,11 +56,10 @@ use const DIRECTORY_SEPARATOR;
  */
 class Application extends Container implements ApplicationInterface
 {
-    /** @var Application|null The singleton application instance. */
-    private static ?Application $app = null;
+    use SingletonTrait;
 
-    /** @var string The base path of the application. */
-    private string $basePath;
+    /** @var string|null The base path of the application. */
+    private ?string $basePath;
 
     /** @var AbstractServiceProvider[] List of all registered service providers. */
     private array $providers = [];
@@ -90,21 +90,19 @@ class Application extends Container implements ApplicationInterface
      *
      * Initializes paths, base bindings, service providers, and container aliases.
      *
-     * @param string $basePath The root directory of the application.
+     * @param string|null $basePath The root directory of the application.
      */
-    public function __construct(string $basePath)
+    public function __construct(?string $basePath = null)
     {
+        $this->basePath = rtrim($basePath ?? $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__, 5), '\/');
+
+        Path::init($this->basePath);
+
         parent::__construct();
 
         // set base path
-        $this->setBasePath($basePath);
-        $this->setConfigPath(
-            $_ENV['CONFIG_PATH'] ?? DIRECTORY_SEPARATOR
-            . 'app'
-            . DIRECTORY_SEPARATOR
-            . 'config'
-            . DIRECTORY_SEPARATOR
-        );
+        $this->setBasePath($this->basePath);
+        $this->setConfigPath(env('CONFIG_PATH', Path::getPath('app.config')));
 
         // base binding
         $this->setBaseBinding();
@@ -117,16 +115,6 @@ class Application extends Container implements ApplicationInterface
     }
 
     /**
-     * Retrieves the singleton instance of the application.
-     *
-     * @return Application|null The application instance, or null if not set.
-     */
-    public static function getInstance(): ?Application
-    {
-        return Application::$app;
-    }
-
-    /**
      * Registers the core bindings into the container.
      *
      * Sets the application instance and container aliases, and registers the package manifest.
@@ -135,7 +123,6 @@ class Application extends Container implements ApplicationInterface
      */
     protected function setBaseBinding(): void
     {
-        Application::$app = $this;
         $this->set('app', $this);
         $this->set(Application::class, $this);
         $this->set(Container::class, $this);
@@ -147,26 +134,6 @@ class Application extends Container implements ApplicationInterface
                 $this->getApplicationCachePath()
             )
         );
-    }
-
-    /**
-     * Defines legacy constants from the given configuration array.
-     *
-     * Useful for backward compatibility with global-based APIs (e.g., Redis, Memcached).
-     *
-     * @param array<string, string> $configs Associative array of constant names and values.
-     * @return void
-     */
-    private function defined(array $configs): void
-    {
-        // redis
-        defined('REDIS_HOST') || define('REDIS_HOST', $configs['REDIS_HOST']);
-        defined('REDIS_PASS') || define('REDIS_PASS', $configs['REDIS_PASS']);
-        defined('REDIS_PORT') || define('REDIS_PORT', $configs['REDIS_PORT']);
-        // Memcached
-        defined('MEMCACHED_HOST') || define('MEMCACHED_HOST', $configs['MEMCACHED_HOST']);
-        defined('MEMCACHED_PASS') || define('MEMCACHED_PASS', $configs['MEMCACHED_PASS']);
-        defined('MEMCACHED_PORT') || define('MEMCACHED_PORT', $configs['MEMCACHED_PORT']);
     }
 
     /**
@@ -193,6 +160,7 @@ class Application extends Container implements ApplicationInterface
         }
     }
 
+    //  $configs = $this->app->get('config');
     /**
      * Merges core application providers with vendor-defined package providers.
      *
@@ -210,107 +178,23 @@ class Application extends Container implements ApplicationInterface
      */
     public function loadConfig(ConfigRepository $configs): void
     {
-        // give access to get config directly
         $this->set('config', fn (): ConfigRepository => $configs);
 
-        // base env
-        $this->set('environment', $configs['APP_ENV'] ?? $configs['ENVIRONMENT']);
+        $this->set('environment', $configs['APP_ENV']);
         $this->set('app.debug', $configs['APP_DEBUG'] === 'true');
-        // application path
-        $this->setAppPath($this->getBasePath());
-        $this->setModelPath($configs['MODEL_PATH']);
-        $this->setViewPath($configs['VIEW_PATH']);
-        $this->setViewPaths($configs['VIEW_PATHS']);
-        $this->setControllerPath($configs['CONTROLLER_PATH']);
-        $this->setServicesPath($configs['SERVICES_PATH']);
-        $this->setComponentPath($configs['COMPONENT_PATH']);
-        $this->setCommandPath($configs['COMMAND_PATH']);
-        $this->setCachePath($configs['CACHE_PATH']);
-        $this->setCompiledViewPath($configs['COMPILED_VIEW_PATH']);
-        $this->setMiddlewarePath($configs['MIDDLEWARE']);
-        $this->setProviderPath($configs['SERVICE_PROVIDER']);
-        $this->setMigrationPath($configs['MIGRATION_PATH']);
-        $this->setPublicPath($configs['PUBLIC_PATH']);
-        $this->setSeederPath($configs['SEEDER_PATH']);
-        $this->setStoragePath($configs['STORAGE_PATH']);
-        // other config
-        $this->set('config.pusher_id', $configs['PUSHER_APP_ID']);
-        $this->set('config.pusher_key', $configs['PUSHER_APP_KEY']);
-        $this->set('config.pusher_secret', $configs['PUSHER_APP_SECRET']);
-        $this->set('config.pusher_cluster', $configs['PUSHER_APP_CLUSTER']);
         $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
-        // load provider
         $this->providers = $configs['PROVIDERS'];
-        $this->defined($configs->toArray());
     }
 
+#region Application Setter
     /**
      * {@inheritdoc}
      */
-    public function defaultConfigs(): array
+    public function setAppPath(?string $path = null): self
     {
-        return [
-            // app config
-            'BASEURL'               => '/',
-            'time_zone'             => 'UTC',
-            'APP_KEY'               => '',
-            'ENVIRONMENT'           => 'dev',
-            'APP_DEBUG'             => 'false',
-            'BCRYPT_ROUNDS'         => 12,
-            'CACHE_STORE'           => 'file',
+        $appPath = $path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR;
 
-            'COMMAND_PATH'          => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Commands' . DIRECTORY_SEPARATOR,
-            'CONTROLLER_PATH'       => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Controllers' . DIRECTORY_SEPARATOR,
-            'MODEL_PATH'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Models' . DIRECTORY_SEPARATOR,
-            'MIDDLEWARE'            => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Middlewares' . DIRECTORY_SEPARATOR,
-            'SERVICE_PROVIDER'      => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Providers' . DIRECTORY_SEPARATOR,
-            'CONFIG'                => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR,
-            'SERVICES_PATH'         => DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'Services' . DIRECTORY_SEPARATOR,
-            'VIEW_PATH'             => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-            'COMPONENT_PATH'        => DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'components' . DIRECTORY_SEPARATOR,
-            'STORAGE_PATH'          => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR,
-            'CACHE_PATH'            => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR,
-            'CACHE_VIEW_PATH'       => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
-            'PUBLIC_PATH'           => DIRECTORY_SEPARATOR . 'public' . DIRECTORY_SEPARATOR,
-            'MIGRATION_PATH'        => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR,
-            'SEEDER_PATH'           => DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seeders' . DIRECTORY_SEPARATOR,
-
-            'PROVIDERS'             => [
-                // provider class name
-            ],
-
-            // db config
-            'DB_HOST'               => 'localhost',
-            'DB_USER'               => 'root',
-            'DB_PASS'               => 'vb65ty4',
-            'DB_NAME'               => 'phpmvc',
-
-            // pusher
-            'PUSHER_APP_ID'         => '',
-            'PUSHER_APP_KEY'        => '',
-            'PUSHER_APP_SECRET'     => '',
-            'PUSHER_APP_CLUSTER'    => '',
-
-            // redis driver
-            'REDIS_HOST'            => '127.0.0.1',
-            'REDIS_PASS'            => '',
-            'REDIS_PORT'            => 6379,
-
-            // Memcached
-            'MEMCACHED_HOST'        => '127.0.0.1',
-            'MEMCACHED_PASS'        => '',
-            'MEMCACHED_PORT'        => 6379,
-
-            // view config
-            'VIEW_PATHS' => [
-                DIRECTORY_SEPARATOR . 'resources' . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR,
-            ],
-            'VIEW_EXTENSIONS' => [
-                '.template.php',
-                '.php',
-            ],
-            'COMPILED_VIEW_PATH' => DIRECTORY_SEPARATOR . 'storage' . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR . 'view' . DIRECTORY_SEPARATOR,
-        ];
+        return $this;
     }
 
     /**
@@ -318,8 +202,20 @@ class Application extends Container implements ApplicationInterface
      */
     public function setBasePath(string $path): self
     {
-        $this->basePath = $path;
-        $this->set('path.base', $path);
+          $this->basePath = $path;
+          $this->set('path.base', $path);
+
+          return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setCachePath(?string $path = null): self
+    {
+        $this->set('path.cache', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('storage.app.cache'));
 
         return $this;
     }
@@ -327,10 +223,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setAppPath(string $path): self
+    public function setCommandPath(?string $path = null): self
     {
-        $appPath = $path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR;
-        $this->set('path.app', $appPath);
+        $this->set('path.command', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.Commands'));
 
         return $this;
     }
@@ -338,10 +235,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setModelPath(string $path): self
+    public function setComponentPath(?string $path = null): self
     {
-        $modelPath = $this->basePath . $path;
-        $this->set('path.model', $modelPath);
+        $this->set('path.component', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('resources.components'));
 
         return $this;
     }
@@ -349,10 +247,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setViewPath(string $path): self
+    public function setCompiledViewPath(?string $path = null): self
     {
-        $viewPath = $this->basePath . $path;
-        $this->set('path.view', $viewPath);
+        $this->set('path.compiled_view_path', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('resources.components'));
 
         return $this;
     }
@@ -360,10 +259,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setViewPaths(array $paths): self
+    public function setControllerPath(?string $path = null): self
     {
-        $viewPaths = array_map(fn ($path) => $this->basePath . $path, $paths);
-        $this->set('paths.view', $viewPaths);
+        $this->set('path.controller', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.Controllers'));
 
         return $this;
     }
@@ -371,85 +271,12 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setControllerPath(string $path): self
+    public function setConfigPath(?string $path = null): self
     {
-        $controllerPath = $this->basePath . $path;
-        $this->set('path.controller', $controllerPath);
+        $this->set('path.config', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.config'));
 
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setServicesPath(string $path): self
-    {
-        $servicesPath = $this->basePath . $path;
-        $this->set('path.services', $servicesPath);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setComponentPath(string $path): self
-    {
-        $componentPath = $this->basePath . $path;
-        $this->set('path.component', $componentPath);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCommandPath(string $path): self
-    {
-        $commandPath = $this->basePath . $path;
-        $this->set('path.command', $commandPath);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setStoragePath(string $path): self
-    {
-        $storagePath = $this->basePath . $path;
-        $this->set('path.storage', $storagePath);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCachePath(string $path): self
-    {
-        $cachePath = $this->basePath . $path;
-        $this->set('path.cache', $cachePath);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setCompiledViewPath(string $path): self
-    {
-        $compiledViewPath = $this->basePath . $path;
-        $this->set('path.compiled_view_path', $compiledViewPath);
-
-        return $this;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setConfigPath(string $path): self
-    {
         $configPath = $this->basePath . $path;
         $this->set('path.config', $configPath);
 
@@ -459,10 +286,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setMiddlewarePath(string $path): self
+    public function setMiddlewarePath(?string $path = null): self
     {
-        $middlewarePath = $this->basePath . $path;
-        $this->set('path.middleware', $middlewarePath);
+        $this->set('path.middleware', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.Middlewares'));
 
         return $this;
     }
@@ -470,10 +298,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setProviderPath(string $path): self
+    public function setMigrationPath(?string $path = null): self
     {
-        $serviceProviderPath = $this->basePath . $path;
-        $this->set('path.provider', $serviceProviderPath);
+        $this->set('path.migration', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('database.migration'));
 
         return $this;
     }
@@ -481,10 +310,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setMigrationPath(string $path): self
+    public function setModelPath(?string $path = null): self
     {
-        $migrationPath = $this->basePath . $path;
-        $this->set('path.migration', $migrationPath);
+        $this->set('path.model', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.Models'));
 
         return $this;
     }
@@ -492,10 +322,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setSeederPath(string $path): self
+    public function setProviderPath(?string $path = null): self
     {
-        $seederPath = $this->basePath . $path;
-        $this->set('path.seeder', $seederPath);
+        $this->set('path.provider', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.Providers'));
 
         return $this;
     }
@@ -503,10 +334,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setPublicPath(string $path): self
+    public function setPublicPath(?string $path = null): self
     {
-        $publicPath = $this->basePath . $path;
-        $this->set('path.public', $publicPath);
+        $this->set('path.public', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('public'));
 
         return $this;
     }
@@ -514,11 +346,68 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function getBasePath(): string
+    public function setSeederPath(?string $path = null): self
     {
-        return $this->get('path.base');
+        $this->set('path.seeder', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('database.seeders'));
+
+        return $this;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function setServicesPath(?string $path = null): self
+    {
+        $this->set('path.services', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('app.Services'));
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setStoragePath(?string $path = null): self
+    {
+        $this->set('path.storage', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('storage'));
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setViewPath(?string $path = null): self
+    {
+        $this->set('path.view', $path !== null
+            ? Path::getPath($path)
+            : Path::getPath('resources.views'));
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setViewPaths(?array $paths = null): self
+    {
+        $viewPaths = array_map(
+            fn(string $path) => Path::getPath($path),
+            $paths
+        );
+
+        $this->set('paths.view', $viewPaths);
+
+        return $this;
+    }
+#endregion
+
+#region Application Getter
     /**
      * {@inheritdoc}
      */
@@ -532,139 +421,90 @@ class Application extends Container implements ApplicationInterface
      */
     public function getApplicationCachePath(): string
     {
-        return rtrim(
-            $this->getBasePath(),
-            DIRECTORY_SEPARATOR
-        ) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+        return rtrim($this->getBasePath(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'bootstrap' . DIRECTORY_SEPARATOR . 'cache' . DIRECTORY_SEPARATOR;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBasePath(): string
+    {
+        return $this->get('path.base');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getModelPath(): string
+    public function getCachePath(?string $path = null): string
     {
-        return $this->get('path.model');
-    }
+        if (!$this->has('path.cache')) {
+            $this->setCachePath($path);
+        }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getViewPath(): string
-    {
-        return $this->get('path.view');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getViewPaths(): array
-    {
-        return $this->get('paths.view');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getControllerPath(): string
-    {
-        return $this->get('path.controller');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getServicesPath(): string
-    {
-        return $this->get('path.services');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getComponentPath(): string
-    {
-        return $this->get('path.component');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCommandPath(): string
-    {
-        return $this->get('path.command');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getStoragePath(): string
-    {
-        return $this->get('path.storage');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCachePath(): string
-    {
         return $this->get('path.cache');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getCompiledViewPath(): string
+    public function getCommandPath(?string $path = null): string
     {
+        if (!$this->has('path.command')) {
+            $this->setCommandPath($path);
+        }
+
+        return $this->get('path.command');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getComponentPath(?string $path = null): string
+    {
+        if (!$this->has('path.component')) {
+            $this->setComponentPath($path);
+        }
+
+        return $this->get('path.component');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getCompiledViewPath(?string $path = null): string
+    {
+        if (!$this->has('path.compiled_view_path')) {
+            $this->setCompiledViewPath($path);
+        }
+
         return $this->get('path.compiled_view_path');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getConfigPath(): string
+    public function getControllerPath(?string $path = null): string
     {
+        if (!$this->has('path.controller')) {
+            $this->setControllerPath($path);
+        }
+
+        return $this->get('path.controller');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getConfigPath(?string $path = null): string
+    {
+        if (!$this->has('path.config')) {
+            $this->setConfigPath($path);
+        }
+
         return $this->get('path.config');
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getMiddlewarePath(): string
-    {
-        return $this->get('path.middleware');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getProviderPath(): string
-    {
-        return $this->get('path.provider');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationPath(): string
-    {
-        return $this->get('path.migration');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getSeederPath(): string
-    {
-        return $this->get('path.seeder');
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getPublicPath(): string
-    {
-        return $this->get('path.public');
-    }
 
     /**
      * {@inheritdoc}
@@ -677,6 +517,129 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
+    public function getMiddlewarePath(?string $path = null): string
+    {
+        if (!$this->has('path.middleware')) {
+            $this->setMiddlewarePath($path);
+        }
+
+        return $this->get('path.middleware');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getMigrationPath(?string $path = null): string
+    {
+        if (!$this->has('path.migration')) {
+            $this->setMigrationPath($path);
+        }
+
+        return $this->get('path.migration');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getModelPath(?string $path = null): string
+    {
+        if (!$this->has('path.model')) {
+            $this->setModelPath($path);
+        }
+
+        return $this->get('path.model');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProviderPath(?string $path = null): string
+    {
+        if (!$this->has('path.provider')) {
+            $this->setProviderPath($path);
+        }
+
+        return $this->get('path.provider');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPublicPath(?string $path = null): string
+    {
+        if (!$this->has('path.public')) {
+            $this->setPublicPath($path);
+        }
+
+        return $this->get('path.public');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSeederPath(?string $path = null): string
+    {
+        if (!$this->has('path.seeder')) {
+            $this->setSeederPath($path);
+        }
+
+        return $this->get('path.seeder');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getServicesPath(?string $path = null): string
+    {
+        if (!$this->has('path.services')) {
+            $this->setServicesPath($path);
+        }
+
+        return $this->get('path.services');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getStoragePath(?string $path = null): string
+    {
+        if (!$this->has('path.storage')) {
+            $this->setStoragePath($path);
+        }
+
+        return $this->get('path.storage');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewPath(?string $path = null): string
+    {
+        if (!$this->has('path.view')) {
+            $this->setViewPath($path);
+        }
+
+        return $this->get('path.view');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getViewPaths(?array $paths = null): array
+    {
+        if (!$this->has('paths.view')) {
+            $paths ??= ['resources.views'];
+            $this->setViewPaths($paths);
+        }
+
+        return $this->get('paths.view');
+    }
+#endregion
+
+#region Application conditional
+    /**
+     * {@inheritdoc}
+     */
     public function isDebugMode(): bool
     {
         return $this->get('app.debug');
@@ -685,17 +648,17 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function isProduction(): bool
+    public function isDev(): bool
     {
-        return $this->getEnvironment() === 'prod';
+        return $this->getEnvironment() === 'dev';
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isDev(): bool
+    public function isProduction(): bool
     {
-        return $this->getEnvironment() === 'dev';
+        return $this->getEnvironment() === 'prod';
     }
 
     /**
@@ -713,6 +676,7 @@ class Application extends Container implements ApplicationInterface
     {
         return $this->isBootstrapped;
     }
+#endregion
 
     /**
      * {@inheritdoc}
@@ -806,8 +770,6 @@ class Application extends Container implements ApplicationInterface
      */
     public function flush(): void
     {
-        Application::$app = null;
-
         $this->providers         = [];
         $this->loadedProviders   = [];
         $this->bootedProviders   = [];
