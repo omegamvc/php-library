@@ -96,10 +96,10 @@ interface ApplicationInterface
      * This method assigns the given path to the view directory (e.g., "base", "config", "modules"),
      * and stores it into the container under a corresponding key for later retrieval.
      *
-     * @param string|null $path The absolute path to the view directory.
+     * @param string| $path The absolute path to the view directory.
      * @return self Returns the current instance for method chaining.
      */
-    public function setViewPath(?string $path = null): self;
+    public function setViewPath(string $path): self;
 
     /**
      * Sets the view paths.
@@ -107,10 +107,10 @@ interface ApplicationInterface
      * This method assigns the given array of paths for the view resource type (e.g., views, translations),
      * and stores them into the container for later resolution and usage by the application.
      *
-     * @param string[]|null $paths A list of absolute paths to the view directories.
+     * @param string[] $paths A list of absolute paths to the view directories.
      * @return self Returns the current instance for method chaining.
      */
-    public function setViewPaths(?array $paths = null): self;
+    public function setViewPaths(array $paths): self;
 
     /**
      * Sets the controller path.
@@ -312,12 +312,11 @@ interface ApplicationInterface
      * Retrieves the absolute path to the view directory (e.g., base, config, routes),
      * previously registered in the container.
      *
-     * @param string|null $path The absolute path to the views directory.
      * @return string The path to the view directory.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getViewPath(?string $path = null): string;
+    public function getViewPath(): string;
 
     /**
      * Returns the view paths.
@@ -325,12 +324,11 @@ interface ApplicationInterface
      * Retrieves an array of absolute paths where the application should look for view templates.
      * These paths are typically defined via the corresponding setter and stored in the container.
      *
-     * @param string[]|null $paths An array to the absolute view path.
      * @return string[]List of absolute paths to view directories.
      * @throws DependencyException If a dependency cannot be resolved.
      * @throws NotFoundException If the requested entry is not found in the container.
      */
-    public function getViewPaths(?array $paths = null): array;
+    public function getViewPaths(): array;
 
     /**
      * Returns the controller path.

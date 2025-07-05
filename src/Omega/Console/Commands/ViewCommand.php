@@ -223,7 +223,7 @@ class ViewCommand extends Command
     public function clear(): int
     {
         warn('Clear cache file in ' . cache_path())->out(false);
-        $files = $this->findFiles(cache_path() . DIRECTORY_SEPARATOR, $this->prefix);
+        $files = $this->findFiles(cache_path(), $this->prefix);
 
         if (0 === count($files)) {
             warn('No file cache clear.')->out();

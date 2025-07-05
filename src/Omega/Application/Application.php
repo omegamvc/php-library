@@ -182,6 +182,8 @@ class Application extends Container implements ApplicationInterface
 
         $this->set('environment', $configs['APP_ENV']);
         $this->set('app.debug', $configs['APP_DEBUG'] === 'true');
+        $this->setViewPath($configs['VIEW_PATH']);
+        $this->setViewPaths($configs['VIEW_PATHS']);
         $this->set('config.view.extensions', $configs['VIEW_EXTENSIONS']);
         $this->providers = $configs['PROVIDERS'];
     }
@@ -193,6 +195,8 @@ class Application extends Container implements ApplicationInterface
     public function setAppPath(?string $path = null): self
     {
         $appPath = $path . DIRECTORY_SEPARATOR . 'app' . DIRECTORY_SEPARATOR;
+
+        $this->set('path.app', $appPath);
 
         return $this;
     }
@@ -382,29 +386,47 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function setViewPath(?string $path = null): self
+    public function setViewPath(string $path): self
+    {
+        $viewPath = $this->basePath . $path;
+        $this->set('path.view', $viewPath);
+
+        return $this;
+    }
+
+    /**public function setViewPath(?string $path = null): self
     {
         $this->set('path.view', $path !== null
             ? Path::getPath($path)
             : Path::getPath('resources.views'));
 
         return $this;
-    }
+    }*/
 
     /**
      * {@inheritdoc}
      */
-    public function setViewPaths(?array $paths = null): self
+    public function setViewPaths(array $paths): self
     {
-        $viewPaths = array_map(
-            fn(string $path) => Path::getPath($path),
-            $paths
-        );
-
+        $viewPaths = array_map(fn ($path) => $this->basePath . $path, $paths);
         $this->set('paths.view', $viewPaths);
 
         return $this;
     }
+
+    /**public function setViewPaths(?array $paths = null): self
+    {
+        if (is_null($paths)) {
+            $paths = [Path::getPath('resources.views')];
+        }
+
+        $viewPaths = array_map(fn ($path) => / **$this->basePath .* / $path, $paths);
+        var_dump($viewPaths);
+        $this->set('paths.view', $viewPaths);
+
+        return $this;
+    }*/
+
 #endregion
 
 #region Application Getter
@@ -615,9 +637,9 @@ class Application extends Container implements ApplicationInterface
      */
     public function getViewPath(?string $path = null): string
     {
-        if (!$this->has('path.view')) {
+        /**if (!$this->has('path.view')) {
             $this->setViewPath($path);
-        }
+        }*/
 
         return $this->get('path.view');
     }
@@ -625,12 +647,11 @@ class Application extends Container implements ApplicationInterface
     /**
      * {@inheritdoc}
      */
-    public function getViewPaths(?array $paths = null): array
+    public function getViewPaths(): array
     {
-        if (!$this->has('paths.view')) {
-            $paths ??= ['resources.views'];
+        /*if (!$this->has('paths.view')) {
             $this->setViewPaths($paths);
-        }
+        }*/
 
         return $this->get('paths.view');
     }
