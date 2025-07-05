@@ -21,8 +21,7 @@ class Route implements \ArrayAccess
     public function __construct(array $route)
     {
         $this->prefix_name = Router::$group['as'] ?? '';
-        $route['name'] ??= $this->prefix_name;
-        //$route['name']     = $this->prefix_name;
+        $route['name']     = $this->prefix_name;
         $this->route       = $route;
     }
 
@@ -71,6 +70,18 @@ class Route implements \ArrayAccess
         return $this;
     }
 
+    /**
+     * Costume url match pattern for this route.
+     *
+     * @param array<string, string> $patterns
+     */
+    public function where(array $patterns): self
+    {
+        $this->route['patterns'] = $patterns;
+
+        return $this;
+    }
+
     // ArrayAccess ---------------------------------------------
 
     /**
@@ -111,11 +122,9 @@ class Route implements \ArrayAccess
      * Returns the value at specified offset.
      *
      * @param string $offset the offset to retrieve
-     *
-     * @return mixed|null Can return all value types
      */
     #[\ReturnTypeWillChange]
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->route[$offset] ?? null;
     }

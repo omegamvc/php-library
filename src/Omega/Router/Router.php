@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Omega\Router;
 
+use Omega\Router\Attribute\Middleware;
+use Omega\Router\Attribute\Name;
+use Omega\Router\Attribute\Prefix;
+use Omega\Router\Attribute\Where;
+
 class Router
 {
     /** @var Route[] */
@@ -37,16 +42,23 @@ class Router
     /**
      * Repalce alias to regex.
      *
-     * @param string $url Alias patern url
+     * @param string                $url      Alias patern url
+     * @param array<string, string> $patterns
      *
      * @return string Patern regex
      */
-    public static function mapPatterns(string $url): string
+    public static function mapPatterns(string $url, array $patterns): string
     {
-        $user_pattern         = array_keys(self::$patterns);
-        $allow_pattern        = array_values(self::$patterns);
+        $user_pattern  = array_keys($patterns);
+        $allow_pattern = array_values($patterns);
 
-        return str_replace($user_pattern, $allow_pattern, $url);
+        $expression = str_replace($user_pattern, $allow_pattern, $url);
+
+        return preg_replace_callback('/\((\w+):(\w+)\)/', static function (array $matchs) use ($patterns): string {
+            $pattern = $patterns["(:{$matchs[2]})"] ?? '[^/]+';
+
+            return "(?P<{$matchs[1]}>{$pattern})";
+        }, $expression);
     }
 
     /**
@@ -56,11 +68,9 @@ class Router
      */
     public static function addRoutes(array $route): void
     {
-        if (
-            isset($route['expression'])
-            && isset($route['function'])
-            && isset($route['method'])
-        ) {
+        if (isset($route['expression'])
+        && isset($route['function'])
+        && isset($route['method'])) {
             self::$routes[] = new Route($route);
         }
     }
@@ -314,6 +324,95 @@ class Router
     }
 
     /**
+     * @param class-string|class-string[] $class_name
+     */
+    public static function register(string|array $class_name): void
+    {
+        $class_names = is_string($class_name) ? [$class_name] : $class_name;
+        foreach ($class_names as $class) {
+            $reflection     = new \ReflectionClass($class);
+            $routes         = self::resolveRouteAttribute($class, $reflection->getAttributes(), $reflection->getMethods());
+            foreach ($routes as $route) {
+                self::$routes[] = (new Route($route))->name($route['name'] ?? '');
+            }
+        }
+    }
+
+    /**
+     * @param \ReflectionAttribute<object>[] $attributes
+     * @param \ReflectionMethod[]            $attributes_methods
+     *
+     * @return array<int, array<string, string|array<string, string>>>
+     */
+    private static function resolveRouteAttribute(string $class_name, array $attributes = [], array $attributes_methods = []): array
+    {
+        $prefix_uri  = '';
+        $prefix_name = '';
+        $middlewares = [];
+        $name        = '';
+        $pattern     = [];
+        $classes     = [];
+        $http_method = '';
+        $uri         = '';
+
+        foreach ($attributes as $class_attribute) {
+            $instance = $class_attribute->newInstance();
+            if ($instance instanceof Middleware) {
+                $middlewares = $instance->middlware;
+            }
+            if ($instance instanceof Name) {
+                $prefix_name = $instance->name;
+            }
+            if ($instance instanceof Prefix) {
+                $prefix_uri = $instance->prefix;
+            }
+        }
+
+        foreach ($attributes_methods as $method) {
+            $found = false;
+            foreach ($method->getAttributes() as $attribute) {
+                $instance = $attribute->newInstance();
+
+                if ($instance instanceof Middleware) {
+                    $middlewares = array_merge($middlewares, $instance->middlware);
+                    continue;
+                }
+
+                if ($instance instanceof Name) {
+                    $name = $instance->name;
+                    continue;
+                }
+
+                if ($instance instanceof Where) {
+                    $pattern = $instance->pattern;
+                    continue;
+                }
+
+                if ($instance instanceof Attribute\Route\Route) {
+                    [
+                        'method'     => $http_method,
+                        'expression' => $uri,
+                    ]      = $instance->route;
+                    $found = true;
+                }
+            }
+            if (true === $found) {
+                $classes[] = [
+                    'method'     => $http_method,
+                    'patterns'   => $pattern,
+                    'uri'        => "{$prefix_uri}{$uri}",
+                    'expression' => self::mapPatterns("{$prefix_uri}{$uri}", self::$patterns),
+                    'function'   => [$class_name, $method->getName()],
+                    'middleware' => $middlewares,
+                    'name'       => "{$prefix_name}{$name}",
+                ];
+            }
+        }
+
+        return $classes;
+    }
+
+    /**
      * Function used to add a new route.
      *
      * @param string|string[]          $method   Methods allow
@@ -331,7 +430,7 @@ class Router
         return self::$routes[] = new Route([
             'method'      => $method,
             'uri'         => $uri,
-            'expression'  => self::mapPatterns($uri),
+            'expression'  => self::mapPatterns($uri, self::$patterns),
             'function'    => $callback,
             'middleware'  => $middleware,
         ]);

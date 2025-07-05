@@ -213,13 +213,6 @@ class Response
         $responseTemplate = sprintf('HTTP/1.1 %s %s', $responseCode, $responseText);
         header($responseTemplate);
 
-        // header
-        $this->headers->set('Content-Type', $this->contentType);
-        // add costume header
-        foreach ($this->headers as $key => $header) {
-            header($key . ':' . $header);
-        }
-
         // remove header
         foreach ($this->removeHeaders as $header) {
             header_remove($header);

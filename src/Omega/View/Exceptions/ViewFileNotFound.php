@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Omega\View\Exceptions;
 
-class ViewFileNotFound extends \InvalidArgumentException
+/**
+ * @internal
+ */
+final class ViewFileNotFound extends \InvalidArgumentException
 {
     /**
      * Creates a new Exception instance.
